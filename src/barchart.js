@@ -86,6 +86,8 @@ class BarChart extends Component {
             }
         }).reverse();
 
+        console.log("chartData", chartData);
+
         barChart = bar();
         var containerWidth = props.width;
         barChart

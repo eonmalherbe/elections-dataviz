@@ -17,7 +17,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "embed-build": "react-scripts build --entry src/embed.js",
+    "build:embed": "webpack --config webpack.embed.config.js",
+    "docz:dev": "docz dev",
+    "docz:build": "docz build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -32,6 +34,7 @@
   ],
   "devDependencies": {
     "docz": "^0.13.7",
-    "docz-theme-default": "^0.13.7"
+    "docz-theme-default": "^0.13.7",
+    "webpack-cli": "^3.2.3"
   }
 }
