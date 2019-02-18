@@ -4,14 +4,22 @@
   "private": true,
   "dependencies": {
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "apollo-cache-inmemory": "^1.4.3",
+    "apollo-client": "^2.4.13",
+    "apollo-link-http": "^1.5.11",
     "babel-loader": "8.0.4",
+    "bootstrap": "3",
     "britecharts": "^2.9.8",
     "d3": "^5.9.1",
     "docz-plugin-babel6": "^0.11.0",
     "docz-plugin-css": "^0.11.0",
+    "graphql": "^14.1.1",
+    "graphql-tag": "^2.10.1",
     "react": "^16.8.1",
+    "react-bootstrap": "^1.0.0-beta.5",
     "react-dom": "^16.8.1",
     "react-scripts": "2.1.3",
+    "topojson": "^3.0.2",
     "webpack": "4.19.1"
   },
   "scripts": {
