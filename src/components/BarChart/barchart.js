@@ -165,6 +165,7 @@ function Chart(container, width, height) {
     .attr("class", className("bartext-container"));
 
   this.draw = function(chartData) {
+    console.log("draw start", chartData);
     x.domain(chartData.map(function (d) {
         return d.name;
       }));
@@ -224,9 +225,10 @@ function Chart(container, width, height) {
         .attr("y", function(d) {
           return y(0);
         })
-        .attr("height", 0)
+        .attr("height", 0)        
 
-      bars.transition()
+      barSvg.selectAll(`.${className("bar")}`).data(chartData)
+        .transition()
         .duration(300)
         .attr("y", function (d) {
           return y(Number(d.value));
@@ -234,6 +236,7 @@ function Chart(container, width, height) {
         .attr("height", function (d) {
           return height - y(Number(d.value));
         })
+      console.log("bars", bars);
         
       var barTexts = barTextSvg.selectAll(`.${className("bartext")}`).data(chartData);
 
@@ -256,7 +259,7 @@ function Chart(container, width, height) {
         .attr("y", function(d) {
           return y(0) - 5;
         })
-      barTexts
+      barTextSvg.selectAll(`.${className("bartext")}`).data(chartData)
         .text(function(d) {
           return d.value;
         })
@@ -353,6 +356,7 @@ class BarChart extends Component {
         if (!chart)
           chart = new Chart(container, width, height);
         chart.draw(chartData);
+        console.log("draw chartData", chartData);
     }
 }
 

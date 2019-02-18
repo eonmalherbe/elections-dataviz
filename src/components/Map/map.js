@@ -57,7 +57,7 @@ class Map extends Component {
                 .attr("d", path);
             
             //show place label
-            svg.selectAll(".place-label")
+            var placeLabelText = svg.selectAll(".place-label")
                 .data(geoJsonData.features)
             .enter().append("text")
                 .attr("class", "place-label")
@@ -70,9 +70,21 @@ class Map extends Component {
                 })
                 .attr("dy", ".35em")
                 .style("text-anchor", "middle")
+
+            placeLabelText.append('tspan')
+                .attr("x", 0)
+                .attr("dy", '0em')
                 .text(function(d) { 
-                    return d.properties.smunicipal.split("-")[1]; 
+                    return d.properties.smunicipal.split("-")[1].split("[")[0]; 
                 });
+            placeLabelText.append('tspan')
+                .attr("x", 0)
+                .attr("dy", '1em')
+                .text(function(d) { 
+                    return "[" + d.properties.smunicipal.split("-")[1].split("[")[1]; 
+                });
+
+            // useful link for wrapping https://bl.ocks.org/mbostock/7555321
             
             //hidden area for catching events
             svg.selectAll(".eventLayer")
