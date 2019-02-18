@@ -66,6 +66,8 @@ class Map extends Component {
                     var coordinates = d.geometry.coordinates[0];
                     var sum = coordinates.reduce(function(a, b) { return [a[0] + b[0], a[1] + b[1]]; });
                     var center = [sum[0] / coordinates.length, sum[1] / coordinates.length];
+                    var projectionCenter = projection(center);
+                    projectionCenter[1] -= 12;
                     return "translate(" + projection(center) + ")"; 
                 })
                 .attr("dy", ".35em")

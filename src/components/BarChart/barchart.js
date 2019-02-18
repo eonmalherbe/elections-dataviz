@@ -165,7 +165,6 @@ function Chart(container, width, height) {
     .attr("class", className("bartext-container"));
 
   this.draw = function(chartData) {
-    console.log("draw start", chartData);
     x.domain(chartData.map(function (d) {
         return d.name;
       }));
@@ -236,7 +235,6 @@ function Chart(container, width, height) {
         .attr("height", function (d) {
           return height - y(Number(d.value));
         })
-      console.log("bars", bars);
         
       var barTexts = barTextSvg.selectAll(`.${className("bartext")}`).data(chartData);
 
@@ -266,9 +264,11 @@ function Chart(container, width, height) {
         .transition()
         .duration(300)
         .attr("y", function (d) {
-          // console.log("d.frequency", d.frequency);
           return y(Number(d.value)) - 5;
         })
+  }
+  this.destroy = function() {
+    svg.remove();
   }
 }
 
@@ -279,37 +279,55 @@ class BarChart extends Component {
     constructor(props) {
       super(props);
       var self = this;
+      this.state = {
+        numParties: 5,
+        regionName: "Western Cape",
+        width: 600,
+        height: 220
+      }
+      if (props.numParties) {
+        this.state.numParties = props.numParties;
+      }
+      if (props.regionName) {
+        this.state.regionName = props.regionName;
+      }
+      if (props.width) {
+        this.state.width = props.width;
+      }
+      if (props.height) {
+        this.state.height = props.height;
+      }
       setInterval(() => {
-        self.draw(self.getContainer(), self.props)
+        self.draw(self.getContainer(), self.state)
       }, dataRefreshTime);
+      this.handleRegionChange = this.handleRegionChange.bind(this);
+      this.redrawChart = this.redrawChart.bind(this);
     }
   
     componentDidMount() {
-      this.draw(this.getContainer(), this.props)
-      document.addEventListener(events.REGION_CHANGE, this.handleRegionChange.bind(this));
+      this.draw(this.getContainer(), this.state)
+      document.addEventListener(events.REGION_CHANGE, this.handleRegionChange);
       window.addEventListener("resize", this.redrawChart, 200);
     }
 
-
-
     componentDidUpdate() {
-      this.draw(this.getContainer(), this.props)
+      this.draw(this.getContainer(), this.state)
     }
 
     componentWillUnmount() {
-      document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange.bind(this));
+      document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
       window.removeEventListener("resize", this.redrawChart);
     }
 
     redrawChart() {
-      // var newContainerWidth = container.node() ? container.node().getBoundingClientRect().width : false;
-      // if (newContainerWidth) {
-
-      // }
+      var modifW = document.body.clientWidth, modifH = document.body.clientHeight/3;
+      chart.destroy();
+      chart = new Chart(this.getContainer(), modifW, modifH);
+      this.setState({width: modifW, height: modifH});
     };
 
-    handleRegionChange = (event) => {
-      alert("region is changed");
+    handleRegionChange(event) {
+      this.setState({regionName: "Eastern Cape"})
     }
 
     getContainer() {
@@ -356,7 +374,6 @@ class BarChart extends Component {
         if (!chart)
           chart = new Chart(container, width, height);
         chart.draw(chartData);
-        console.log("draw chartData", chartData);
     }
 }
 
