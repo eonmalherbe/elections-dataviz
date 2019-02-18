@@ -29,10 +29,6 @@
 .y-axis-label {
   white-space: nowrap;
 }
-.bar {
-  /* fill: #9cf; */
-  stroke-width: 0;
-}
 
 .y-label {
   white-space: nowrap;
