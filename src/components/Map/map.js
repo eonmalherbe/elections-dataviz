@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import * as topojson from 'topojson-client';
+import polylabel from 'polylabel';
 import styles from './map.css';
 import events from '../../events';
 
@@ -14,7 +15,8 @@ class Map extends Component {
         super(props);
         this.state = {
           regionType: "national",
-          regionName: "SA"
+          regionName: "SA",
+          parentProvinceName: ""
         }
 
         if (props.regionType) {
@@ -90,6 +92,15 @@ class Map extends Component {
         // ];
         var fullRouteGeoJsonFile = "/mapdata/" + getRegionFileName();
 
+        var tooltipDiv;
+        if (document.getElementsByClassName('tooltip')[0]) {
+          tooltipDiv = d3.select(".tooltip");
+        } else {
+          tooltipDiv = d3.select("body").append("div")	
+            .attr("class", className("tooltip"))				
+            .style("opacity", 0);
+        }
+
         if (JSON.stringify(process.env).indexOf("docz") != -1) {
             fullRouteGeoJsonFile = "/public" + fullRouteGeoJsonFile;
         }
@@ -117,10 +128,10 @@ class Map extends Component {
             .on("click", function() {
                 var regionType = self.state.regionType;
                 if (regionType == "province") {
-                    self.setState({regionType: "national"});
+                    self.setState({regionType: "national", regionName: "SA"});
                 } else if (regionType == "municipality") {
                     function getProvinceFromMunicipality(municipalityName) {
-                        return "Western Cape";
+                        return self.state.parentProvinceName;
                     }
                     self.setState({
                         regionType: "province", 
@@ -132,16 +143,22 @@ class Map extends Component {
         var geoJsonLoader = d3.json(fullRouteGeoJsonFile);
 
         Promise.all([geoJsonLoader]).then(function(values){ 
+
+            console.log("json load Finished");
             var geoJsonData = values[0];
-            var projection = d3.geoMercator().fitSize([w, h], geoJsonData);
-            var path = d3.geoPath().projection(projection);
 
             var getJsonDataFeatures;
             if (fullRouteGeoJsonFile.indexOf(".topojson") != -1) {
-                getJsonDataFeatures = topojson.feature(geoJsonData, geoJsonData.objects[self.state.regionName]);
-            } else {
-                getJsonDataFeatures = geoJsonData.features;
+                geoJsonData = topojson.feature(geoJsonData, geoJsonData.objects[self.state.regionName]);
             }
+
+            getJsonDataFeatures = geoJsonData.features;
+
+            console.log("getJsonDataFeatures", getJsonDataFeatures);
+
+
+            var projection = d3.geoMercator().fitSize([w, h], geoJsonData);
+            var path = d3.geoPath().projection(projection);
 
             // fill region with green
             svg.selectAll(`.${className("region")}`)
@@ -157,41 +174,96 @@ class Map extends Component {
                 .attr("d", path);
             
             //show place label
-            var placeLabelText = svg.selectAll(".place-label")
+            svg.selectAll(".place-label")
                 .data(getJsonDataFeatures)
             .enter().append("text")
                 .attr("class", "place-label")
                 .attr("font-size", "12px")
                 .attr("transform", function(d) { 
-                    var coordinates = d.geometry.coordinates[0];
-                    var sum = coordinates.reduce(function(a, b) { return [a[0] + b[0], a[1] + b[1]]; });
-                    var center = [sum[0] / coordinates.length, sum[1] / coordinates.length];
-                    var projectionCenter = projection(center);
-                    projectionCenter[1] -= 12;
-                    return "translate(" + projection(center) + ")"; 
+                    if (d.geometry.type == "Polygon") {
+                        var center = polylabel(d.geometry.coordinates);
+                        console.log("center", center);
+                        var projectionCenter = projection(center);
+                        projectionCenter[1] -= 12;
+                        return "translate(" + projectionCenter + ")"; 
+                    } else { //d.geometry.type == "MultiPolygon"
+                        var center = polylabel(d.geometry.coordinates[0]);
+                        var projectionCenter = projection(center);
+                        projectionCenter[1] -= 5;
+                        //projection(center)
+                        return "translate(" + projectionCenter + ")"; 
+                    }
                 })
                 .attr("dy", ".35em")
                 .style("text-anchor", "middle")
-
-            placeLabelText.append('tspan')
-                .attr("x", 0)
-                .attr("dy", '0em')
                 .text(function(d) { 
-                    if (d.properties.SPROVINCE) 
+                    if (self.state.regionType == "national") {
                         return d.properties.SPROVINCE;
-                    return d.properties.smunicipal.split("-")[1].split("[")[0]; 
-                });
-            placeLabelText.append('tspan')
-                .attr("x", 0)
-                .attr("dy", '1em')
-                .text(function(d) { 
-                    if (d.properties.SPROVINCE) 
-                        return "";
-                    return "[" + d.properties.smunicipal.split("-")[1].split("[")[1]; 
-                });
+                    } else if (self.state.regionType == "province") {
+                        return d.properties.smunicipal.split("-")[1].split("[")[0]; 
+                    } else {//municipality
+                        return d.properties.SMUNICIPAL.split("-")[1].split("[")[0]; 
+                    }
+                })
 
-            // useful link for wrapping https://bl.ocks.org/mbostock/7555321
+            var labelElements = document.getElementsByClassName("place-label");
+
+            var regions = {};
+            var overlapCnt = {};
+            for (var i = 0; i < getJsonDataFeatures.length; i ++) {
+                regions[i] = labelElements[i].getBoundingClientRect();
+            }
+
+            for (var i = 0; i < getJsonDataFeatures.length; i ++) {
+                for (var j = 0; j < i; j ++) {
+                    var rect1 = regions[i];
+                    var rect2 = regions[j];
+                    var overlap = !(rect1.right < rect2.left || 
+                        rect1.left > rect2.right || 
+                        rect1.bottom < rect2.top || 
+                        rect1.top > rect2.bottom);
+                    if (overlap) {
+                        overlapCnt[i] = overlapCnt[i]? (overlapCnt[i] + 1): 1;
+                    }
+                }
+                if (overlapCnt[i] > 2) {
+                    labelElements[i].setAttribute("opacity", 0)
+                } else if (overlapCnt[i] > 0){
+                    labelElements[i].innerHTML = labelElements[i].innerHTML.slice(0, 3) + "...";
+                } else {
+
+                }
+            }
+            for (var i = 0; i < getJsonDataFeatures.length; i ++) {
+                // labelElements[i].setAttribute("font-size", 12 / overlapCnt[i]);
+                
+            }
             
+            console.log("regions", overlapCnt);
+
+
+            // placeLabelText.append('tspan')
+            //     .attr("x", 0)
+            //     .attr("dy", '0em')
+            //     .text(function(d) { 
+            //         if (self.state.regionType == "national") {
+            //             return d.properties.SPROVINCE;
+            //         } else if (self.state.regionType == "province") {
+            //             return d.properties.smunicipal.split("-")[1].split("[")[0]; 
+            //         } else {//municipality
+            //             return d.properties.SMUNICIPAL.split("-")[1].split("[")[0]; 
+            //         }
+            //     });
+            // placeLabelText.append('tspan')
+            //     .attr("x", 0)
+            //     .attr("dy", '1em')
+            //     .text(function(d) { 
+            //         if (d.properties.SPROVINCE) 
+            //             return "";
+            //         return "[" + d.properties.smunicipal.split("-")[1].split("[")[1]; 
+            //     });
+            
+				
             //hidden area for catching events
             svg.selectAll(".eventLayer")
                 .data(getJsonDataFeatures)
@@ -208,30 +280,70 @@ class Map extends Component {
                         .attr('stroke-width', 3)
                         .style('fill-opacity', 0.8);
                 })
+                .on("mousemove", function(d) {		
+                    tooltipDiv.transition()		
+                        .duration(200)		
+                        .style("opacity", 1);
+                    function regionName() {
+                        if (self.state.regionType == "national") {
+                            return d.properties.SPROVINCE;
+                        } else if (self.state.regionType == "province") {
+                            return d.properties.smunicipal.split("-")[1].split("[")[0]; 
+                        } else {//municipality
+                            return d.properties.SMUNICIPAL.split("-")[1].split("[")[0]; 
+                        }
+                    }
+                    tooltipDiv.html(regionName())	
+                        .style("left", (d3.event.pageX) + "px")		
+                        .style("top", (d3.event.pageY - 28) + "px");	
+                })
                 .on('mouseout', function(d, i) {
                     d3.select(`#region-${i}`)
                         .attr('stroke-width', 1)
                         .style('fill-opacity', 1);
+                    
+                    tooltipDiv.transition()		
+                        .duration(200)		
+                        .style("opacity", 0);	
                 })
                 .on("click", function(d, i) {
-                    console.log("click event", i, d.properties, self);
-                    var event = new CustomEvent(events.REGION_CHANGE, { properties: d.properties });
-                    document.dispatchEvent(event);
+                    console.log("click event", i, d.properties);
+                    
                     var regionType = self.state.regionType;
                     if (regionType == "national") {
-                        console.log("setState", d.properties.SPROVINCE);
-                        self.setState({regionType: "province", regionName: d.properties.SPROVINCE});
+                        var newState = {
+                            regionType: "province",
+                            regionName: d.properties.SPROVINCE
+                        }
+                        var event = new CustomEvent(events.REGION_CHANGE, newState);
+                        document.dispatchEvent(event);
+                        self.setState(newState);
                     } else if (regionType == "province") {
-                        console.log("setState", getMunicipalityName(d.properties));
                         function getMunicipalityName(properties) {
                             return properties.smunicipal.split("-")[0].replace(/\s/g, "");
                         }
-                        self.setState({
+                        var newState = {
                             regionType: "municipality", 
-                            regionName: getMunicipalityName(d.properties)
-                        });
+                            regionName: getMunicipalityName(d.properties),
+                            parentProvinceName: self.state.regionName
+                        }
+                        var event = new CustomEvent(events.REGION_CHANGE, newState);
+                        document.dispatchEvent(event);
+
+                        self.setState(newState);
+                    } else {
+                        function getMunicipalityRegionName(properties) {
+                            return properties.SMUNICIPAL.split("-")[0].replace(/\s/g, "");
+                        }
+                        var newState = {
+                            regionType: "municipality-region", 
+                            regionName: getMunicipalityRegionName(d.properties),
+                        }
+                        var event = new CustomEvent(events.REGION_CHANGE, newState);
+                        document.dispatchEvent(event);
                     }
                 })
+            console.log("svg drawing finished");
         })
 
         var redrawChart = function() {

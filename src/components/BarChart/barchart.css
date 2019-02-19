@@ -49,9 +49,10 @@ d3fc-svg svg {
   height: 28px;					
   padding: 2px;				
   font: 12px sans-serif;		
-  background: lightsteelblue;	
+  background: white;	
+  display: inline-block;
   border: 0px;		
-  border-radius: 8px;			
+  border-radius: 3px;			
   pointer-events: none;			
 }
 
