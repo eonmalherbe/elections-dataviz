@@ -2,6 +2,7 @@
   "name": "sabcviz",
   "version": "0.1.0",
   "private": true,
+  "githubpage": "http://sabc-eds.github.io/elections-dataviz",
   "dependencies": {
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "apollo-cache-inmemory": "^1.4.3",
