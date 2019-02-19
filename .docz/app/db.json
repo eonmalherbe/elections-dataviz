@@ -1,0 +1,54 @@
+{
+  "config": {
+    "title": "Elections DataViz Docs",
+    "description": "Elections Data Visualization Docs",
+    "menu": [],
+    "ordering": "descending",
+    "version": "0.1.0",
+    "repository": null,
+    "native": false,
+    "codeSandbox": true,
+    "themeConfig": {},
+    "hashRouter": true,
+    "plugins": [
+      {},
+      {}
+    ]
+  },
+  "entries": {
+    "src/Box.mdx": {
+      "name": "Box",
+      "id": "05a2834ceaed10486b9b52e1cac4113e",
+      "filepath": "src/Box.mdx",
+      "link": null,
+      "slug": "src-box",
+      "route": "/src-box",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "hello-world",
+          "value": "Hello world"
+        }
+      ]
+    },
+    "src/barchart.mdx": {
+      "name": "BarChart",
+      "id": "9aa9aee82ec5ab742a3d5c877351a58e",
+      "filepath": "src/barchart.mdx",
+      "link": null,
+      "slug": "src-barchart",
+      "route": "/src-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "barchart",
+          "value": "BarChart"
+        }
+      ]
+    }
+  }
+}

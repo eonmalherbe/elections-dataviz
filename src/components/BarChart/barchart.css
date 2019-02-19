@@ -1,0 +1,61 @@
+.chart-label {
+  font-size: 1.5em;
+  line-height: normal;
+  color: black;
+}
+
+.chart-title {
+  font-weight: bold;
+}
+
+.chart-body {
+}
+
+.percentage-label {
+  font-style: italic;
+}
+
+.chart svg {
+  overflow: visible !important;
+}
+
+.chart.large {
+  height: 400px;
+}
+
+.y-axis-label {
+  white-space: nowrap;
+}
+
+.y-label {
+  white-space: nowrap;
+}
+
+d3fc-svg svg {
+  overflow: visible !important;
+}
+
+.annotation-line > line {
+  fill-opacity: 0;
+  stroke: #999;
+  stroke-width: 1;
+  stroke-dasharray: 3, 3;
+}
+
+.tooltip {	
+  position: absolute;			
+  text-align: center;			
+  width: 60px;					
+  height: 28px;					
+  padding: 2px;				
+  font: 12px sans-serif;		
+  background: white;	
+  display: inline-block;
+  border: 0px;		
+  border-radius: 3px;			
+  pointer-events: none;			
+}
+
+.grid {
+  color: grey;
+}
