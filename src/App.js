@@ -9,7 +9,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <BarChart width="600" height="220" regionName="Western Cape" numParties={3}/>
+        {/* <BarChart width="600" height="220" regionName="Western Cape" numParties={3}/> */}
         <Map />
         <div id="sales-data"></div>
       </div>

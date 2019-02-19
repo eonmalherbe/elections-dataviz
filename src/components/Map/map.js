@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
+import * as topojson from 'topojson-client';
 import styles from './map.css';
 import events from '../../events';
 
@@ -9,32 +10,124 @@ function className(originName) {
 
 class Map extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+          regionType: "national",
+          regionName: "SA"
+        }
+
+        if (props.regionType) {
+            this.state.regionType = props.regionType;
+        }
+        if (props.regionName) {
+            this.state.regionName = props.regionName;
+        }
+    }
+
+
+
     drawGraph(container, props) {
-        var geoJSONFileNames = [
-            "ec_lo-res.geojson",
-            "fs_lo-res.geojson",
-            "gt_lo-res.geojson",
-            "kzn_lo-res.geojson",
-            "lim_lo-res.geojson",
-            "mp_lo-res.geojson",
-            "nc_lo-res.geojson",
-            "nw_lo-res.geojson",
-            "wc_lo-res.geojson",
-            "province_hires.geojson",
-            "province_lo-res.geojson",
-        ];
-        var fullRouteGeoJsonFile = "/mapdata/" + geoJSONFileNames[0];
+        console.log("drawGraph", "new", this);
+        var self = this;
+        var nationalMapFile = "province_lo-res.geojson";
+
+        function getRegionFileName() {
+            function getProvinceFileName(regionName) {
+                console.log("getProvinceFileName", regionName);
+                var provinceNameToFileMap = {
+                    "Limpopo": "lim_lo-res.geojson",
+                    "Mpumalanga": "mp_lo-res.geojson",
+                    "Gauteng": "gt_lo-res.geojson",
+                    "KwaZulu-Natal": "kzn_lo-res.geojson",
+                    "North West": "nw_lo-res.geojson",
+                    "Free State": "fs_lo-res.geojson",
+                    "Eastern Cape": "ec_lo-res.geojson",
+                    "Northern Cape": "nc_lo-res.geojson",
+                    "Western Cape": "wc_lo-res.geojson",
+                }
+                return provinceNameToFileMap[regionName];
+            }
+            switch(self.state.regionType) {
+                case "national":
+                    return nationalMapFile;
+                case "province":
+                    return getProvinceFileName(self.state.regionName);
+                case "municipality":
+                    return self.state.regionName + ".topojson";
+            }
+        }
+
+        // var geoJSONFileNames = [
+        //     "province_hires.geojson", // high resolution national { "SPROVINCE": "Mpumalanga", "PKLVDNUMBE": 54100011.0 }
+        //     "province_lo-res.geojson",// low resolution national {"SPROVINCE":"Limpopo","PKLVDNUMBE":54520017}
+        //     "ec_lo-res.geojson",
+        //     "fs_lo-res.geojson",
+        //     "gt_lo-res.geojson",
+        //     "kzn_lo-res.geojson",
+        //     "lim_lo-res.geojson",
+        //     "mp_lo-res.geojson",
+        //     "nc_lo-res.geojson",
+        //     "nw_lo-res.geojson", //low resolution northwest {"smunicipal":"NW372 - Madibeng [Brits]"}
+        //     "wc_lo-res.geojson",
+        //     // BUF.topojson
+        //     // CPT.topojson
+        //     // EC101.topojson ... EC444.topojson
+        //     // EKU.topojson
+        //     // ETH.topojson
+        //     // FS161.topojson ... FS205.topojson
+        //     // GT421.topojson ... GT484.topojson
+        //     // JHB.topojson
+        //     // KZN211.topojson ... KZN435.topojson
+        //     // LIM331.topojson ... LIM475.topojson
+        //     // MAN.topojson
+        //     // MP301.topojson ... MP325.topojson
+        //     // NC061.topojson ... NC453.topojson
+        //     // NMA.topojson
+        //     // NW371.topojson ... NW404.topojson
+        //     // TSH.topojson
+        //     // WC011.topojson ... WC053.topojson
+        // ];
+        var fullRouteGeoJsonFile = "/mapdata/" + getRegionFileName();
 
         if (JSON.stringify(process.env).indexOf("docz") != -1) {
             fullRouteGeoJsonFile = "/public" + fullRouteGeoJsonFile;
         }
 
+        console.log("fullRouteGeoJsonFile", fullRouteGeoJsonFile);
+
         var w = 1400;
         var h = 700;
+        container.selectAll("svg").remove();
         var svg = container.append("svg")
             .attr("preserveAspectRatio", "xMinYMin meet").style("background-color","#c9e8fd")
             .attr("viewBox", "0 0 " + w + " " + h)
             .classed("svg-content", true);
+
+        var fo = svg.append('foreignObject')
+            .attr('x', w - 100)
+            .attr('y', 10)
+            .attr('width', 100)
+            .attr('height', 30)
+            .attr('class', 'map-controls')
+        var gobackbutton = fo.append('xhtml:div')
+            .append('button')
+            .attr('class', 'go-back')
+            .html('go back')
+            .on("click", function() {
+                var regionType = self.state.regionType;
+                if (regionType == "province") {
+                    self.setState({regionType: "national"});
+                } else if (regionType == "municipality") {
+                    function getProvinceFromMunicipality(municipalityName) {
+                        return "Western Cape";
+                    }
+                    self.setState({
+                        regionType: "province", 
+                        regionName: getProvinceFromMunicipality(self.regionName)
+                    });
+                }
+            });
 
         var geoJsonLoader = d3.json(fullRouteGeoJsonFile);
 
@@ -43,9 +136,16 @@ class Map extends Component {
             var projection = d3.geoMercator().fitSize([w, h], geoJsonData);
             var path = d3.geoPath().projection(projection);
 
+            var getJsonDataFeatures;
+            if (fullRouteGeoJsonFile.indexOf(".topojson") != -1) {
+                getJsonDataFeatures = topojson.feature(geoJsonData, geoJsonData.objects[self.state.regionName]);
+            } else {
+                getJsonDataFeatures = geoJsonData.features;
+            }
+
             // fill region with green
             svg.selectAll(`.${className("region")}`)
-                .data(geoJsonData.features)
+                .data(getJsonDataFeatures)
                 .enter()
                 .append("path")
                 .attr("class", className("region"))
@@ -58,7 +158,7 @@ class Map extends Component {
             
             //show place label
             var placeLabelText = svg.selectAll(".place-label")
-                .data(geoJsonData.features)
+                .data(getJsonDataFeatures)
             .enter().append("text")
                 .attr("class", "place-label")
                 .attr("font-size", "12px")
@@ -77,12 +177,16 @@ class Map extends Component {
                 .attr("x", 0)
                 .attr("dy", '0em')
                 .text(function(d) { 
+                    if (d.properties.SPROVINCE) 
+                        return d.properties.SPROVINCE;
                     return d.properties.smunicipal.split("-")[1].split("[")[0]; 
                 });
             placeLabelText.append('tspan')
                 .attr("x", 0)
                 .attr("dy", '1em')
                 .text(function(d) { 
+                    if (d.properties.SPROVINCE) 
+                        return "";
                     return "[" + d.properties.smunicipal.split("-")[1].split("[")[1]; 
                 });
 
@@ -90,7 +194,7 @@ class Map extends Component {
             
             //hidden area for catching events
             svg.selectAll(".eventLayer")
-                .data(geoJsonData.features)
+                .data(getJsonDataFeatures)
             .enter()
                 .append("path")
                 .attr("d", path)
@@ -110,9 +214,23 @@ class Map extends Component {
                         .style('fill-opacity', 1);
                 })
                 .on("click", function(d, i) {
-                    console.log("click event", i, d.properties.smunicipal);
-                    var event = new CustomEvent(events.REGION_CHANGE, { regionName: d.properties.smunicipal });
+                    console.log("click event", i, d.properties, self);
+                    var event = new CustomEvent(events.REGION_CHANGE, { properties: d.properties });
                     document.dispatchEvent(event);
+                    var regionType = self.state.regionType;
+                    if (regionType == "national") {
+                        console.log("setState", d.properties.SPROVINCE);
+                        self.setState({regionType: "province", regionName: d.properties.SPROVINCE});
+                    } else if (regionType == "province") {
+                        console.log("setState", getMunicipalityName(d.properties));
+                        function getMunicipalityName(properties) {
+                            return properties.smunicipal.split("-")[0].replace(/\s/g, "");
+                        }
+                        self.setState({
+                            regionType: "municipality", 
+                            regionName: getMunicipalityName(d.properties)
+                        });
+                    }
                 })
         })
 
@@ -124,8 +242,7 @@ class Map extends Component {
     }
 
     draw(container, props) {
-        var self = this;
-        self.drawGraph(container, props);
+        this.drawGraph(container, props);
     }
 
     componentDidMount() {
@@ -142,7 +259,10 @@ class Map extends Component {
       
     render () {
         return (
-          <div ref="vizcontainer" className="map"></div>
+            <div>
+                <div>{this.state.regionName}</div>
+                <div ref="vizcontainer" className="map"></div>
+            </div>
         )
     }
 }
