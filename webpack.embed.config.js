@@ -12,6 +12,16 @@ module.exports = {
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        use: [{
+            loader: 'file-loader',
+            options: {
+                name: '[name].[ext]',
+                outputPath: 'fonts/'
+            }
+        }]
       }
     ]
   },
@@ -19,7 +29,7 @@ module.exports = {
     extensions: ['*', '.js', '.jsx']
   },
   output: {
-    path: __dirname + '/embed',
+    path: __dirname + '/build/embed',
     publicPath: '/',
     filename: 'embed.js'
   },
@@ -27,7 +37,7 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin()
   ],
   devServer: {
-    contentBase: './embed',
+    contentBase: './build/embed',
     hot: true
   }
 };

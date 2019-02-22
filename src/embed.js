@@ -1,25 +1,22 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 import {
     BarChart,
     Map
-} from './components';
+} from "./components";
 
 // 1. Container div tag
 // 2. Geography - e.g.National, Province - EC, Municipality - CPT or VD - 10344444
 // 3. Number of parties shown
 
-window.showBarChart = (element, eventType, locationName, numberOfParties) => {
+window.showBarChart = (element, options) => {
     ReactDOM.render(<BarChart 
-        width="600" 
-        height="220" 
-        eventType={eventType}
-        locationName={locationName}
-        numberOfParties={numberOfParties}
+        {...options}
         />, element);
 };
 
-window.showMap = (element) => {
+window.showMap = (element, options) => {
     ReactDOM.render(<Map 
+        {...options}
         />, element);
 };

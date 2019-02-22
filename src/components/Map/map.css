@@ -4,6 +4,51 @@ text {
 .region {
 
 }
-/* .region:hover {
-    fill: white;
-} */
+.loading-spinner {
+    position: absolute;
+    left: calc(50% - 50px);
+    top: calc(50% - 50px);
+}
+.map-navbar {
+    position: absolute;
+    width : 150px;
+    left: 0;
+    top: 0;
+    color: #8d97ad;
+    font-size: 1em;
+    letter-spacing: 2px;
+    line-height: 22px;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.map-navbar::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+.map-navbar::-webkit-scrollbar
+{
+	width: 6px;
+	background-color: #F5F5F5;
+}
+
+.map-navbar::-webkit-scrollbar-thumb
+{
+	background-color: #000000;
+}
+
+.map-container {
+    display: block;
+    width: 100%;
+    padding-top: 70%;
+    position: relative;
+}
+.map {
+    width: calc(100% - 150px);
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 10px;
+}

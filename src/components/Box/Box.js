@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import * as d3 from 'd3'
-import './Box.css';
+import React, { Component } from "react";
+import * as d3 from "d3";
+import "./Box.css";
 
 class Box extends Component {
     draw() {

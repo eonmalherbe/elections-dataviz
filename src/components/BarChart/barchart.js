@@ -1,278 +1,103 @@
-import React, { Component } from 'react';
-import * as d3 from 'd3';
-import styles from './barchart.css';
+import React, { Component } from "react";
+import * as d3 from "d3";
+import styles from "./barchart.css";
+import {Chart} from "./d3barchart";
 
-import events from '../../events';
+import events from "../../events";
 import {
-  getVotesData
-} from '../../api';
+  getVotesDataM
+} from "../../api";
 
-var dataRefreshTime = 30 * 100;
-var predefBarChartColors = [
-  {R: 0, G: 114, B: 47},
-  {R: 3, G: 62, B: 108},
-  {R: 131, G: 23, B: 27},
-  {R: 170, G: 0, B: 14},
-  {R: 76, G: 114, B: 114},
-  {R: 191, G: 135, B: 50},
-];
-var seed = 1;
+var dataRefreshTime = 30 * 1000;
+
 
 // for the purposes of the proof of concept - production data should be live
 var use_live_data = true;
+
 var js = {
-  "data": {
-    "allProvincialBallots": {
-      "edges": [
-        {
-          "node": {
-            "location": {
-              "name": "Western Cape"
-            },
-            "topResult": {
-              "edges": [
-                {
-                  "node": {
-                    "party": {
-                      "abbreviation": "VF Plus",
-                      "name": "VRYHEIDSFRONT PLUS"
-                    },
-                    "validVotes": 23243
+    "data": {
+      "allProvincialBallots": {
+        "edges": [
+          {
+            "node": {
+              "partyResults": {
+                "edges": [
+                  {
+                    "node": {
+                      "validVotes": 15311,
+                      "percOfVotes": 84.44,
+                      "party": {
+                        "id": "52",
+                        "name": "DEMOCRATIC ALLIANCE/DEMOKRATIESE ALLIANSIE",
+                        "abbreviation": "DA"
+                      }
+                    }
+                  },
+                  {
+                    "node": {
+                      "validVotes": 1508,
+                      "percOfVotes": 8.32,
+                      "party": {
+                        "id": "7",
+                        "name": "AFRICAN NATIONAL CONGRESS",
+                        "abbreviation": "ANC"
+                      }
+                    }
+                  },
+                  {
+                    "node": {
+                      "validVotes": 328,
+                      "percOfVotes": 1.81,
+                      "party": {
+                        "id": "938",
+                        "name": "AGANG SOUTH AFRICA",
+                        "abbreviation": "AGANG SA"
+                      }
+                    }
+                  },
+                  {
+                    "node": {
+                      "validVotes": 255,
+                      "percOfVotes": 1.41,
+                      "party": {
+                        "id": "945",
+                        "name": "ECONOMIC FREEDOM FIGHTERS",
+                        "abbreviation": "EFF"
+                      }
+                    }
+                  },
+                  {
+                    "node": {
+                      "validVotes": 198,
+                      "percOfVotes": 1.09,
+                      "party": {
+                        "id": "4",
+                        "name": "VRYHEIDSFRONT PLUS",
+                        "abbreviation": "VF Plus"
+                      }
+                    }
                   }
-                },
-                {
-                  "node": {
-                    "party": {
-                      "abbreviation": "ACDP",
-                      "name": "AFRICAN CHRISTIAN DEMOCRATIC PARTY"
-                    },
-                    "validVotes": 25318
-                  }
-                },
-                {
-                  "node": {
-                    "party": {
-                      "abbreviation": "EFF",
-                      "name": "ECONOMIC FREEDOM FIGHTERS"
-                    },
-                    "validVotes": 50280
-                  }
-                },
-                {
-                  "node": {
-                    "party": {
-                      "abbreviation": "ANC",
-                      "name": "AFRICAN NATIONAL CONGRESS"
-                    },
-                    "validVotes": 737219
-                  }
-                },
-                {
-                  "node": {
-                    "party": {
-                      "abbreviation": "DA",
-                      "name": "DEMOCRATIC ALLIANCE/DEMOKRATIESE ALLIANSIE"
-                    },
-                    "validVotes": 1241424
-                  }
-                }
-              ]
+                ]
+              },
+              "location": {
+                "id": "UHJvdmluY2VUeXBlOjk5",
+                "name": "Out of Country"
+              }
             }
           }
-        }
-      ]
+        ]
+      }
     }
-  }
 }
 
 function className(originName) {
   return styles[originName] || originName;
 }
 
-function Chart(container, width, height) {
-  var XaxisOffset = 70;
-  var YaxisOffset = 20;
-  var predefColors = predefBarChartColors;
-  var svg = container.append("svg")
-      .attr("width", width + XaxisOffset)
-      .attr("height", height + YaxisOffset);
 
-  function gradientName(rgb) {
-    return `gradientrgb-${rgb.R}-${rgb.G}-${rgb.B}`;
-  }
-
-  function defineGradient(defs, originRGB) {
-    function getMergedColorWithWhite(percent) {
-      var mixedR = (originRGB.R * (100-percent) + 255 * (percent))/100;
-      var mixedG = (originRGB.G * (100-percent) + 255 * (percent))/100;
-      var mixedB = (originRGB.B * (100-percent) + 255 * (percent))/100;
-      return `rgb(${mixedR},${mixedG},${mixedB})`;
-    }
-    var linearGradient = defs.append("linearGradient")
-      .attr("id", gradientName(originRGB));
-    var gradientInfo = [[0,0], [11, 92], [25,15], [82, 35], [100, 4]];
-    linearGradient.selectAll("stop")
-      .data(gradientInfo)
-      .enter()
-      .append('stop')
-      .attr("offset", d => d[0]+'%')
-      .attr("stop-color", d => getMergedColorWithWhite(d[1]))
-      .attr("stop-opacity", 1);
-  }
-
-  var defs = svg.append("defs");
-  for (var i = 0; i < predefColors.length; i ++)
-    defineGradient(defs, predefColors[i]);
-
-  var tooltipDiv;
-  if (document.getElementsByClassName('tooltip')[0]) {
-    tooltipDiv = d3.select(".tooltip");
-  } else {
-    tooltipDiv = d3.select("body").append("div")	
-      .attr("class", className("tooltip"))				
-      .style("opacity", 0);
-  }
-
-  var x = d3.scaleBand()
-    .rangeRound([XaxisOffset, width])
-
-  var y = d3.scaleLinear()
-    .rangeRound([height, YaxisOffset]);
-
-  svg.append("g")
-    .attr("transform", "translate(20,"+(height/2+YaxisOffset/2)+")")
-    .append("text")
-    .attr("class", className("percentage-label"))
-    .attr("transform", "rotate(-90)")
-    .text("PERCENTAGE VOTES")
-    .attr("text-anchor", "middle");
-
-  svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-
-  svg.append("g")
-    .attr("class", "y axis")
-    .attr("transform", "translate(" + XaxisOffset +", 0)")
-
-  svg.append("g")
-    .attr("class", className("grid"))
-    .attr("transform", "translate(" + XaxisOffset +", 0)")
-
-  var barSvg = svg.append("g")
-    .attr("class", className("bar-container"));
-  var barTextSvg = svg.append("g")
-    .attr("class", className("bartext-container"));
-
-  this.draw = function(chartData) {
-    x.domain(chartData.map(function (d) {
-        return d.name;
-      }));
-    y.domain([0, d3.max(chartData, function (d) {
-          return Number(d.value);
-        })]);
-
-
-		svg.select('.x.axis').transition().duration(300).call(d3.axisBottom(x));
-		svg.select(".y.axis").transition().duration(300).call(d3.axisLeft(y)
-      .ticks(6)
-      .tickSize(-width+XaxisOffset)
-    )
-    svg.select(".grid").transition().duration(300).call(d3.axisLeft(y)
-      .ticks(6)
-      .tickSize(-width+XaxisOffset)
-      .tickFormat("")
-    )
-
-    var bars = barSvg.selectAll(`.${className("bar")}`).data(chartData);
-
-    bars.exit()
-      .transition()
-      .duration(300)
-      .attr("y", function(d) {
-        return y(0);
-      })
-      .attr("height", 0)
-      .style('fill-opacity', 1e-6)
-      .remove();
-
-    bars.enter()
-        .append("rect")
-        .attr("class", className("bar"))
-        .attr("x", function (d) {
-          return x(d.name)+x.bandwidth()/20;
-        })
-        .attr("width", x.bandwidth()*9/10)
-        .attr("fill", (d, i) =>`url(#${gradientName(predefColors[i%predefColors.length])})`)
-        .on("mousemove", function(d) {		
-            d3.select(this)
-              .attr("opacity", 0.8);
-            tooltipDiv.transition()		
-                .duration(200)		
-                .style("opacity", .9);		
-            tooltipDiv.html(d.name + ' : ' + d.value)	
-                .style("left", (d3.event.pageX) + "px")		
-                .style("top", (d3.event.pageY - 28) + "px");	
-            })					
-        .on("mouseout", function(d) {		
-            d3.select(this)
-              .attr("opacity", 1);
-            tooltipDiv.transition()		
-                .duration(200)		
-                .style("opacity", 0);	
-        })
-        .attr("y", function(d) {
-          return y(0);
-        })
-        .attr("height", 0)        
-
-      barSvg.selectAll(`.${className("bar")}`).data(chartData)
-        .transition()
-        .duration(300)
-        .attr("y", function (d) {
-          return y(Number(d.value));
-        })
-        .attr("height", function (d) {
-          return height - y(Number(d.value));
-        })
-        
-      var barTexts = barTextSvg.selectAll(`.${className("bartext")}`).data(chartData);
-
-      barTexts.exit()
-        .transition()
-        .duration(300)
-        .attr("y", function(d) {
-          return y(0) - 5;
-        })
-        .style('fill-opacity', 1e-6)
-        .remove();
-
-      barTexts.enter().append("text")
-        .attr("class", className("bartext"))
-        .attr("x", function (d) {
-          return x(d.name)+x.bandwidth()/2;
-        })
-        .attr('text-anchor', 'middle')
-        .attr('font-size', '12px')
-        .attr("y", function(d) {
-          return y(0) - 5;
-        })
-      barTextSvg.selectAll(`.${className("bartext")}`).data(chartData)
-        .text(function(d) {
-          return d.value;
-        })
-        .transition()
-        .duration(300)
-        .attr("y", function (d) {
-          return y(Number(d.value)) - 5;
-        })
-  }
-  this.destroy = function() {
-    svg.remove();
-  }
-}
 
 var chart;
+var refreshIntervalID = 0;
 
 class BarChart extends Component {
 
@@ -281,32 +106,54 @@ class BarChart extends Component {
       var self = this;
       this.state = {
         numParties: 5,
-        regionName: "Western Cape",
-        width: 600,
-        height: 220
+        eventDescription: "2014 National Election",
+        regionType: "national",
+        provinceName: "",
+        muniName: "",
+        muniCode: "",
+        vdNumber: "",
       }
       if (props.numParties) {
         this.state.numParties = props.numParties;
       }
-      if (props.regionName) {
-        this.state.regionName = props.regionName;
+      if (props.regionType) {
+        this.state.regionType = props.regionType;
       }
-      if (props.width) {
+      if (props.provinceName) {
+        this.state.provinceName = props.provinceName;
+      }
+      if (props.muniName) {
+        this.state.muniName = props.muniName;
+      }
+      if (props.muniCode) {
+        this.state.muniCode = props.muniCode;
+      }
+      if (props.vdNumber) {
+        this.state.vdNumber = props.vdNumber;
+      }
+      if (props.width && props.height) {
         this.state.width = props.width;
-      }
-      if (props.height) {
         this.state.height = props.height;
+      } else {
+        var {
+          modifW,
+          modifH
+        } = this.getWidthHeightByScreenSize();
+        this.state.width = modifW;
+        this.state.height = modifH;
       }
-      setInterval(() => {
+      refreshIntervalID = setInterval(() => {
         self.draw(self.getContainer(), self.state)
       }, dataRefreshTime);
       this.handleRegionChange = this.handleRegionChange.bind(this);
+      this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
       this.redrawChart = this.redrawChart.bind(this);
     }
   
     componentDidMount() {
       this.draw(this.getContainer(), this.state)
       document.addEventListener(events.REGION_CHANGE, this.handleRegionChange);
+      document.addEventListener(events.BARCHART_PREVIEW, this.handlePreviewEvent);
       window.addEventListener("resize", this.redrawChart, 200);
     }
 
@@ -316,29 +163,75 @@ class BarChart extends Component {
 
     componentWillUnmount() {
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
+      document.removeEventListener(events.BARCHART_PREVIEW, this.handlePreviewEvent);
       window.removeEventListener("resize", this.redrawChart);
+      clearInterval(refreshIntervalID);
+    }
+
+    getWidthHeightByScreenSize() {
+      var modifW = Math.min(810, document.body.clientWidth- 350);
+      if (document.body.clientWidth < 775)
+        modifW = document.body.clientWidth - 50;
+      var modifH = modifW/3.5;
+      return {
+        modifW,
+        modifH
+      }
     }
 
     redrawChart() {
-      var modifW = document.body.clientWidth, modifH = document.body.clientHeight/3;
-      chart.destroy();
-      chart = new Chart(this.getContainer(), modifW, modifH);
+      var {
+        modifW,
+        modifH
+      } = this.getWidthHeightByScreenSize();
+      if (chart)
+        chart.destroy();
+      chart = new Chart(this.getContainer(), modifW, modifH, className);
       this.setState({width: modifW, height: modifH});
     };
 
     handleRegionChange(event) {
-      this.setState({regionName: "Eastern Cape"})
+      var newState = event.detail;
+      console.log("handleRegionChange", newState);
+      this.setState(newState)
+    }
+
+    handlePreviewEvent(event) {
+      var newState = event.detail;
+      console.log("handlePreviewEvent", newState);
+      if (chart)
+        chart.destroy();
+      chart = new Chart(this.getContainer(), this.state.width, this.state.height, className);
+      this.setState(newState)
     }
 
     getContainer() {
       return d3.select(this.refs.vizcontainer)
     }
+
+    getRegionName() {
+      if (this.state.regionType == "national") {
+        return "SA";
+      }
+      if (this.state.regionType == "province") {
+        return this.state.provinceName;
+      }
+      if (this.state.regionType == "municipality") {
+        return this.state.muniName;
+      }
+      if (this.state.regionType == "municipality-vd") {
+        return this.state.muniName + "-" + this.state.vdNumber;
+      }
+    }
       
     render () {
       return (
-          <div>
-            <div className={className("chart-title")}>RACE FOR VOTES: </div>
-            <div ref="vizcontainer" className={className("chart-body")}></div>
+          <div className="barchart">
+            <div className={className("chart-title")}>RACE FOR VOTES ({this.getRegionName()}): </div>
+            <div 
+              ref="vizcontainer" 
+              className={className("chart-body")} 
+              style={{width: this.state.width, height: this.state.height}}></div>
           </div>
         )
     }
@@ -346,10 +239,7 @@ class BarChart extends Component {
     draw(container, props) {
       var self = this;
       if (use_live_data) {
-        getVotesData({
-          numParties: props.numParties || 5,
-          regionName: props.regionName || "Western Cape"
-        }).then(function(data) {
+        getVotesDataM(props).then(function(data) {
             self.drawGraph(container, props, data);
         }).catch(error => console.error(error));
       }
@@ -359,20 +249,38 @@ class BarChart extends Component {
     }
 
     drawGraph(container, props, data) {
-        var chartData;
-        var results = data["data"]["allProvincialBallots"].edges[0]["node"]["topResult"]["edges"];
+        var results, chartData, firstEdge;
+        var regionType = props.regionType;
+        if (regionType == "national" || regionType == "province") {
+          firstEdge = data["data"]["allProvincialBallots"].edges[0];
+        } else if (regionType == "municipality") {
+          firstEdge= data["data"]["allMunicipalBallots"].edges[0];
+        } else { //"municipality-vd"
+          firstEdge = data["data"]["allVotingDistrictBallots"].edges[0];
+        }
+        if (!firstEdge){
+          console.error("party data is empty!!");
+          return;
+        }
+
+        var nodeData = firstEdge["node"];
+        var partyResults = nodeData["partyResults"] || nodeData["topResult"];
+        results = partyResults["edges"];
+
         chartData = results.map(function(node) {
             var el = node["node"];
             return {
                 name: el["party"]["abbreviation"],
-                value: el["validVotes"] + parseInt(Math.random(seed++) * 0.1 * el["validVotes"])
+                validVotes: el["validVotes"],
+                percOfVotes: el["percOfVotes"],
+                partyInfo: el["party"]
             }
         }).reverse();
-
+        
         var width = parseInt(props.width);
         var height = parseInt(props.height);
         if (!chart)
-          chart = new Chart(container, width, height);
+          chart = new Chart(container, width, height, className);
         chart.draw(chartData);
     }
 }
