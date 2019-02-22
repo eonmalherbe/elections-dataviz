@@ -88,9 +88,9 @@ class MapEmbed extends Component {
                         <input 
                             type="text" 
                             className={className("form-control")} 
-                            placeholder="Western Cape"
+                            placeholder="City of Cape Town"
                             value={muniName}
-                            onChange={e => this.setState({provinceName: e.target.value})} 
+                            onChange={e => this.setState({muniName: e.target.value})} 
                             />
                     </div>
               }

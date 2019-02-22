@@ -123,9 +123,9 @@ class BarChartEmbed extends Component {
                         <input 
                             type="text" 
                             className={className("form-control")} 
-                            placeholder="Western Cape"
+                            placeholder="City of Cape Town"
                             value={muniName}
-                            onChange={e => this.setState({provinceName: e.target.value})} 
+                            onChange={e => this.setState({muniName: e.target.value})} 
                             disabled={(regionType=="national")}/>
                     </div>
               }
@@ -136,9 +136,9 @@ class BarChartEmbed extends Component {
                         <input 
                             type="text" 
                             className={className("form-control")} 
-                            placeholder="Western Cape"
+                            placeholder="CPT"
                             value={muniCode}
-                            onChange={e => this.setState({provinceName: e.target.value})} 
+                            onChange={e => this.setState({muniCode: e.target.value})} 
                             disabled={(regionType=="national")}/>
                     </div>
               }
@@ -149,9 +149,9 @@ class BarChartEmbed extends Component {
                         <input 
                             type="text" 
                             className={className("form-control")} 
-                            placeholder="Western Cape"
+                            placeholder="97860055"
                             value={vdNumber}
-                            onChange={e => this.setState({provinceName: e.target.value})} 
+                            onChange={e => this.setState({vdNumber: e.target.value})} 
                             disabled={(regionType=="national")}/>
                     </div>
               }

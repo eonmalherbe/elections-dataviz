@@ -146,6 +146,21 @@ class Map extends Component {
         this.setState(newState);
     }
 
+    getRegionName() {
+        if (this.state.regionType == "national") {
+          return "SA";
+        }
+        if (this.state.regionType == "province") {
+          return this.state.provinceName;
+        }
+        if (this.state.regionType == "municipality") {
+          return this.state.muniName;
+        }
+        if (this.state.regionType == "municipality-vd") {
+          return this.state.muniName + "-" + this.state.vdNumber;
+        }
+      }
+
     getContainer() {
         return d3.select(this.refs.vizcontainer)
     }
@@ -189,7 +204,7 @@ class Map extends Component {
                                                             id={"navbar-muni-"+muni.muniCode}
                                                             onClick={this.handleNavBarSelection.bind(this, "municipality", muni)}
                                                             >
-                                                                {muni.muniCode}
+                                                                {muni.muniName.split("-")[1].split("[")[0] }
                                                             </Nav>
                                                     })
                                                 }
@@ -199,6 +214,8 @@ class Map extends Component {
                             </SideNav>
                         </div> 
                 }
+
+                {this.getRegionName()}
 
                 <div className="loading-spinner" ref="loading">
                     <ReactLoading type={"spin"} color={"#777"} height={100} width={100} />
