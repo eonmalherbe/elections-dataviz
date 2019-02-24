@@ -28,13 +28,12 @@ export function getVotesDataM(options) {
     return client.query({
       query: gql`
       {
-        allProvincialBallots(
-          location_Name_Icontains:"Country",
+        allBallots(
           event_Description:"${eventDescription}"
         ){
           edges{
             node{
-              topResult(last:${options.numParties}) {
+              topResult(first:${options.numParties}) {
                 edges{
                   node{
                     validVotes
