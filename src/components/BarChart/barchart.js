@@ -251,7 +251,9 @@ class BarChart extends Component {
     drawGraph(container, props, data) {
         var results, chartData, firstEdge;
         var regionType = props.regionType;
-        if (regionType == "national" || regionType == "province") {
+        if (regionType == "national") {
+          firstEdge = data["data"]["allBallots"].edges[0];
+        } else if (regionType == "province") {
           firstEdge = data["data"]["allProvincialBallots"].edges[0];
         } else if (regionType == "municipality") {
           firstEdge= data["data"]["allMunicipalBallots"].edges[0];

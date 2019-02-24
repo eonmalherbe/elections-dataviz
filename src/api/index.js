@@ -33,7 +33,7 @@ export function getVotesDataM(options) {
         ){
           edges{
             node{
-              topResult(first:${options.numParties}) {
+              topResult(last:${options.numParties}) {
                 edges{
                   node{
                     validVotes
