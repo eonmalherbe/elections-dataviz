@@ -92,13 +92,14 @@ export function getVotesDataM(options) {
       `
     })
   } else if (options.regionType == "municipality") {
+    var muniCode = options.muniName.split(" - ")[0];
 
     return client.query({
       query: gql`
       {
         allMunicipalBallots(location_Province_Name:"${options.provinceName}", 
           event_Description:"${eventDescription}",
-          location_Name: "${options.muniName}"
+          location_Code: "${muniCode}"
         ) {
           edges{
             node {
