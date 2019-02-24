@@ -277,7 +277,7 @@ class BarChart extends Component {
                 percOfVotes: el["percOfVotes"],
                 partyInfo: el["party"]
             }
-        }).reverse();
+        });
         
         var width = parseInt(props.width);
         var height = parseInt(props.height);

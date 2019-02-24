@@ -33,7 +33,7 @@ export function getVotesDataM(options) {
         ){
           edges{
             node{
-              topResult(last:${options.numParties}) {
+              topResult(first:${options.numParties}) {
                 edges{
                   node{
                     validVotes
@@ -67,7 +67,7 @@ export function getVotesDataM(options) {
         ){
           edges{
             node{
-              topResult(last:${options.numParties}) {
+              topResult(first:${options.numParties}) {
                 edges{
                   node{
                     validVotes
@@ -102,7 +102,7 @@ export function getVotesDataM(options) {
         ) {
           edges{
             node {
-              topResult(last:${options.numParties}){
+              topResult(first:${options.numParties}){
                 edges{
                   node{
                     party {               
@@ -138,7 +138,7 @@ export function getVotesDataM(options) {
               location {
                 vdNumber
               }
-              topResult(last:${options.numParties}) {
+              topResult(first:${options.numParties}) {
                 edges{
                   node{
                     party{
