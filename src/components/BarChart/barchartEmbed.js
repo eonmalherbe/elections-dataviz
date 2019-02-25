@@ -28,9 +28,11 @@ class BarChartEmbed extends Component {
 
             electionEvents: []
         }
+        console.log("start getElectionEvents");
         getElectionEvents()
             .then(function(data) {
                 var electionEvents = data["data"]["allEvents"]["edges"].map(edge => edge["node"]["description"])
+                console.log("electionEvents", electionEvents);
                 self.setState({electionEvents});
             }).catch(error => console.error(error));
     }

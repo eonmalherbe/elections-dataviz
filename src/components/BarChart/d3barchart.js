@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 
-export function Chart(container, width, height, className) {
+export function Chart(container, width, height, className, ) {
     var XaxisOffset = 70;
     var YaxisOffset = 20;
     var predefColors = ["blue", "yellow", "red"];
@@ -44,7 +44,11 @@ export function Chart(container, width, height, className) {
     var barTextSvg = svg.append("g")
       .attr("class", className("bartext-container"));
   
-    this.draw = function(chartData) {
+    this.draw = function(chartData, partyColorsData) {
+      var partyColorByName = {};
+      // partyColorsData["data"]["allParties"]["edges"].forEach(edge => {
+      //   partyColorByName[edge.node.name] = edge.node.colour;
+      // })
       x.domain(chartData.map(function (d) {
           return d.name;
         }));
@@ -75,7 +79,7 @@ export function Chart(container, width, height, className) {
             return x(d.name)+x.bandwidth()/20;
           })
           .attr("width", x.bandwidth()*9/10)
-          .attr("fill", (d,i) => predefColors[i%predefColors.length])
+          .attr("fill", (d,i) => partyColorByName[d.partyInfo.name.split("/")[0]] || predefColors[i%predefColors.length])
           .on("mousemove", function(d) {		
               d3.select(this)
                 .attr("opacity", 0.8);

@@ -5,7 +5,8 @@ import {Chart} from "./d3barchart";
 
 import events from "../../events";
 import {
-  getVotesDataM
+  getVotesDataM,
+  getPartyColors
 } from "../../api";
 
 var dataRefreshTime = 30 * 1000;
@@ -97,6 +98,7 @@ function className(originName) {
 
 
 var chart;
+var partyColorsData;
 var refreshIntervalID = 0;
 
 class BarChart extends Component {
@@ -239,16 +241,26 @@ class BarChart extends Component {
     draw(container, props) {
       var self = this;
       if (use_live_data) {
-        getVotesDataM(props).then(function(data) {
-            self.drawGraph(container, props, data);
+        var votesDataLoader = getVotesDataM(props);
+        var dataLoaders = [votesDataLoader];
+
+        if (!partyColorsData) {
+          var partyColorsLoader = getPartyColors();
+          dataLoaders.push(partyColorsLoader);
+        }
+        
+        Promise.all(dataLoaders).then(function(values){ 
+          var votesData = values[0];
+          partyColorsData = partyColorsData || values[1];          
+          self.drawGraph(container, props, votesData, partyColorsData);
         }).catch(error => console.error(error));
       }
       else {
-          self.drawGraph(container, props, js);
+          self.drawGraph(container, props, js, null);
       }
     }
 
-    drawGraph(container, props, data) {
+    drawGraph(container, props, data, partyColorsData) {
         var results, chartData, firstEdge;
         var regionType = props.regionType;
         if (regionType == "national" || regionType == "province") {
@@ -281,7 +293,7 @@ class BarChart extends Component {
         var height = parseInt(props.height);
         if (!chart)
           chart = new Chart(container, width, height, className);
-        chart.draw(chartData);
+        chart.draw(chartData, partyColorsData);
     }
 }
 
