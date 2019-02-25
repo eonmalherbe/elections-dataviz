@@ -22,6 +22,23 @@ export function getElectionEvents() {
   })
 }
 
+export function getPartyColors() {
+  return client.query({
+    query: gql`
+    {
+      allParties {
+        edges{
+          node{
+            name
+            colour
+          }
+        }
+      }
+    }
+    `
+  })
+}
+
 export function getVotesDataM(options) {
   var eventDescription = options.eventDescription;
   if (options.regionType == "national") {

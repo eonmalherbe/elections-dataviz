@@ -44,7 +44,18 @@ export function Chart(container, width, height, className) {
     var barTextSvg = svg.append("g")
       .attr("class", className("bartext-container"));
   
-    this.draw = function(chartData) {
+    this.draw = function(chartData, partyColorsData) {
+      var partyColorByName = {};
+      if (partyColorsData && partyColorsData["data"]["allParties"]["edges"]) {
+        partyColorsData["data"]["allParties"]["edges"].forEach(edge => {
+          partyColorByName[edge.node.name] = edge.node.colour;
+        })
+      }
+
+      function getFillColorFromPartyName(partyName, i) {
+        return partyColorByName[partyName.split("/")[0]] || predefColors[i%predefColors.length];
+      }
+      console.log("chartData", chartData);
       x.domain(chartData.map(function (d) {
           return d.name;
         }));
@@ -75,7 +86,10 @@ export function Chart(container, width, height, className) {
             return x(d.name)+x.bandwidth()/20;
           })
           .attr("width", x.bandwidth()*9/10)
-          .attr("fill", (d,i) => predefColors[i%predefColors.length])
+          .attr("fill", (d,i) => {
+            console.log("partyColor check", partyColorByName, d.partyInfo.name.split("/")[0]);
+            return getFillColorFromPartyName(d.partyInfo.name, i);
+          })
           .on("mousemove", function(d) {		
               d3.select(this)
                 .attr("opacity", 0.8);
@@ -102,6 +116,7 @@ export function Chart(container, width, height, className) {
           .attr("height", 0)        
   
         barSvg.selectAll(`.${className("bar")}`).data(chartData)
+          .attr("fill", (d, i) => getFillColorFromPartyName(d.partyInfo.name, i))
           .transition()
           .duration(300)
           .attr("y", function (d) {
