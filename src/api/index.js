@@ -41,6 +41,8 @@ export function getPartyColors() {
 
 export function getVotesDataM(options) {
   var eventDescription = options.eventDescription;
+  if (!eventDescription)
+  return;
   if (options.regionType == "national") {
     return client.query({
       query: gql`
@@ -79,8 +81,8 @@ export function getVotesDataM(options) {
       query: gql`
       {
         allProvincialBallots(
-          location_Name_Icontains:"${options.provinceName}",
-          event_Description:"${eventDescription}"
+          event_Description:"${eventDescription}",
+          location_Name_Icontains:"${options.provinceName}"
         ){
           edges{
             node{
@@ -113,8 +115,9 @@ export function getVotesDataM(options) {
     return client.query({
       query: gql`
       {
-        allMunicipalBallots(location_Province_Name:"${options.provinceName}", 
+        allMunicipalBallots(
           event_Description:"${eventDescription}",
+          location_Province_Name:"${options.provinceName}", 
           location_Code: "${muniCode}"
         ) {
           edges{
@@ -147,8 +150,9 @@ export function getVotesDataM(options) {
     return client.query({
       query: gql`
       {
-        allVotingDistrictBallots(location_Id:"${options.vdNumber}", 
+        allVotingDistrictBallots(
         event_Description:"${eventDescription}",
+        location_Id:"${options.vdNumber}", 
         location_Ward_Municipality_Name_Icontains:"${options.muniCode}") {
           edges{
             node{
@@ -171,5 +175,108 @@ export function getVotesDataM(options) {
       }
       `
     })
+  }
+}
+
+export function getMainParties(options) {
+  var eventDescription = options.eventDescription;
+  if (!eventDescription)
+    return;
+  if (options.regionType == "national") {
+    return client.query({
+      query: gql`
+      {
+        allProvincialBallots(
+          event_Description:"${eventDescription}"
+        ){
+          edges{
+            node{
+              topResult(first:1) {
+                edges{
+                  node{
+                    validVotes
+                    percOfVotes
+                    party {
+                      id
+                      name
+                      abbreviation
+                    }
+                  }
+                }
+              }
+              location {
+                id
+                name
+              }
+            }
+          }
+        }
+      }
+      `
+    })
+  } else if (options.regionType == "province") {
+    return client.query({
+      query: gql`
+      {
+        allMunicipalBallots(
+          event_Description:"${eventDescription}",
+          location_Province_Name:"${options.provinceName}"
+        ) {
+          edges{
+            node {
+              topResult(first:1){
+                edges{
+                  node{
+                    party {               
+                      name
+                      abbreviation
+                    }
+                    validVotes
+                    percOfVotes
+                  }
+                }
+                
+              }
+              location {
+                code
+                name
+                longName
+              }
+            }
+          }
+        }
+      }
+      `
+    })
+  } else if (options.regionType == "municipality") {
+    console.log("municipality", options);
+    var muniRegName = options.muniName.split(" - ")[1];
+      return client.query({
+        query: gql`
+        {
+          allVotingDistrictBallots( 
+          event_Description:"${eventDescription}",
+          location_Ward_Municipality_Name_Icontains:"${muniRegName}") {
+            edges{
+              node{
+                location {
+                  vdNumber
+                }
+                topResult(first:1) {
+                  edges{
+                    node{
+                      party{
+                        name
+                        abbreviation
+                      }
+                    }
+                  }  
+                }
+              }
+            }
+          }
+        }
+        `
+      })
   }
 }

@@ -8,6 +8,10 @@ import {
   getVotesDataM,
   getPartyColors
 } from "../../api";
+import {
+  parseVotesData
+} from "../../utils";
+
 
 var dataRefreshTime = 30 * 1000;
 
@@ -261,41 +265,12 @@ class BarChart extends Component {
     }
 
     drawGraph(container, props, data, partyColorsData) {
-        var results, chartData, firstEdge;
-        var regionType = props.regionType;
-        if (regionType == "national") {
-          firstEdge = data["data"]["allBallots"].edges[0];
-        } else if (regionType == "province") {
-          firstEdge = data["data"]["allProvincialBallots"].edges[0];
-        } else if (regionType == "municipality") {
-          firstEdge= data["data"]["allMunicipalBallots"].edges[0];
-        } else { //"municipality-vd"
-          firstEdge = data["data"]["allVotingDistrictBallots"].edges[0];
-        }
-        if (!firstEdge){
-          console.error("party data is empty!!");
-          return;
-        }
-
-        var nodeData = firstEdge["node"];
-        var partyResults = nodeData["partyResults"] || nodeData["topResult"];
-        results = partyResults["edges"];
-
-        chartData = results.map(function(node) {
-            var el = node["node"];
-            return {
-                name: el["party"]["abbreviation"],
-                validVotes: el["validVotes"],
-                percOfVotes: el["percOfVotes"],
-                partyInfo: el["party"]
-            }
-        });
-        
+        var chartData = parseVotesData(data, props);
+       
         var width = parseInt(props.width);
         var height = parseInt(props.height);
         if (!chart)
           chart = new Chart(container, width, height, className);
-        console.log(results);
         chart.draw(chartData, partyColorsData);
     }
 }

@@ -8,10 +8,18 @@ import polylabel from "polylabel";
 import styles from "./map.css";
 import events from "../../events";
 import ReactLoading from "react-loading";
+import {
+    getMainParties,
+    getPartyColors
+} from "../../api";
+import {
+  parseVotesData,
+  parseMainPartyData
+} from "../../utils";
 
 var regionColor = "#9c9c9c";
 var regionBorderColor = "#eeeeee";
-
+var partyColorsData;
 
 function className(originName) {
   return styles[originName] || originName;
@@ -71,11 +79,12 @@ class Map extends Component {
         super(props);
         this.state = {
             disableNavigation: false,
+            eventDescription: "2014 National Election",
             regionType: "national",
             provinceName: "",
             muniName: "",
             muniCode: "",
-            vdNumber: "",
+            vdNumber: ""
         }
 
         if (props.regionType) {
@@ -98,7 +107,7 @@ class Map extends Component {
     }
 
     componentDidMount() {
-        this.draw(this.getContainer(), this.props)
+        this.draw(this.getContainer(), this.state)
         document.addEventListener(events.MAP_PREVIEW, this.handlePreviewEvent);
     }
 
@@ -107,7 +116,7 @@ class Map extends Component {
     }
 
     componentDidUpdate() {
-        this.draw(this.getContainer(), this.props)
+        this.draw(this.getContainer(), this.state)
     }
 
     handlePreviewEvent(event) {
@@ -320,9 +329,61 @@ class Map extends Component {
         // }
 
         var geoJsonLoader = d3.json(fullRouteGeoJsonFile);
+        var mainPartiesDataLoader = getMainParties(props);
+        console.log("getMainParties", props)
+        var dataLoaders = [geoJsonLoader, mainPartiesDataLoader];
 
-        Promise.all([geoJsonLoader]).then(function(values){ 
+        if (!partyColorsData) {
+          var partyColorsLoader = getPartyColors();
+          dataLoaders.push(partyColorsLoader);
+        }
+
+        Promise.all(dataLoaders).then(function(values){ 
+            console.log("dataLoaders values", values);
             var geoJsonData = values[0];
+            var locationToMainParty = parseMainPartyData(values[1], props);
+            partyColorsData = partyColorsData || values[2];  
+
+            console.log("locationToMainParty", locationToMainParty);
+
+            var partyColorByName = {};
+            if (partyColorsData && partyColorsData["data"]["allParties"]["edges"]) {
+              partyColorsData["data"]["allParties"]["edges"].forEach(edge => {
+                partyColorByName[edge.node.name] = edge.node.colour;
+              })
+            }            
+            console.log("partyColorByName", partyColorByName);
+
+
+            function getFillColorFromPartyName(partyName) {
+              if (!partyName)
+                return regionColor;
+              console.log("getFillColorFromPartyName", partyName, partyColorByName[partyName.split("/")[0]] )
+              return partyColorByName[partyName.split("/")[0]] || regionColor;
+            }
+
+            function getMainPartyColorFromRegion(d, i) {
+                var partyName;
+                var regionType = self.state.regionType;
+                if (regionType === "national") {
+                    var provinceName = d.properties.SPROVINCE;
+                    partyName = locationToMainParty[provinceName];
+                } else if (regionType === "province") {
+                    function getMunicipalityCode(properties) {
+                        return properties.code || properties.smunicipal.split("-")[0].replace(/\s/g, "");
+                    }
+                    var muniCode = getMunicipalityCode(d.properties);
+                    partyName = locationToMainParty[muniCode];
+                } else {// "municipality"
+                    function getMunicipalityVdNumber(properties) {
+                        return properties.PKLVDNUMBE;
+                    }
+                    var vdNumber = getMunicipalityVdNumber(d.properties);
+                    console.log("getFillColorFromPartyName", vdNumber);
+                    partyName = locationToMainParty[vdNumber];
+                }
+                return getFillColorFromPartyName(partyName);
+            }
 
             var getJsonDataFeatures;
             if (fullRouteGeoJsonFile.indexOf(".topojson") !== -1) {//topojson is used for only munis
@@ -341,7 +402,7 @@ class Map extends Component {
                 .append("path")
                 .attr("class", className("region"))
                 .attr("stroke", regionBorderColor)
-                .attr("fill", regionColor)
+                .attr("fill", getMainPartyColorFromRegion)
                 .attr("id", function(d, i) {
                     return `region-${i}`;
                 })
