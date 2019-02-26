@@ -1,2 +1,2 @@
 (window.webpackJsonp=window.webpackJsonp||[]).push([[6],{"./.docz/app/imports.js":function(n,r,t){"use strict";t.r(r),t.d(r,"imports",function(){return e});var e={"src/index.mdx":function(){return t.e(5).then(t.bind(null,"./src/index.mdx"))},"src/components/BarChart/barchart.mdx":function(){return Promise.all([t.e(0),t.e(3)]).then(t.bind(null,"./src/components/BarChart/barchart.mdx"))},"src/components/Map/map.mdx":function(){return Promise.all([t.e(0),t.e(4)]).then(t.bind(null,"./src/components/Map/map.mdx"))}}}},0,[0,3,4,5]]);
-//# sourceMappingURL=6.c90d0f51842c40a90b05.js.map
+//# sourceMappingURL=6.87f88179a92ac3ed8ccb.js.map
