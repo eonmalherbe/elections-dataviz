@@ -191,7 +191,7 @@ export function getMainParties(options) {
         ){
           edges{
             node{
-              topResult(first:1) {
+              partyResults {
                 edges{
                   node{
                     validVotes
@@ -224,7 +224,7 @@ export function getMainParties(options) {
         ) {
           edges{
             node {
-              topResult(first:1){
+              partyResults {
                 edges{
                   node{
                     party {               
@@ -249,7 +249,6 @@ export function getMainParties(options) {
       `
     })
   } else if (options.regionType == "municipality") {
-    console.log("municipality", options);
     var muniRegName = options.muniName.split(" - ")[1];
       return client.query({
         query: gql`
@@ -262,7 +261,7 @@ export function getMainParties(options) {
                 location {
                   vdNumber
                 }
-                topResult(first:1) {
+                partyResults {
                   edges{
                     node{
                       party{

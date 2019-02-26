@@ -9,37 +9,39 @@
     "native": false,
     "codeSandbox": true,
     "themeConfig": {},
-    "hashRouter": true,
     "plugins": [
       {},
       {}
-    ]
+    ],
+    "public": "./public",
+    "dest": "./build/docz",
+    "base": "./"
   },
   "entries": {
-    "src/Box.mdx": {
-      "name": "Box",
-      "id": "05a2834ceaed10486b9b52e1cac4113e",
-      "filepath": "src/Box.mdx",
+    "src/components/BarChart/barchart.mdx": {
+      "name": "BarChart",
+      "id": "e7474739e1cabcd5efd72b3da01a6bfa",
+      "filepath": "src/components/BarChart/barchart.mdx",
       "link": null,
-      "slug": "src-box",
-      "route": "/src-box",
+      "slug": "src-components-bar-chart-barchart",
+      "route": "/src-components-bar-chart-barchart",
       "order": 0,
       "menu": null,
       "headings": [
         {
           "depth": 1,
-          "slug": "hello-world",
-          "value": "Hello world"
+          "slug": "barchart",
+          "value": "BarChart"
         }
       ]
     },
-    "src/barchart.mdx": {
-      "name": "BarChart",
-      "id": "9aa9aee82ec5ab742a3d5c877351a58e",
-      "filepath": "src/barchart.mdx",
+    "src/components/Map/map.mdx": {
+      "name": "Map",
+      "id": "515338909073b9194af7316350dd5b44",
+      "filepath": "src/components/Map/map.mdx",
       "link": null,
-      "slug": "src-barchart",
-      "route": "/src-barchart",
+      "slug": "src-components-map-map",
+      "route": "/src-components-map-map",
       "order": 0,
       "menu": null,
       "headings": [

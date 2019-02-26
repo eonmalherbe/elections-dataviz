@@ -35,13 +35,14 @@ export function parseMainPartyData(data, props) {
     var locationToMainParty = {};
     var edges;
     var regionType = props.regionType;
-    console.log("parseMainPartyData", regionType, data)
+    console.log("parseMainPartyData", data, regionType);
     if (regionType === "national") {
         edges = data["data"]["allProvincialBallots"].edges;
         edges.forEach(function(edge) {
             var node = edge.node;
             var provinceName = node["location"]["name"];
-            var partyName = node["topResult"]["edges"][0]["node"]["party"]["name"];
+            var partyResults = node["partyResults"] || node["topResult"]; 
+            var partyName = partyResults["edges"][0]["node"]["party"]["name"];
             locationToMainParty[provinceName] = partyName;
         })
     } else if (regionType === "province") {
@@ -49,7 +50,8 @@ export function parseMainPartyData(data, props) {
         edges.forEach(function(edge) {
             var node = edge.node;
             var muniCode = node["location"]["code"];
-            var partyName = node["topResult"]["edges"][0]["node"]["party"]["name"];
+            var partyResults = node["partyResults"] || node["topResult"]; 
+            var partyName = partyResults["edges"][0]["node"]["party"]["name"];
             locationToMainParty[muniCode] = partyName;
         })
     } else {// "municipality"
@@ -57,7 +59,8 @@ export function parseMainPartyData(data, props) {
         edges.forEach(function(edge) {
             var node = edge.node;
             var vdNumber = node["location"]["vdNumber"];
-            var partyName = node["topResult"]["edges"][0]["node"]["party"]["name"];
+            var partyResults = node["partyResults"] || node["topResult"]; 
+            var partyName = partyResults["edges"][0]["node"]["party"]["name"];
             locationToMainParty[vdNumber] = partyName;
         })
     }

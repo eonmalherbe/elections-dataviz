@@ -148,16 +148,17 @@ class BarChart extends Component {
         this.state.width = modifW;
         this.state.height = modifH;
       }
-      refreshIntervalID = setInterval(() => {
-        self.draw(self.getContainer(), self.state)
-      }, dataRefreshTime);
       this.handleRegionChange = this.handleRegionChange.bind(this);
       this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
       this.redrawChart = this.redrawChart.bind(this);
     }
   
     componentDidMount() {
-      this.draw(this.getContainer(), this.state)
+      var self = this;
+      this.draw(this.getContainer(), this.state);
+      refreshIntervalID = setInterval(() => {
+        self.draw(self.getContainer(), self.state)
+      }, dataRefreshTime);
       document.addEventListener(events.REGION_CHANGE, this.handleRegionChange);
       document.addEventListener(events.BARCHART_PREVIEW, this.handlePreviewEvent);
       window.addEventListener("resize", this.redrawChart, 200);
@@ -168,6 +169,8 @@ class BarChart extends Component {
     }
 
     componentWillUnmount() {
+      console.log("barchart unmount");
+      chart = null;
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
       document.removeEventListener(events.BARCHART_PREVIEW, this.handlePreviewEvent);
       window.removeEventListener("resize", this.redrawChart);
@@ -198,13 +201,11 @@ class BarChart extends Component {
 
     handleRegionChange(event) {
       var newState = event.detail;
-      console.log("handleRegionChange", newState);
       this.setState(newState)
     }
 
     handlePreviewEvent(event) {
       var newState = event.detail;
-      console.log("handlePreviewEvent", newState);
       if (chart)
         chart.destroy();
       chart = new Chart(this.getContainer(), this.state.width, this.state.height, className);
@@ -243,6 +244,7 @@ class BarChart extends Component {
     }
 
     draw(container, props) {
+      console.log("drawing ...barchart");
       var self = this;
       if (use_live_data) {        
         var votesDataLoader = getVotesDataM(props);
@@ -271,6 +273,7 @@ class BarChart extends Component {
         var height = parseInt(props.height);
         if (!chart)
           chart = new Chart(container, width, height, className);
+        console.log("chart component", chart)
         chart.draw(chartData, partyColorsData);
     }
 }

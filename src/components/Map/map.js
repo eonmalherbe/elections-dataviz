@@ -103,6 +103,7 @@ class Map extends Component {
     }
 
     draw(container, props) {
+        console.log("drawing ...map");
         this.drawGraph(container, props);
     }
 
@@ -187,7 +188,7 @@ class Map extends Component {
         } = this.state;
         return (
             <div className="map-container">
-                {
+                {/* {
                     !disableNavigation &&
                         <div className={className("map-navbar")}>
                             <SideNav
@@ -222,14 +223,14 @@ class Map extends Component {
                                 }
                             </SideNav>
                         </div> 
-                }
+                } */}
 
                 {this.getRegionName()}
 
                 <div className="loading-spinner" ref="loading">
                     <ReactLoading type={"spin"} color={"#777"} height={100} width={100} />
                 </div>
-                <div ref="vizcontainer" className="map"></div>
+                <div ref="vizcontainer" style={{display: 'hidden'}} className="map"></div>
             </div>
         )
     }
@@ -283,7 +284,6 @@ class Map extends Component {
         }
 
         console.log("process.env", process.env)
-        console.log("fullRouteGeoJsonFile", fullRouteGeoJsonFile);
 
         var w = 900;
         var h = 800;
@@ -293,44 +293,8 @@ class Map extends Component {
             .attr("viewBox", "0 0 " + w + " " + h)
             .classed("svg-content", true);
 
-        // if (!self.state.disableNavigation) {
-        //     var fo = svg.append("foreignObject")
-        //         .attr("x", w - 100)
-        //         .attr("y", 10)
-        //         .attr("width", 100)
-        //         .attr("height", 30)
-        //         .attr("class", "map-controls")
-        //     fo.append("xhtml:div")
-        //         .append("button")
-        //         .attr("class", "go-back")
-        //         .html("go back")
-        //         .on("click", function() {
-        //             var regionType = self.state.regionType;
-        //             var newState, event;
-
-        //             var newState = {
-        //                 regionType: self.state.regionType, 
-        //                 provinceName: self.state.provinceName,
-        //                 muniName: self.state.muniName,
-        //                 muniImuniCodeD: self.state.muniCode,
-        //                 vdNumber: self.state.vdNumber,
-        //             }
-                    
-        //             if (regionType === "province") {
-        //                 newState.regionType = "national";
-        //             } else if (regionType === "municipality") {
-        //                 newState.regionType = "province";
-        //             }
-
-        //             event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
-        //             document.dispatchEvent(event);
-        //             self.setState(newState);
-        //         });
-        // }
-
         var geoJsonLoader = d3.json(fullRouteGeoJsonFile);
         var mainPartiesDataLoader = getMainParties(props);
-        console.log("getMainParties", props)
         var dataLoaders = [geoJsonLoader, mainPartiesDataLoader];
 
         if (!partyColorsData) {
@@ -339,12 +303,9 @@ class Map extends Component {
         }
 
         Promise.all(dataLoaders).then(function(values){ 
-            console.log("dataLoaders values", values);
             var geoJsonData = values[0];
             var locationToMainParty = parseMainPartyData(values[1], props);
             partyColorsData = partyColorsData || values[2];  
-
-            console.log("locationToMainParty", locationToMainParty);
 
             var partyColorByName = {};
             if (partyColorsData && partyColorsData["data"]["allParties"]["edges"]) {
@@ -352,13 +313,10 @@ class Map extends Component {
                 partyColorByName[edge.node.name] = edge.node.colour;
               })
             }            
-            console.log("partyColorByName", partyColorByName);
-
 
             function getFillColorFromPartyName(partyName) {
               if (!partyName)
                 return regionColor;
-              console.log("getFillColorFromPartyName", partyName, partyColorByName[partyName.split("/")[0]] )
               return partyColorByName[partyName.split("/")[0]] || regionColor;
             }
 
@@ -368,6 +326,8 @@ class Map extends Component {
                 if (regionType === "national") {
                     var provinceName = d.properties.SPROVINCE;
                     partyName = locationToMainParty[provinceName];
+                    console.log("mainParty", partyName, provinceName);
+                    console.log("partyColor", partyColor);
                 } else if (regionType === "province") {
                     function getMunicipalityCode(properties) {
                         return properties.code || properties.smunicipal.split("-")[0].replace(/\s/g, "");
@@ -379,10 +339,10 @@ class Map extends Component {
                         return properties.PKLVDNUMBE;
                     }
                     var vdNumber = getMunicipalityVdNumber(d.properties);
-                    console.log("getFillColorFromPartyName", vdNumber);
                     partyName = locationToMainParty[vdNumber];
                 }
-                return getFillColorFromPartyName(partyName);
+                var partyColor = getFillColorFromPartyName(partyName);
+                return partyColor;
             }
 
             var getJsonDataFeatures;
@@ -537,7 +497,6 @@ class Map extends Component {
                     if (self.state.disableNavigation) {
                         return;
                     }
-                    console.log("click event", i, d.properties);
                     tooltipDiv.transition()		
                         .duration(200)		
                         .style("opacity", 0);	
@@ -581,6 +540,40 @@ class Map extends Component {
                         document.dispatchEvent(event);
                     }
                 })
+            if (!self.state.disableNavigation) {
+                var fo = svg.append("foreignObject")
+                    .attr("x", w - 100)
+                    .attr("y", 10)
+                    .attr("width", 100)
+                    .attr("height", 30)
+                    .attr("class", "map-controls")
+                fo.append("xhtml:div")
+                    .append("button")
+                    .attr("class", "go-back")
+                    .html("go back")
+                    .on("click", function() {
+                        var regionType = self.state.regionType;
+                        var newState, event;
+    
+                        var newState = {
+                            regionType: self.state.regionType, 
+                            provinceName: self.state.provinceName,
+                            muniName: self.state.muniName,
+                            muniImuniCodeD: self.state.muniCode,
+                            vdNumber: self.state.vdNumber,
+                        }
+                        
+                        if (regionType === "province") {
+                            newState.regionType = "national";
+                        } else if (regionType === "municipality") {
+                            newState.regionType = "province";
+                        }
+    
+                        event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
+                        document.dispatchEvent(event);
+                        self.setState(newState);
+                    });
+            }
             self.getLoadingSpinner()
                 .style("display", "none");
         })

@@ -1,6 +1,6 @@
 export const imports = {
-  'src/Box.mdx': () =>
-    import(/* webpackPrefetch: true, webpackChunkName: "src-box" */ 'src/Box.mdx'),
-  'src/barchart.mdx': () =>
-    import(/* webpackPrefetch: true, webpackChunkName: "src-barchart" */ 'src/barchart.mdx'),
+  'src/components/BarChart/barchart.mdx': () =>
+    import(/* webpackPrefetch: true, webpackChunkName: "src-components-bar-chart-barchart" */ 'src/components/BarChart/barchart.mdx'),
+  'src/components/Map/map.mdx': () =>
+    import(/* webpackPrefetch: true, webpackChunkName: "src-components-map-map" */ 'src/components/Map/map.mdx'),
 }

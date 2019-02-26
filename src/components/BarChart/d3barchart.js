@@ -55,7 +55,6 @@ export function Chart(container, width, height, className) {
       function getFillColorFromPartyName(partyName, i) {
         return partyColorByName[partyName.split("/")[0]] || predefColors[i%predefColors.length];
       }
-      console.log("chartData", chartData);
       x.domain(chartData.map(function (d) {
           return d.name;
         }));
@@ -87,7 +86,6 @@ export function Chart(container, width, height, className) {
           })
           .attr("width", x.bandwidth()*9/10)
           .attr("fill", (d,i) => {
-            console.log("partyColor check", partyColorByName, d.partyInfo.name.split("/")[0]);
             return getFillColorFromPartyName(d.partyInfo.name, i);
           })
           .on("mousemove", function(d) {		

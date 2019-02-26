@@ -11,5 +11,7 @@ export default {
       cssmodules: true
     })
   ],
-  public: './public'
+  public: './public',
+  dest: './build/docz',
+  base: './'
 };
