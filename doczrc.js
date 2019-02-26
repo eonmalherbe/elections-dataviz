@@ -13,5 +13,5 @@ export default {
   ],
   public: './public',
   dest: './build/docz',
-  base: './'
+  base: '/elections-dataviz/docz/'
 };

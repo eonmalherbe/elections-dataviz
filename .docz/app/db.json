@@ -15,9 +15,26 @@
     ],
     "public": "./public",
     "dest": "./build/docz",
-    "base": "./"
+    "base": "/elections-dataviz/docz/"
   },
   "entries": {
+    "src/index.mdx": {
+      "name": "Election Dataviz Widgets",
+      "route": "/",
+      "id": "6576455a124f9aaefd860597f03a8fe4",
+      "filepath": "src/index.mdx",
+      "link": null,
+      "slug": "src-index",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "sabc-election-dataviz-widgets",
+          "value": "SABC Election Dataviz Widgets"
+        }
+      ]
+    },
     "src/components/BarChart/barchart.mdx": {
       "name": "BarChart",
       "id": "e7474739e1cabcd5efd72b3da01a6bfa",
@@ -30,8 +47,8 @@
       "headings": [
         {
           "depth": 1,
-          "slug": "barchart",
-          "value": "BarChart"
+          "slug": "race-for-votes---bar-chart",
+          "value": "Race for Votes - Bar Chart"
         }
       ]
     },
@@ -47,8 +64,8 @@
       "headings": [
         {
           "depth": 1,
-          "slug": "barchart",
-          "value": "BarChart"
+          "slug": "race-for-votes---map",
+          "value": "Race for Votes - Map"
         }
       ]
     }
