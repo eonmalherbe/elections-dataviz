@@ -1,0 +1,20 @@
+{
+  "vendors.css": "/static/css/vendors.b59b48adcce927e45f5f.css",
+  "vendors.js": "/static/js/vendors.839e24a1.js",
+  "vendors.js.map": "/static/js/vendors.b59b48adcce927e45f5f.js.map",
+  "app.js": "/static/js/app.6d3eb915.js",
+  "app.js.map": "/static/js/app.b59b48adcce927e45f5f.js.map",
+  "runtime~app.js": "/static/js/runtime~app.b59b48adcce927e45f5f.js",
+  "runtime~app.js.map": "/static/js/runtime~app.b59b48adcce927e45f5f.js.map",
+  "src-components-bar-chart-barchart.css": "/static/css/src-components-bar-chart-barchart.b59b48adcce927e45f5f.css",
+  "src-components-bar-chart-barchart.js": "/static/js/src-components-bar-chart-barchart.ee8da5a5.js",
+  "src-components-bar-chart-barchart.js.map": "/static/js/src-components-bar-chart-barchart.b59b48adcce927e45f5f.js.map",
+  "src-components-map-map.css": "/static/css/src-components-map-map.b59b48adcce927e45f5f.css",
+  "src-components-map-map.js": "/static/js/src-components-map-map.26e1a585.js",
+  "src-components-map-map.js.map": "/static/js/src-components-map-map.b59b48adcce927e45f5f.js.map",
+  "static/js/5.39dcc2a8.js": "/static/js/5.39dcc2a8.js",
+  "static/js/5.b59b48adcce927e45f5f.js.map": "/static/js/5.b59b48adcce927e45f5f.js.map",
+  "index.html": "/index.html",
+  "static/fonts/bootstrap.min.css": "/static/fonts/glyphicons-halflings-regular.fa277232.woff",
+  "static/img/bootstrap.min.css": "/static/img/glyphicons-halflings-regular.89889688.svg"
+}
