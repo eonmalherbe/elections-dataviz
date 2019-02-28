@@ -12,7 +12,7 @@ class App extends Component {
     return (
       <div className="App">
         <div className="leftContainer">
-          <BarChart regionName="SA" regionType="national" numParties={3} />
+          <BarChart regionName="South Africa" regionType="national" numParties={3} />
           <Map regionType="province" provinceName="Western Cape" />
         </div>
         <div className="rightContainer">

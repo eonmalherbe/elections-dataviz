@@ -8,7 +8,6 @@ import {
     getProvincesData
 } from "../../api";
 
-
 var provincesData = getProvincesData();
 
 function className(originClassName) {
@@ -22,8 +21,8 @@ class BarChartEmbed extends Component {
         this.state = {
             elementId: "root",
             eventDescription: "2014 National Election",
-            regionType: "province",
-            provinceName: "Western Cape",
+            regionType: "national",
+            provinceName: "",
             muniName: "",
             muniCode: "",
             vdNumber: "",
@@ -55,6 +54,12 @@ class BarChartEmbed extends Component {
     }
 
     onPreview(e) {
+        if (this.state.regionType == "province" && this.state.eventDescription.toLowerCase().indexOf("provincial") == -1) {
+            return alert("you selected province region type but didn't selected provincial event");
+        }
+        if (this.state.regionType == "national" && this.state.eventDescription.toLowerCase().indexOf("national") == -1) {
+            return alert("you selected national region type but didn't selected national event");
+        }
         var event = new CustomEvent(events.BARCHART_PREVIEW, { detail: this.state });
         document.dispatchEvent(event);
     }
@@ -76,7 +81,7 @@ class BarChartEmbed extends Component {
         var curProvinceData = provincesData.filter(item => item.name == provinceName)[0];
         return (
           <div>
-            <h3> Race For Votes Bar Chart Embed Script Generation </h3>
+            <h3> Race For Seat Bar Chart Embed Script Generation </h3>
             <div className={className("form-group")}>
                 <label>Element ID </label>
                 <input 
@@ -105,8 +110,6 @@ class BarChartEmbed extends Component {
                      onChange={this.onRegionTypeChange.bind(this)}>
                         <option value="national">national</option>
                         <option value="province">province</option>
-                        <option value="municipality">municipality</option>
-                        <option value="municipality-vd">voting district</option>
                   </select>
               </div>
               {
@@ -149,7 +152,7 @@ class BarChartEmbed extends Component {
                             placeholder="CPT"
                             value={muniCode}
                             onChange={e => this.setState({muniCode: e.target.value})} 
-                            />
+                            disabled={(regionType=="national")}/>
                     </div>
               }
               {
@@ -162,7 +165,7 @@ class BarChartEmbed extends Component {
                             placeholder="97860055"
                             value={vdNumber}
                             onChange={e => this.setState({vdNumber: e.target.value})} 
-                            />
+                            disabled={(regionType=="national")}/>
                     </div>
               }
               <div className={className("form-group")}>

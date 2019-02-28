@@ -1,12 +1,44 @@
 import * as d3 from "d3";
 
-export function Chart(container, width, height, className) {
+export function Chart(container, width, height, className, options) {
+
+
+  if (!options) {
+    options = {};
+  } 
+  if (!options.chartType) {
+    options.chartType = "Race For Votes";
+  }
+  if (!options.yAxisLabel) {
+    options.yAxisLabel = "PERCENTAGE VOTES";
+  }
+  if (!options.yValue) {
+    options.yValue = function(d) {
+      return d.percOfVotes;
+    }
+  }
+  if (!options.yValueFormat) {
+    options.yValueFormat = function(value) {
+      return value + '%';
+    }
+  }
+
+  width = 700;
+  height = 200;
+  container.selectAll("svg").remove();
+
     var XaxisOffset = 70;
     var YaxisOffset = 20;
     var predefColors = ["blue", "yellow", "red"];
+
     var svg = container.append("svg")
-        .attr("width", parseInt(width) + XaxisOffset)
-        .attr("height", parseInt(height) + YaxisOffset);
+        .attr("preserveAspectRatio", "xMinYMin meet").style("background-color","#ffffff")
+        .attr("viewBox", "0 0 " + (width+XaxisOffset) + " " + (height+YaxisOffset))
+        .classed("svg-content", true);
+        
+    // var svg = container.append("svg")
+    //     .attr("width", parseInt(width) + XaxisOffset)
+    //     .attr("height", parseInt(height) + YaxisOffset);
   
     var tooltipDiv;
     if (document.getElementsByClassName("tooltip")[0]) {
@@ -28,7 +60,7 @@ export function Chart(container, width, height, className) {
       .append("text")
       .attr("class", className("percentage-label"))
       .attr("transform", "rotate(-90)")
-      .text("PERCENTAGE VOTES")
+      .text(options.yAxisLabel)
       .attr("text-anchor", "middle");
   
     svg.append("g")
@@ -58,12 +90,16 @@ export function Chart(container, width, height, className) {
       x.domain(chartData.map(function (d) {
           return d.name;
         }));
-      y.domain([0, 100]);
+      var minMaxY = [0, 100];
+      if (options.dynamicYAxisFromValues) {
+        minMaxY[1] = d3.max(chartData, function(d) { return options.yValue(d); })
+      }
+      y.domain(minMaxY);
   
-          svg.select(".x.axis").transition().duration(300).call(d3.axisBottom(x));
-          svg.select(".y.axis").transition().duration(300).call(d3.axisLeft(y)
+      svg.select(".x.axis").transition().duration(300).call(d3.axisBottom(x));
+      svg.select(".y.axis").transition().duration(300).call(d3.axisLeft(y)
         .ticks(6)
-        .tickFormat(function(d) { return d + "%"; })
+        .tickFormat(function(d) { return options.yValueFormat(d); })
       )
   
       var bars = barSvg.selectAll(`.${className("bar")}`).data(chartData);
@@ -97,7 +133,7 @@ export function Chart(container, width, height, className) {
               function formatPartyName(name) {
                 return name.split("/")[0].toLowerCase().replace(/\b\w/g, function(l){ return l.toUpperCase() })
               }
-              tooltipDiv.html(formatPartyName(d.partyInfo.name) + " : " + d.percOfVotes + "%")
+              tooltipDiv.html(formatPartyName(d.partyInfo.name) + " : " + options.yValueFormat(options.yValue(d)))
                   .style("left", (d3.event.pageX) + "px")		
                   .style("top", (d3.event.pageY - 28) + "px");	
               })					
@@ -118,10 +154,10 @@ export function Chart(container, width, height, className) {
           .transition()
           .duration(300)
           .attr("y", function (d) {
-            return y(Number(d.percOfVotes));
+            return y(Number(options.yValue(d)));
           })
           .attr("height", function (d) {
-            return height - y(Number(d.percOfVotes));
+            return height - y(Number(options.yValue(d)));
           })
           
         var barTexts = barTextSvg.selectAll(`.${className("bartext")}`).data(chartData);
@@ -147,12 +183,12 @@ export function Chart(container, width, height, className) {
           })
         barTextSvg.selectAll(`.${className("bartext")}`).data(chartData)
           .text(function(d) {
-            return d.percOfVotes + "%";
+            return options.yValueFormat(options.yValue(d));
           })
           .transition()
           .duration(300)
           .attr("y", function (d) {
-            return y(Number(d.percOfVotes)) - 5;
+            return y(Number(options.yValue(d))) - 5;
           })
     }
     this.destroy = function() {

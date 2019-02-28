@@ -18,6 +18,7 @@ export function parseVotesData(data, props) {
     var nodeData = firstEdge["node"];
     var partyResults = nodeData["partyResults"] || nodeData["topResult"];
     results = partyResults["edges"];
+    results = results.slice(0, props.numParties);
 
     return results.map(function(node) {
         var el = node["node"];
@@ -35,7 +36,6 @@ export function parseMainPartyData(data, props) {
     var locationToMainParty = {};
     var edges;
     var regionType = props.regionType;
-    console.log("parseMainPartyData", data, regionType);
     if (regionType === "national") {
         edges = data["data"]["allProvincialBallots"].edges;
         edges.forEach(function(edge) {
@@ -65,4 +65,53 @@ export function parseMainPartyData(data, props) {
         })
     }
     return locationToMainParty;
+}
+
+export function parseSeatsData(data, props) {
+  if (!data)  return null;
+  var edges = data["data"]["allSeatCalculations"].edges;
+  var regionType = props.regionType;
+  var results = edges.map(edge => {
+    var node = edge.node;
+    var seats = 0;
+    if (regionType === "national") {
+      seats = node["nationalPr"];
+    } else {//"province"
+      seats = node["regional"];
+    }
+    return {
+      seats,
+      name: node["party"]["abbreviation"],
+      partyInfo: node["party"]
+    }
+  })
+  
+  // results.sort(function(a,b) {
+  //   return b["seats"] - a["seats"];
+  // })
+  return results.slice(0, props.numParties);
+}
+
+export function getRegionName(state) {
+  function beautifiedMuniName(muniName) {
+    if (muniName.indexOf("-") != -1) {
+        muniName = muniName.split("-")[1];
+    }
+    if (muniName.indexOf("[") != -1) {
+        muniName = muniName.split("[")[0];
+    }
+    return muniName;
+  }
+  if (state.regionType == "national") {
+    return "South Africa";
+  }
+  if (state.regionType == "province") {
+    return state.provinceName;
+  }
+  if (state.regionType == "municipality") {
+    return beautifiedMuniName(state.muniName);
+  }
+  if (state.regionType == "municipality-vd") {
+    return beautifiedMuniName(state.muniName) + "-" + state.vdNumber;
+  }
 }

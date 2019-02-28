@@ -5,35 +5,35 @@ import {Chart} from "../BarChart/d3barchart";
 
 import events from "../../events";
 import {
-  getVotesDataM,
-  getPartyColors,
-  getProvincesData
+  getSeatsData,
+  getPartyColors
 } from "../../api";
 import {
-  parseVotesData,
+  parseSeatsData,
   getRegionName
 } from "../../utils";
 
-var provincesData = getProvincesData();
 
 var dataRefreshTime = 30 * 1000;
+var chartOptions = {
+  chartType: 'Race For Seats',
+  yAxisLabel: 'Seats Count',
+  dynamicYAxisFromValues: true,
+  yValue: function(d) {
+    return d.seats;
+  },
+  yValueFormat: function(seats) {
+    return seats;
+  } 
+};
 
 function className(originName) {
   return styles[originName] || originName;
 }
 
-
-
 var chart;
 var partyColorsData;
 var refreshIntervalID = 0;
-
-var chartOptions = {
-  chartType: "Race For Votes",
-  yAxisLabel: "PERCENTAGE VOTES",
-  yValue: d => d.percOfVotes,
-  yValueFormat: value => value + '%'
-}
 
 class BarChart extends Component {
 
@@ -84,18 +84,6 @@ class BarChart extends Component {
     }
   
     componentDidMount() {
-
-      // if (this.state.width && this.state.height) {
-
-      // } else {
-      //   var {
-      //     modifW,
-      //     modifH
-      //   } = this.getWidthHeightByScreenSize();
-      //   this.state.width = modifW;
-      //   this.state.height = modifH;
-      // }
-
       var self = this;
       this.draw(this.getContainer(), this.state);
       refreshIntervalID = setInterval(() => {
@@ -131,14 +119,14 @@ class BarChart extends Component {
     }
 
     redrawChart() {
-      // var {
-      //   modifW,
-      //   modifH
-      // } = this.getWidthHeightByScreenSize();
-      // if (chart)
-      //   chart.destroy();
-      // chart = new Chart(this.getContainer(), modifW, modifH, className);
-      // this.setState({width: modifW, height: modifH});
+      var {
+        modifW,
+        modifH
+      } = this.getWidthHeightByScreenSize();
+      if (chart)
+        chart.destroy();
+      chart = new Chart(this.getContainer(), modifW, modifH, className, chartOptions);
+      this.setState({width: modifW, height: modifH});
     };
 
     handleRegionChange(event) {
@@ -150,7 +138,7 @@ class BarChart extends Component {
       var newState = event.detail;
       if (chart)
         chart.destroy();
-      chart = new Chart(this.getContainer(), this.state.width, this.state.height, className);
+      chart = new Chart(this.getContainer(), this.state.width, this.state.height, className, chartOptions);
       this.setState(newState)
     }
 
@@ -173,8 +161,8 @@ class BarChart extends Component {
     draw(container, props) {
       console.log("drawing ...barchart");
       var self = this;
-      var votesDataLoader = getVotesDataM(props);
-      var dataLoaders = [votesDataLoader];
+      var seatsDataLoader = getSeatsData(props);
+      var dataLoaders = [seatsDataLoader];
 
       if (!partyColorsData) {
         var partyColorsLoader = getPartyColors();
@@ -182,20 +170,20 @@ class BarChart extends Component {
       }
 
       Promise.all(dataLoaders).then(function(values){ 
-        var votesData = values[0];
+        var seatsData = values[0];
         partyColorsData = partyColorsData || values[1];          
-        self.drawGraph(container, props, votesData, partyColorsData);
+        self.drawGraph(container, props, seatsData, partyColorsData);
       }).catch(error => console.error(error));
     }
 
     drawGraph(container, props, data, partyColorsData) {
-        var chartData = parseVotesData(data, props);
-       
+        var chartData = parseSeatsData(data, props);
+      //  console.log("chart component", chart)
         var width = parseInt(props.width);
         var height = parseInt(props.height);
         if (!chart)
-          chart = new Chart(container, width, height, className);
-        console.log("chart component", chart)
+          chart = new Chart(container, width, height, className, chartOptions);
+        
         chart.draw(chartData, partyColorsData);
     }
 }

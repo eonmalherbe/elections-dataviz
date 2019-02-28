@@ -1,29 +1,41 @@
 import React, { Component } from "react";
-import bootstrapStyles from "bootstrap/dist/css/bootstrap.min.css";
-import styles from "./mapEmbed.css";
 import config from "../../config";
+import bootstrapStyles from "bootstrap/dist/css/bootstrap.min.css";
+import styles from "./barchartMapEmbed.css";
 import events from "../../events";
-
 import {
+    getElectionEvents,
     getProvincesData
 } from "../../api";
 
 var provincesData = getProvincesData();
+
 function className(originClassName) {
     return bootstrapStyles[originClassName] || styles[originClassName] || originClassName;
 }
 
-class MapEmbed extends Component {
+class BarChartWithNavMapEmbed extends Component {
     
     constructor(props) {
         super(props);
+        var self = this;
         this.state = {
             elementId: "root",
-            disableNavigation: false, //checkbox
-            regionType: "province",
-            provinceName: "Western Cape",
+            eventDescription: "2014 National Election",
+            regionType: "national",
+            provinceName: "",
             muniName: "",
+            muniCode: "",
+            vdNumber: "",
+            numParties: 5,
+
+            electionEvents: []
         }
+        getElectionEvents()
+            .then(function(data) {
+                var electionEvents = data["data"]["allEvents"].map(edge => edge["description"])
+                self.setState({electionEvents});
+            }).catch(error => console.error(error));
     }
 
     componentDidMount() {
@@ -32,29 +44,37 @@ class MapEmbed extends Component {
     componentDidUpdate() {
     }
 
+    onEventDescriptionChange(e) {
+        this.setState({eventDescription: e.target.value});
+    }
+
     onRegionTypeChange(e) {
         var newState = {regionType: e.target.value};
         this.setState(newState);
     }
 
     onPreview(e) {
-        var event = new CustomEvent(events.MAP_PREVIEW, { detail: this.state });
+        var event = new CustomEvent(events.BARCHART_PREVIEW, { detail: this.state });
         document.dispatchEvent(event);
     }
       
     render () {
         var DOMAIN = config.DOMAIN;
         var {
-            elementId,            
-            disableNavigation,
-            regionType,
+            elementId,
+            eventDescription,
+            regionType,            
             provinceName,
             muniName,
+            muniCode,
+            vdNumber,
+            numParties,
+            electionEvents
         } = this.state;
         var curProvinceData = provincesData.filter(item => item.name == provinceName)[0];
         return (
           <div>
-            <h3> Map Embed Script Generation </h3>
+            <h3> Map + Barchart Embed Script Generation </h3>
             <div className={className("form-group")}>
                 <label>Element ID </label>
                 <input 
@@ -64,7 +84,19 @@ class MapEmbed extends Component {
                     onChange={e => this.setState({elementId: e.target.value})}
                     />
             </div>
-            <div className={className("form-group")}>
+              <div className={className("form-group")}>
+                  <label>Event </label>
+                  <select className={className("form-control")} 
+                     value={eventDescription}
+                     onChange={this.onEventDescriptionChange.bind(this)}>
+                        {
+                            electionEvents.map(item => {
+                                return (<option key={item} value={item}>{item}</option>)
+                            })
+                        }
+                  </select>
+              </div>
+              <div className={className("form-group")}>
                   <label>Region Type </label>
                   <select className={className("form-control")} 
                      value={regionType}
@@ -104,40 +136,39 @@ class MapEmbed extends Component {
                         </select>
                     </div>
               }
-
-              <div className={className("form-check")}>
-                
-                <label className={className("form-check-label")}>
-                    <input 
-                        type="checkbox" 
-                        className={className("form-check-input")} 
-                        value={disableNavigation}
-                        onChange={e => this.setState({disableNavigation: e.target.checked})} 
-                        />
-                    &nbsp;&nbsp;Disable Navigation
-                </label>
+              <div className={className("form-group")}>
+                  <label>Number Of Parties</label>
+                  <input 
+                    type="number" 
+                    className={className("form-control")} 
+                    placeholder="5"
+                    value={numParties}
+                    onChange={e => this.setState({numParties: e.target.value})} />
               </div>
               <div className={className("form-group")}>
                 <button type="button" onClick={this.onPreview.bind(this)} className={className("btn") + " " + className("btn-primary") }>Preview</button>
               </div>
-            <div className={className("form-group")}>
-                <label>Embed Code</label>
-                <div className={className("embedcode")}>
+              <div className={className("form-group")}>
+                  <label>Embed Code</label>
+                  <div className={className("embedcode")}>
                     <span>{`<script src="${DOMAIN}/embed/embed.js"></script>
-                    <script>
-                        showMap(document.getElementById("${elementId}"),{
-                            disableNavigation: ${disableNavigation},
+                    <script>showBarchartWithNavMap(
+                        document.getElementById("${elementId}"),
+                        {
+                            eventDescription: "${eventDescription}",
                             regionType: "${regionType}",
                             provinceName: "${provinceName}",
                             muniName: "${muniName}",
-                        });</script>`.replace(/(\r\n|\n|\r)/gm, "")}
-                    </span>
-                </div>
-            </div>
+                            muniCode: "${muniCode}",
+                            vdNumber: "${vdNumber}",
+                            numParties: "${numParties}",
+                            width: 600,
+                            height: 220
+                        });</script>`.replace(/(\r\n|\n|\r)/gm, "")}</span>
+                  </div>
+              </div>
           </div>
         )
     }
 }
-export default MapEmbed;
-
-
+export default BarChartWithNavMapEmbed;
