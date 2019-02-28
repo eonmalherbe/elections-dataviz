@@ -29,9 +29,19 @@
       "menu": null,
       "headings": [
         {
-          "depth": 1,
+          "depth": 2,
           "slug": "sabc-election-dataviz-widgets",
           "value": "SABC Election Dataviz Widgets"
+        },
+        {
+          "depth": 2,
+          "slug": "note-on-municipalities",
+          "value": "Note on municipalities"
+        },
+        {
+          "depth": 2,
+          "slug": "performance",
+          "value": "Performance"
         }
       ]
     },
@@ -87,7 +97,7 @@
       ]
     },
     "src/components/RaceForSeatBarchart/barchart.mdx": {
-      "name": "Race for Seats - BarChart",
+      "name": "Race for Seats - Bar Chart",
       "id": "564ae6a7598bdbe935c66b31a7fcaca1",
       "filepath": "src/components/RaceForSeatBarchart/barchart.mdx",
       "link": null,

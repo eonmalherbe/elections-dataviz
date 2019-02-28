@@ -54,8 +54,11 @@ class BarChartWithNavMapEmbed extends Component {
     }
 
     onPreview(e) {
-        var event = new CustomEvent(events.BARCHART_PREVIEW, { detail: this.state });
-        document.dispatchEvent(event);
+        var event1 = new CustomEvent(events.BARCHART_PREVIEW, { detail: this.state });
+        document.dispatchEvent(event1);
+
+        var event2 = new CustomEvent(events.MAP_PREVIEW, { detail: this.state });
+        document.dispatchEvent(event2);
     }
       
     render () {
@@ -83,6 +86,25 @@ class BarChartWithNavMapEmbed extends Component {
                     placeholder="chart-container"
                     onChange={e => this.setState({elementId: e.target.value})}
                     />
+            </div>
+            <div>
+                Way to customize size and position of Bar Chart and Map.<br/>
+                For bar chart, you can use .barchart-container
+                <div className={className("embedcode")}>
+                    {`.barchart-container {
+                        width: 1000px;
+                        height: 300px;
+                        margin-left: 100px;
+                    }`}
+                </div>
+                For Map, you can use .map-container
+                <div className={className("embedcode")}>
+                    {`.map-container {
+                        width: 1000px;
+                        height: 300px;
+                        margin-left: 100px;
+                    }`}
+                </div>
             </div>
               <div className={className("form-group")}>
                   <label>Event </label>

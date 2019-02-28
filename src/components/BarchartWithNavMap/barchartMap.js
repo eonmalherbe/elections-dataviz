@@ -56,10 +56,10 @@ class BarchartWithNavMap extends Component {
     render() {
         return (
         <div>
-            <div className="leftContainer">
+            <div className="barchart-container">
             <BarChart {...this.state} />
             </div>
-            <div className="rightContainer">
+            <div className="map-container">
             <Map {...this.state}/>
             </div>
         </div>

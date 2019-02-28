@@ -58,7 +58,6 @@ class Map extends Component {
     }
 
     draw(container, props) {
-        console.log("drawing ...map");
         this.drawGraph(container, props);
     }
 
@@ -273,7 +272,7 @@ class Map extends Component {
                     partyName = locationToMainParty[provinceName];
                 } else if (regionType === "province") {
                     function getMunicipalityCode(properties) {
-                        return properties.code || properties.smunicipal.split("-")[0].replace(/\s/g, "");
+                        return properties.code || properties.smunicipal.split(" - ")[0].replace(/\s/g, "");
                     }
                     var muniCode = getMunicipalityCode(d.properties);
                     partyName = locationToMainParty[muniCode];
@@ -316,11 +315,19 @@ class Map extends Component {
                 .attr("d", path);
             
             var parties = [];
+            var availableCnt = [];
             getJsonDataFeatures.forEach((d, i) => {
                 var party = getMainPartyName(d, i);
                 if (parties.indexOf(party) == -1) {
                     parties.push(party);
+                    availableCnt.push(1);
+                } else {
+                    availableCnt[parties.indexOf(party)] ++;
                 }
+            })
+
+            parties.sort(function(a, b){
+                return availableCnt[parties.indexOf(b)] - availableCnt[parties.indexOf(a)];
             })
 
             function getLegendXY(i) {
@@ -386,9 +393,9 @@ class Map extends Component {
                         if (self.state.regionType === "national") {
                             return d.properties.SPROVINCE;
                         } else if (self.state.regionType === "province") {
-                            return d.properties.smunicipal.split("-")[1].split("[")[0]; 
+                            return d.properties.smunicipal.split(" - ")[1].split("[")[0]; 
                         } else {//municipality
-                            return d.properties.SMUNICIPAL.split("-")[1].split("[")[0]; 
+                            return d.properties.SMUNICIPAL.split(" - ")[1].split("[")[0]; 
                         }
                     })
             }
@@ -451,9 +458,9 @@ class Map extends Component {
                         if (self.state.regionType === "national") {
                             return d.properties.SPROVINCE;
                         } else if (self.state.regionType === "province") {
-                            return d.properties.smunicipal.split("-")[1].split("[")[0]; 
+                            return d.properties.smunicipal.split(" - ")[1].split("[")[0]; 
                         } else {//municipality
-                            return d.properties.SMUNICIPAL.split("-")[1].split("[")[0]; 
+                            return d.properties.SMUNICIPAL.split(" - ")[1].split("[")[0]; 
                         }
                     }
                     tooltipDiv.html(regionName())	
@@ -491,7 +498,7 @@ class Map extends Component {
                         self.setState(newState);
                     } else if (regionType === "province") {
                         function getMunicipalityCode(properties) {
-                            return properties.code || properties.smunicipal.split("-")[0].replace(/\s/g, "");
+                            return properties.code || properties.smunicipal.split(" - ")[0].replace(/\s/g, "");
                         }
                         newState = {
                             regionType: "municipality", 

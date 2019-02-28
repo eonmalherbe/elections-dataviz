@@ -221,6 +221,7 @@ export function getVotesDataM(options) {
       })
     } else if (options.regionType == "municipality") {
       var muniRegName = options.muniName.split(" - ")[1];
+      console.log(options.regionType, options.muniName, muniRegName);
         return client.query({
           query: gql`
           {

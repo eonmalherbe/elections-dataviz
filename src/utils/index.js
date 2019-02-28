@@ -94,8 +94,8 @@ export function parseSeatsData(data, props) {
 
 export function getRegionName(state) {
   function beautifiedMuniName(muniName) {
-    if (muniName.indexOf("-") != -1) {
-        muniName = muniName.split("-")[1];
+    if (muniName.indexOf(" - ") != -1) {
+        muniName = muniName.split(" - ")[1];
     }
     if (muniName.indexOf("[") != -1) {
         muniName = muniName.split("[")[0];
