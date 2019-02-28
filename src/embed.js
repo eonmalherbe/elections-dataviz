@@ -2,12 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {
     BarChart,
-    Map
+    RaceForSeatsBarChart,
+    Map,
+    BarchartWithNavMap
 } from "./components";
-
-// 1. Container div tag
-// 2. Geography - e.g.National, Province - EC, Municipality - CPT or VD - 10344444
-// 3. Number of parties shown
 
 window.showBarChart = (element, options) => {
     ReactDOM.render(<BarChart 
@@ -17,6 +15,18 @@ window.showBarChart = (element, options) => {
 
 window.showMap = (element, options) => {
     ReactDOM.render(<Map 
+        {...options}
+        />, element);
+};
+
+window.showBarchartWithNavMap = (element, options) => {
+    ReactDOM.render(<BarchartWithNavMap 
+        {...options}
+        />, element);
+}
+
+window.showRaceForSeatsBarChart = (element, options) => {
+    ReactDOM.render(<RaceForSeatsBarChart 
         {...options}
         />, element);
 };

@@ -1,6 +1,9 @@
 text {
     user-select: none;
 }
+.map-title {
+    font-weight: bold;
+}
 .region {
 
 }
