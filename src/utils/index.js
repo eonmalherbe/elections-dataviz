@@ -18,6 +18,8 @@ export function parseVotesData(data, props) {
     var nodeData = firstEdge["node"];
     var partyResults = nodeData["partyResults"] || nodeData["topResult"];
     results = partyResults["edges"];
+    results = results.sort(function(a, b) {return b.node.percOfVotes - a.node.percOfVotes});
+
     results = results.slice(0, props.numParties);
 
     return results.map(function(node) {
