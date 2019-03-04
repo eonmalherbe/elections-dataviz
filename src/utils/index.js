@@ -20,6 +20,8 @@ export function parseVotesData(data, props) {
     var nodeData = firstEdge["node"];
     var partyResults = nodeData["partyResults"] || nodeData["topResult"];
     results = partyResults["edges"];
+    results = results.sort(function(a, b) {return b.node.percOfVotes - a.node.percOfVotes});
+
     results = results.slice(0, props.numParties);
 
     return results.map(function(node) {
@@ -38,12 +40,18 @@ export function parseMainPartyData(data, props) {
     var locationToMainParty = {};
     var edges;
     var regionType = props.regionType;
+    var sort_results = function(party_results) {
+        party_results["edges"] = party_results["edges"].sort(function(a, b) {
+            return b.node.percOfVotes - a.node.percOfVotes;
+        })
+        return party_results;
+    }
     if (regionType === "national") {
         edges = data["data"]["allProvincialBallots"].edges;
         edges.forEach(function(edge) {
             var node = edge.node;
             var provinceName = node["location"]["name"];
-            var partyResults = node["partyResults"] || node["topResult"]; 
+            var partyResults = sort_results(node["partyResults"]);
             var partyName = partyResults["edges"][0]["node"]["party"]["name"];
             locationToMainParty[provinceName] = partyName;
         })
@@ -52,7 +60,8 @@ export function parseMainPartyData(data, props) {
         edges.forEach(function(edge) {
             var node = edge.node;
             var muniCode = node["location"]["code"];
-            var partyResults = node["partyResults"] || node["topResult"]; 
+            var partyResults = sort_results(node["partyResults"]);
+
             var partyName = partyResults["edges"][0]["node"]["party"]["name"];
             locationToMainParty[muniCode] = partyName;
         })
@@ -61,7 +70,8 @@ export function parseMainPartyData(data, props) {
         edges.forEach(function(edge) {
             var node = edge.node;
             var vdNumber = node["location"]["vdNumber"];
-            var partyResults = node["partyResults"] || node["topResult"]; 
+            var partyResults = sort_results(node["partyResults"]);
+
             var partyName = partyResults["edges"][0]["node"]["party"]["name"];
             locationToMainParty[vdNumber] = partyName;
         })
@@ -150,7 +160,6 @@ export function getRegionName(state) {
     return beautifiedMuniName(state.muniName) + "-" + state.vdNumber;
   }
 }
-
 export function createTooltip(className) {
   if (document.getElementsByClassName(className("tooltip"))[0]) {
     return d3.select(`.${className("tooltip")}`);
