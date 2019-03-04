@@ -9,4 +9,6 @@ export const imports = {
     import(/* webpackPrefetch: true, webpackChunkName: "src-components-map-map" */ 'src/components/Map/map.mdx'),
   'src/components/RaceForSeatBarchart/barchart.mdx': () =>
     import(/* webpackPrefetch: true, webpackChunkName: "src-components-race-for-seat-barchart-barchart" */ 'src/components/RaceForSeatBarchart/barchart.mdx'),
+  'src/components/TurnoutMap/map.mdx': () =>
+    import(/* webpackPrefetch: true, webpackChunkName: "src-components-turnout-map-map" */ 'src/components/TurnoutMap/map.mdx'),
 }

@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import {createTooltip} from "../../utils";
 
 export function Chart(container, width, height, className, options) {
 
@@ -36,18 +37,7 @@ export function Chart(container, width, height, className, options) {
         .attr("viewBox", "0 0 " + (width+XaxisOffset) + " " + (height+YaxisOffset))
         .classed("svg-content", true);
         
-    // var svg = container.append("svg")
-    //     .attr("width", parseInt(width) + XaxisOffset)
-    //     .attr("height", parseInt(height) + YaxisOffset);
-  
-    var tooltipDiv;
-    if (document.getElementsByClassName("tooltip")[0]) {
-      tooltipDiv = d3.select(".tooltip");
-    } else {
-      tooltipDiv = d3.select("body").append("div")	
-        .attr("class", className("tooltip"))				
-        .style("opacity", 0);
-    }
+    var tooltipDiv = createTooltip(className);
   
     var x = d3.scaleBand()
       .rangeRound([XaxisOffset, width])

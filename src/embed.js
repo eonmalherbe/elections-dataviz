@@ -4,6 +4,7 @@ import {
     BarChart,
     RaceForSeatsBarChart,
     Map,
+    TurnoutMap,
     BarchartWithNavMap
 } from "./components";
 
@@ -19,11 +20,17 @@ window.showMap = (element, options) => {
         />, element);
 };
 
+window.showTurnoutMap = (element, options) => {
+    ReactDOM.render(<TurnoutMap 
+        {...options}
+        />, element);
+};
+
 window.showBarchartWithNavMap = (element, options) => {
     ReactDOM.render(<BarchartWithNavMap 
         {...options}
         />, element);
-}
+};
 
 window.showRaceForSeatsBarChart = (element, options) => {
     ReactDOM.render(<RaceForSeatsBarChart 
