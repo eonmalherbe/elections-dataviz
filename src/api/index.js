@@ -5,6 +5,7 @@ import gql from "graphql-tag"
 
 export {getSeatsData} from "./race-for-seats"
 export {getVotesDataM, getMainParties} from "./race-for-votes"
+export {getTurnoutData} from "./turnout"
 
 var API_URI = "https://elections2019.xyz/graphql";
 const client = new ApolloClient({

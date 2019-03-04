@@ -9,19 +9,17 @@ import styles from "./map.css";
 import events from "../../events";
 import ReactLoading from "react-loading";
 import {
-    getMainParties,
-    getPartyColors,
+    getTurnoutData,
     getProvincesData
 } from "../../api";
 import {
-  parseMainPartyData,
+  parseTurnoutData,
   getRegionName,
   createTooltip
 } from "../../utils";
 
 var regionColor = "#9c9c9c";
 var regionBorderColor = "#eeeeee";
-var partyColorsData;
 
 function className(originName) {
   return styles[originName] || originName;
@@ -230,59 +228,70 @@ class Map extends Component {
             .classed("svg-content", true);
 
         var geoJsonLoader = d3.json(fullRouteGeoJsonFile);
-        var mainPartiesDataLoader = getMainParties(props);
-        var dataLoaders = [geoJsonLoader, mainPartiesDataLoader];
-
-        if (!partyColorsData) {
-          var partyColorsLoader = getPartyColors();
-          dataLoaders.push(partyColorsLoader);
-        }
+        var turnoutDataLoader = getTurnoutData(props);
+        var dataLoaders = [geoJsonLoader, turnoutDataLoader];
 
         Promise.all(dataLoaders).then(function(values){ 
             var geoJsonData = values[0];
-            var locationToMainParty = parseMainPartyData(values[1], props);
-            partyColorsData = partyColorsData || values[2];  
+            var locationToTurnout = parseTurnoutData(values[1], props);      
 
-            var partyColorByName = {};
-            var partyAbbrByName = {};
-            if (partyColorsData && partyColorsData["data"]["allParties"]["edges"]) {
-              partyColorsData["data"]["allParties"]["edges"].forEach(edge => {
-                partyColorByName[edge.node.name] = edge.node.colour;
-                partyAbbrByName[edge.node.name] = edge.node.abbreviation;
-              })
-            }            
-
-            function getFillColorFromPartyName(partyName) {
-              if (!partyName)
-                return regionColor;
-              return partyColorByName[partyName.split("/")[0]] || regionColor;
+            function getMergedColorWithWhite(percent) {
+                var originRGB = {
+                    R: 0,
+                    G: 255,
+                    B: 0
+                }
+                var mixedR = (originRGB.R * (percent) + 255 * (100-percent))/100;
+                var mixedG = (originRGB.G * (percent) + 255 * (100-percent))/100;
+                var mixedB = (originRGB.B * (percent) + 255 * (100-percent))/100;
+                return `rgb(${mixedR},${mixedG},${mixedB})`;
+            }
+            function getFillColorFromTurnout(turnout) {
+                
+              if (turnout > 65)
+                return getMergedColorWithWhite(100);//"rgb(0,165,138)";
+              if (turnout >= 60)
+                return getMergedColorWithWhite(90);//"rgb(4,68,95)";
+              if (turnout >= 55)
+                return getMergedColorWithWhite(80);//"rgb(4,98,138)";
+              if (turnout >= 50)
+                return getMergedColorWithWhite(70);//"rgb(4,117,164)";
+              if (turnout >= 45)
+                return getMergedColorWithWhite(60);//"rgb(4,136,191)";
+              if (turnout >= 40)
+                return getMergedColorWithWhite(50);//"rgb(0,154,216)";
+              if (turnout >= 35)
+                return getMergedColorWithWhite(40);//"rgb(77,174,224)";
+              if (turnout >= 30)
+                return getMergedColorWithWhite(30);//"rgb(124,194,231)";
+              return regionColor;
             }
 
-            function getMainPartyName(d, i) {
-                var partyName;
+            function getTurnout(d, i) {
+                var turnout;
                 var regionType = self.state.regionType;
                 if (regionType === "national") {
                     var provinceName = d.properties.SPROVINCE;
-                    partyName = locationToMainParty[provinceName];
+                    turnout = locationToTurnout[provinceName];
                 } else if (regionType === "province") {
                     function getMunicipalityCode(properties) {
                         return properties.code || properties.smunicipal.split(" - ")[0].replace(/\s/g, "");
                     }
                     var muniCode = getMunicipalityCode(d.properties);
-                    partyName = locationToMainParty[muniCode];
+                    turnout = locationToTurnout[muniCode];
                 } else {// "municipality"
                     function getMunicipalityVdNumber(properties) {
                         return properties.PKLVDNUMBE;
                     }
                     var vdNumber = getMunicipalityVdNumber(d.properties);
-                    partyName = locationToMainParty[vdNumber];
+                    turnout = locationToTurnout[vdNumber];
                 }
-                return partyName;
+                return turnout;
             }
-            function getMainPartyColorFromRegion(d, i) {
-                var partyName = getMainPartyName(d, i);
-                var partyColor = getFillColorFromPartyName(partyName);
-                return partyColor;
+            function getFillColorFromRegion(d, i) {
+                var turnout = getTurnout(d, i);
+                var fillColor = getFillColorFromTurnout(turnout);
+                return fillColor;
             }
 
             var jsonDataFeatures;
@@ -302,33 +311,46 @@ class Map extends Component {
                 .append("path")
                 .attr("class", className("region"))
                 .attr("stroke", regionBorderColor)
-                .attr("fill", getMainPartyColorFromRegion)
+                .attr("fill", getFillColorFromRegion)
                 .attr("id", function(d, i) {
                     return `region-${i}`;
                 })
                 .attr("d", path);
             
-            var parties = [];
-            var availableCnt = [];
-            jsonDataFeatures.forEach((d, i) => {
-                var party = getMainPartyName(d, i);
-                if (parties.indexOf(party) == -1) {
-                    parties.push(party);
-                    availableCnt.push(1);
-                } else {
-                    availableCnt[parties.indexOf(party)] ++;
-                }
-            })
-
-            parties.sort(function(a, b){
-                return availableCnt[parties.indexOf(b)] - availableCnt[parties.indexOf(a)];
-            })
-
+            var turnoutColors = [{
+                text: "More than 65%",
+                turnout: 66
+            },{
+                text: "60% - 65%",
+                turnout: 60
+            },{
+                text: "55% - 60%",
+                turnout: 55
+            },{
+                text: "50% - 55%",
+                turnout: 50
+            },{
+                text: "45% - 50%",
+                turnout: 45
+            },{
+                text: "40% - 45%",
+                turnout: 40
+            },{
+                text: "35% - 40%",
+                turnout: 35
+            },{
+                text: "30% - 35%",
+                turnout: 30
+            },{
+                text: "Less than 30%",
+                turnout: 15
+            }];
+            
             function getLegendXY(i) {
-                return [(i%5)*150, h + 10 + parseInt(i/5) * 40];
+                return [(i%5)*170, h + 10 + parseInt(i/5) * 40];
             }
             var legends = svg.selectAll(`.${className("legend")}`)
-                .data(parties)
+                .data(turnoutColors)
                 .enter()
                 .append('g')
                 .attr('transform', (d, i) => "translate(" + getLegendXY(i) + ")")
@@ -339,27 +361,13 @@ class Map extends Component {
                 .attr('height', 20)
                 .attr('x', 0)
                 .attr('y', 0)
-                .attr("fill", (party, i) => {
-                    return getFillColorFromPartyName(party);
+                .attr("fill", (it) => {
+                    return getFillColorFromTurnout(it.turnout);
                 })
             legends.append('text')
                 .attr('x', 30)
                 .attr('y', 16)
-                .text(party => partyAbbrByName[party])
-            
-            // if (self.state.regionType == "province") {
-            //    console.log("fetch muni Names and codes", JSON.stringify(jsonDataFeatures.map(d => {
-            //         function getMunicipalityCode(properties) {
-            //             return properties.code || properties.smunicipal.split("-")[0].replace(/\s/g, "");
-            //         }
-            //         var newState = {
-            //             provinceName: self.state.provinceName,
-            //             muniName: d.properties.smunicipal,
-            //             muniCode: getMunicipalityCode(d.properties),
-            //         }
-            //         return newState;
-            //     })));
-            // }
+                .text(it => it.text)
             
             if (self.state.regionType !== "municipality") {
                 svg.selectAll(".place-label")
@@ -457,7 +465,7 @@ class Map extends Component {
                             return d.properties.SMUNICIPAL.split(" - ")[1].split("[")[0]; 
                         }
                     }
-                    tooltipDiv.html(regionName() + " : " + getMainPartyName(d, i))	
+                    tooltipDiv.html(regionName(self.state) + " : " + getTurnout(d, i) + "%")	
                         .style("left", (d3.event.pageX) + "px")		
                         .style("top", (d3.event.pageY - 28) + "px");	
                 })
@@ -481,14 +489,12 @@ class Map extends Component {
                         .style("opacity", 0);	
                     
                     var regionType = self.state.regionType;
-                    var newState, event;
+                    var newState;
                     if (regionType === "national") {
                         newState = {
                             regionType: "province",
                             provinceName: d.properties.SPROVINCE
                         }
-                        event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
-                        document.dispatchEvent(event);
                         self.setState(newState);
                     } else if (regionType === "province") {
                         function getMunicipalityCode(properties) {
@@ -500,9 +506,6 @@ class Map extends Component {
                             muniName: d.properties.smunicipal,
                             muniCode: getMunicipalityCode(d.properties),
                         }
-                        event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
-                        document.dispatchEvent(event);
-
                         self.setState(newState);
                     } else { // "municipality"
                         function getMunicipalityVdNumber(properties) {
@@ -515,8 +518,6 @@ class Map extends Component {
                             muniCode: self.state.muniCode,
                             vdNumber: getMunicipalityVdNumber(d.properties),
                         }
-                        var event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
-                        document.dispatchEvent(event);
                     }
                 })
             if (!self.state.disableNavigation) {
@@ -548,8 +549,6 @@ class Map extends Component {
                             newState.regionType = "province";
                         }
     
-                        event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
-                        document.dispatchEvent(event);
                         self.setState(newState);
                     });
             }

@@ -1,3 +1,5 @@
+import * as d3 from "d3";
+
 export function parseVotesData(data, props) {
     var results, firstEdge;
     var regionType = props.regionType;
@@ -92,6 +94,39 @@ export function parseSeatsData(data, props) {
   return results.slice(0, props.numParties);
 }
 
+export function parseTurnoutData(data, props) {
+  if (!data)  return null;
+  var locationToTurnout = {};
+  var edges;
+  var regionType = props.regionType;
+  if (regionType === "national") {
+      edges = data["data"]["allProvincialBallots"].edges;
+      edges.forEach(function(edge) {
+          var node = edge.node;
+          var provinceName = node["location"]["name"];
+          var percVoterTurnout = node["percVoterTurnout"]; 
+          locationToTurnout[provinceName] = percVoterTurnout;
+      })
+  } else if (regionType === "province") {
+      edges = data["data"]["allMunicipalBallots"].edges;
+      edges.forEach(function(edge) {
+          var node = edge.node;
+          var muniCode = node["location"]["code"];
+          var percVoterTurnout = node["percVoterTurnout"]; 
+          locationToTurnout[muniCode] = percVoterTurnout;
+      })
+  } else {// "municipality"
+      edges = data["data"]["allVotingDistrictBallots"].edges;
+      edges.forEach(function(edge) {
+          var node = edge.node;
+          var vdNumber = node["location"]["vdNumber"];
+          var percVoterTurnout = node["percVoterTurnout"]; 
+          locationToTurnout[vdNumber] = percVoterTurnout;
+      })
+  }
+  return locationToTurnout;
+}
+
 export function getRegionName(state) {
   function beautifiedMuniName(muniName) {
     if (muniName.indexOf(" - ") != -1) {
@@ -113,5 +148,15 @@ export function getRegionName(state) {
   }
   if (state.regionType == "municipality-vd") {
     return beautifiedMuniName(state.muniName) + "-" + state.vdNumber;
+  }
+}
+
+export function createTooltip(className) {
+  if (document.getElementsByClassName(className("tooltip"))[0]) {
+    return d3.select(`.${className("tooltip")}`);
+  } else {
+    return d3.select("body").append("div")	
+      .attr("class", className("tooltip"))				
+      .style("opacity", 0);
   }
 }
