@@ -3,8 +3,6 @@ import * as d3 from "d3";
 import * as topojson from "topojson-client";
 import { SideNav, Nav } from "react-sidenav";
 import MetisMenu from 'react-metismenu';
-import { slide as Menu } from 'react-burger-menu'
-
 
 import config from "../../config";
 import styles from "./navbar.css";
@@ -64,6 +62,9 @@ class NavBar extends Component {
 
     handleNavBarSelection(e) {
         console.log("event.target", e.target);
+        var href = e.target.href;
+        var regionType = href.split("#")[0];
+        var selectionData = JSON.parse(href.slice(regionType.length+1, href.length));
         // var newState;
         // if (regionType == "national") {
         //     newState = {regionType: regionType};
