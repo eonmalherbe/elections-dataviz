@@ -125,7 +125,7 @@ class Map extends Component {
             disableNavigation
         } = this.state;
         return (
-            <div className="map-container">
+            <div className={className("map-container")}>
                 {/* {
                     !disableNavigation &&
                         <div className={className("map-navbar")}>
@@ -165,10 +165,10 @@ class Map extends Component {
 
                 <div className={className("map-title")}>{getRegionName(this.state)}</div>
 
-                <div className="loading-spinner" ref="loading">
+                <div className={className("loading-spinner")} ref="loading">
                     <ReactLoading type={"spin"} color={"#777"} height={100} width={100} />
                 </div>
-                <div ref="vizcontainer" style={{display: 'hidden'}} className="map"></div>
+                <div ref="vizcontainer" className={className("map")}></div>
             </div>
         )
     }

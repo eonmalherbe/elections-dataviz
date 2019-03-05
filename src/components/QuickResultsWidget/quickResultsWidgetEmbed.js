@@ -92,25 +92,6 @@ class QuickResultsWidgetEmbed extends Component {
                     onChange={e => this.setState({elementId: e.target.value})}
                     />
             </div>
-            <div>
-                Way to customize size and position of Bar Chart and Map.<br/>
-                For bar chart, you can use .barchart-container
-                <div className={className("embedcode")}>
-                    {`.barchart-container {
-                        width: 1000px;
-                        height: 300px;
-                        margin-left: 100px;
-                    }`}
-                </div>
-                For Map, you can use .map-container
-                <div className={className("embedcode")}>
-                    {`.map-container {
-                        width: 1000px;
-                        height: 300px;
-                        margin-left: 100px;
-                    }`}
-                </div>
-            </div>
               <div className={className("form-group")}>
                   <label>Event </label>
                   <select className={className("form-control")} 

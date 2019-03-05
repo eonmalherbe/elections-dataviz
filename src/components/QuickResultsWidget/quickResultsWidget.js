@@ -64,10 +64,10 @@ class QuickResultsWidget extends Component {
     render() {
         return (
         <div className={className("row")}>
-            <div className={className("col-md-3")}>
+            <div className={className("col-md-4")}>
                 <NavBar />
             </div>
-            <div className={className("col-md-9")}>
+            <div className={className("col-md-8")}>
                 <div className={className("barchart-container")}>
                     <BarChart {...this.state} />
                 </div>

@@ -79,6 +79,14 @@ class NavBar extends Component {
             document.head.appendChild(link);
         }
 
+        if(!document.getElementById('font-awesome')) {
+            var link = document.createElement('link');
+            link.id = 'font-awesome';
+            link.rel = 'stylesheet';
+            link.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
+            document.head.appendChild(link);
+        }
+
         this.refs.navbar.addEventListener("click", this.handleNavBarSelection);
     }
 

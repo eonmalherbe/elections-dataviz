@@ -160,7 +160,7 @@ class BarChart extends Component {
       
     render () {
       return (
-          <div className="barchart">
+          <div className={className("barchart")}>
             <div className={className("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
             <div 
               ref="vizcontainer" 

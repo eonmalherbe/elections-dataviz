@@ -1,7 +1,11 @@
 import React, { Component } from "react";
-import "./barchartMap.css";
+import styles from "./barchartMap.css";
 import BarChart from '../BarChart/barchart';
 import Map from '../Map/map';
+
+function className(originName) {
+    return styles[originName] || originName;
+}
 
 class BarchartWithNavMap extends Component {    
     constructor(props) {
@@ -56,10 +60,10 @@ class BarchartWithNavMap extends Component {
     render() {
         return (
         <div>
-            <div className="barchart-container">
+            <div className={className("barchart-container")}>
             <BarChart {...this.state} />
             </div>
-            <div className="map-container">
+            <div className={className("map-container")}>
             <Map {...this.state}/>
             </div>
         </div>
