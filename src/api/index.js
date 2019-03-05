@@ -2,11 +2,11 @@ import { ApolloClient } from "apollo-client"
 import { HttpLink } from "apollo-link-http"
 import { InMemoryCache } from "apollo-cache-inmemory"
 import gql from "graphql-tag"
+import {client} from "./config"
 
 export {getSeatsData} from "./race-for-seats"
 export {getVotesDataM, getMainParties} from "./race-for-votes"
 export {getTurnoutData} from "./turnout"
-import {client} from "./config"
 
 export function getElectionEvents() {
   return client.query({
@@ -87,4 +87,18 @@ export function getProvincesData() {
       }
   ]
   return provincesData;
+}
+
+export function getMetrosData() {
+  var metrosData = [
+    {"provinceName":"Eastern Cape","muniName":"BUF - Buffalo City [East London]","muniCode":"BUF"},
+    {"provinceName":"Western Cape","muniName":"CPT - City of Cape Town [Cape Town]","muniCode":"CPT"},
+    {"provinceName":"Gauteng","muniName":"JHB - City of Johannesburg [Johannesburg]","muniCode":"JHB"},
+    {"provinceName":"Gauteng","muniName":"TSH - Tshwane Metro [Pretoria]","muniCode":"TSH"},
+    {"provinceName":"Gauteng","muniName":"EKU - Ekurhuleni [East Rand]","muniCode":"EKU"},
+    {"provinceName":"KwaZulu-Natal","muniName":"ETH - eThekwini [Durban Metro]","muniCode":"ETH"},
+    {"provinceName":"Free State","muniName":"MAN - Mangaung [Bloemfontein]","muniCode":"MAN"},
+    {"provinceName":"Eastern Cape","muniName":"NMA - Nelson Mandela Bay [Port Elizabeth]","muniCode":"NMA"}
+  ]
+  return metrosData;
 }

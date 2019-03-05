@@ -451,7 +451,6 @@ class Map extends Component {
                         .style("fill-opacity", 0.8);
                 })
                 .on("mousemove", function(d, i) {	
-                    if (self.state.regionType === "municipality") return;
                     tooltipDiv.transition()		
                         .duration(200)		
                         .style("opacity", 1);
@@ -461,7 +460,7 @@ class Map extends Component {
                         } else if (self.state.regionType === "province") {
                             return d.properties.smunicipal.split(" - ")[1].split("[")[0]; 
                         } else {//municipality
-                            return d.properties.SMUNICIPAL.split(" - ")[1].split("[")[0]; 
+                            return d.properties.PKLVDNUMBE; 
                         }
                     }
                     tooltipDiv.html(regionName(self.state) + " : " + getTurnout(d, i) + "%")	

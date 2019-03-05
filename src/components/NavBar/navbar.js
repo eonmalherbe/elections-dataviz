@@ -1,28 +1,48 @@
 import React, { Component } from "react";
-import * as d3 from "d3";
-import * as topojson from "topojson-client";
-import { SideNav, Nav } from "react-sidenav";
 import MetisMenu from 'react-metismenu';
 
-import config from "../../config";
+import config from '../../config'
 import styles from "./navbar.css";
 import events from "../../events";
 import {
-    getMainParties,
-    getPartyColors,
-    getProvincesData
+    getProvincesData,
+    getMetrosData
 } from "../../api";
-import {
-  parseMainPartyData,
-  getRegionName,
-  createTooltip
-} from "../../utils";
 
 function className(originName) {
   return styles[originName] || originName;
 }
 
 var provincesData = getProvincesData();
+var metrosData = getMetrosData();
+
+
+class CustomLink extends React.Component {
+    constructor() {
+      super();
+  
+      this.onClick = this.onClick.bind(this);
+    }
+  
+    onClick(e) {
+      console.log("onClick item", e, this.props.hasSubMenu);
+      if (this.props.hasSubMenu) this.props.toggleSubMenu(e);
+      else {
+        this.props.activateMe({
+          newLocation: this.props.to,
+          selectedMenuLabel: this.props.label,
+        });
+      }
+    }
+  
+    render() {
+      return (
+        <div className="metismenu-link" onClick={this.onClick}>
+          {this.props.children}
+        </div>
+      );
+    }
+  };
 
 class NavBar extends Component {
 
@@ -34,7 +54,8 @@ class NavBar extends Component {
             provinceName: "",
             muniName: "",
             muniCode: "",
-            iecId: ""
+            iecId: "",
+            activeLinkId: ''
         }
 
         if (props.regionType) {
@@ -50,6 +71,14 @@ class NavBar extends Component {
     }
 
     componentDidMount() {
+        if(!document.getElementById('navbarcss')) {
+            var link = document.createElement('link');
+            link.id = 'navbarcss';
+            link.rel = 'stylesheet';
+            link.href = config.DOMAIN + '/navbar.css';
+            document.head.appendChild(link);
+        }
+
         this.refs.navbar.addEventListener("click", this.handleNavBarSelection);
     }
 
@@ -61,41 +90,33 @@ class NavBar extends Component {
     }
 
     handleNavBarSelection(e) {
-        console.log("event.target", e.target);
-        var href = e.target.href;
-        var regionType = href.split("#")[0];
-        var selectionData = JSON.parse(href.slice(regionType.length+1, href.length));
-        // var newState;
-        // if (regionType == "national") {
-        //     newState = {regionType: regionType};
-        //     if (this.state.regionType == newState.regionType)
-        //         return;
-        // } else if (regionType == "province") {
-        //     newState = {
-        //         regionType: regionType,
-        //         provinceName: selectionData.name
-        //     };
-        //     if (this.state.regionType == newState.regionType && this.state.provinceName == newState.provinceName)
-        //         return;
-        // } else if (regionType == "municipality") {
-        //     newState = {
-        //         regionType: regionType,
-        //         provinceName: selectionData.provinceName,
-        //         muniName: selectionData.muniName,
-        //         muniCode: selectionData.muniCode,
-        //     }; 
-        //     if (this.state.regionType == newState.regionType 
-        //         && this.state.provinceName == newState.provinceName
-        //         && this.state.newState == newState.muniName)
-        //         return;
-        // }
+        var iconClass = e.target.childNodes[0].className;
+        var classList = iconClass.split(' ');
+        var lastClass = classList[classList.length - 1];
+        var passInfo = lastClass.split('-');
 
-        // var event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
-        // document.dispatchEvent(event);
-        // this.setState(newState);
-    }
+        var regionType, selectionData = {};
+        var activeLinkId = '';
 
-    handleNavBarSelection1(regionType, selectionData) {
+        if (passInfo[1] == '1') {
+            regionType = "national";
+            activeLinkId = '1';
+        } else if (passInfo[1] == '2') {
+            regionType = "province";
+            selectionData = provincesData[passInfo[2]];
+        } else if (passInfo[1] == '3') { // muni level
+            regionType = "municipality";
+            selectionData = provincesData[passInfo[2]].munis[passInfo[3]];
+            activeLinkId = `3-${passInfo[2]}-${passInfo[3]}`;
+        } else if (passInfo[1] == '4') { // metros
+            regionType = "municipality"
+            selectionData = metrosData[passInfo[2]];
+            activeLinkId = `4-${passInfo[2]}`;
+        } else {
+            return;
+        }
+        
+        e.preventDefault();
         var newState;
         if (regionType == "national") {
             newState = {regionType: regionType};
@@ -123,6 +144,11 @@ class NavBar extends Component {
 
         var event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
         document.dispatchEvent(event);
+
+        var event = new CustomEvent(events.MAP_PREVIEW, { detail: newState });
+        document.dispatchEvent(event);
+        newState.activeLinkId = activeLinkId;
+        console.log("activeLinkId", activeLinkId);
         this.setState(newState);
     }
       
@@ -132,75 +158,43 @@ class NavBar extends Component {
         };
         var content = [
             {
-                icon: 'icon-class-name',
+                icon: '1',
                 label: 'National',
-                to: 'national',
+                to: '1',
             },
             {
-                icon: 'icon-class-name',
+                icon: '',
                 label: 'Provinces',
-                to: '##',
-                content: provincesData.map(province => {
+                content: provincesData.map((province, i) => {
                     return {
-                        icon: 'icon-class-name',
+                        icon: `2-${i}`,
                         label: province.name,
-                        to: 'province#'+JSON.stringify({
-                            name: province.name,
-                            abbreviation: province.abbreviation,
-                        }),
-                        content: province.munis.map(muni => {
+                        content: province.munis.map((muni, j) => {
                             return {
-                                icon: 'icon-class-name',
+                                icon: `3-${i}-${j}`,
                                 label: muni.muniName.split("-")[1].split("[")[0],
-                                to: 'municipality#'+JSON.stringify(muni),
+                                to: `2-${i}`,
                             }
                         })
                     }
                 })
             },
             {
-                icon: 'icon-class-name',
+                icon: '',
                 label: 'Metros',
-                to: 'metros',
+                content: metrosData.map((metro, i) => {
+                    return {
+                        icon: `4-${i}`,
+                        label: metro.muniName.split("-")[1].split("[")[0],
+                        to: `4-${i}`,
+                    }
+                })
             }
         ]
-
+        
         return (
-            <div className="menu-widget" ref="navbar">
-                <MetisMenu content={content}/>
-                {/* <div className={className("menu-navbar")}>
-                    <SideNav
-                        defaultSelectedPath="1"
-                        theme={theme}
-                        onItemSelection={this.onItemSelection}
-                        className={className("map-navbar")}
-                    >
-                        <Nav id="navbar-national" onClick={this.handleNavBarSelection.bind(this, "national")}>
-                            National
-                        </Nav>
-                        {
-                            provincesData.map(province => {
-                                return <Nav 
-                                    key={province.abbreviation} 
-                                    id={"navbar-province-"+province.abbreviation}
-                                    onClick={this.handleNavBarSelection.bind(this, "province", province)}>
-                                        { province.name }
-                                        {
-                                            province.munis.map(muni => {
-                                                return <Nav 
-                                                    key={muni.muniCode} 
-                                                    id={"navbar-muni-"+muni.muniCode}
-                                                    onClick={this.handleNavBarSelection.bind(this, "municipality", muni)}
-                                                    >
-                                                        {muni.muniName.split("-")[1].split("[")[0] }
-                                                    </Nav>
-                                            })
-                                        }
-                                </Nav>
-                            })
-                        }
-                    </SideNav>
-                </div>  */}
+            <div className={className("menu-widget")} ref="navbar">
+                <MetisMenu activeLinkId={this.state.activeLinkId} content={content} LinkComponent={CustomLink}/>
             </div>
         )
     }

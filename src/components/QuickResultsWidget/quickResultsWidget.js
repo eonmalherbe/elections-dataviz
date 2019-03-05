@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import styles from "./quickResultsWidget.css";
 import bootstrapStyles from "bootstrap/dist/css/bootstrap.min.css";
+
+import config from '../../config'
 import BarChart from '../BarChart/barchart';
 import NavBar from '../NavBar/navbar';
 import Map from '../Map/map';
