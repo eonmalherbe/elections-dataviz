@@ -53,7 +53,7 @@ export function getVotesDataM(options) {
         {
           allProvincialBallots(
             event_Description:"${eventDescription}",
-            location_Name_Icontains:"${options.provinceName}"
+            location_Name:"${options.provinceName}"
           ){
             edges{
               node{
@@ -124,7 +124,7 @@ export function getVotesDataM(options) {
           allVotingDistrictBallots(
           event_Description:"${eventDescription}",
           location_Id:"${options.vdNumber}", 
-          location_Ward_Municipality_Name_Icontains:"${options.muniCode}") {
+          location_Ward_Municipality_Code:"${options.muniCode}") {
             edges{
               node{
                 location {
@@ -227,7 +227,7 @@ export function getVotesDataM(options) {
           {
             allVotingDistrictBallots( 
             event_Description:"${eventDescription}",
-            location_Ward_Municipality_Name_Icontains:"${muniRegName}") {
+            location_Ward_Municipality_Code:"${options.muniCode}") {
               edges{
                 node{
                   location {

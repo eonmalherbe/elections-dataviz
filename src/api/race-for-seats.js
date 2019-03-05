@@ -19,7 +19,7 @@ export function getSeatsData(options) {
       return client.query({
         query: gql`
         {
-            allSeatCalculations(province:"", party_Event_Description:"${eventDescription}", orderBy:["-national_pr"]){
+            allSeatCalculations(party_Event_Description:"${eventDescription}", orderBy:["-national_pr"]){
               edges{
                 node
                 {
