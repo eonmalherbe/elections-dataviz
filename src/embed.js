@@ -5,7 +5,8 @@ import {
     RaceForSeatsBarChart,
     Map,
     TurnoutMap,
-    BarchartWithNavMap
+    BarchartWithNavMap,
+    QuickResultsWidget
 } from "./components";
 
 window.showBarChart = (element, options) => {
@@ -34,6 +35,12 @@ window.showBarchartWithNavMap = (element, options) => {
 
 window.showRaceForSeatsBarChart = (element, options) => {
     ReactDOM.render(<RaceForSeatsBarChart 
+        {...options}
+        />, element);
+};
+
+window.showQuickResultsWidget = (element, options) => {
+    ReactDOM.render(<QuickResultsWidget 
         {...options}
         />, element);
 };

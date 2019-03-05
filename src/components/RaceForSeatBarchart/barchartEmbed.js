@@ -25,7 +25,7 @@ class BarChartEmbed extends Component {
             provinceName: "",
             muniName: "",
             muniCode: "",
-            vdNumber: "",
+            iecId: "",
             numParties: 5,
 
             electionEvents: []
@@ -45,7 +45,12 @@ class BarChartEmbed extends Component {
     }
 
     onEventDescriptionChange(e) {
-        this.setState({eventDescription: e.target.value});
+        if (e.target.value.toLowerCase().indexOf("national") == -1 &&
+                this.state.regionType == "national") {
+            this.setState({eventDescription: e.target.value, regionType: "province", provinceName: "Western Cape"});
+        } else {
+            this.setState({eventDescription: e.target.value });
+        }
     }
 
     onRegionTypeChange(e) {
@@ -54,12 +59,6 @@ class BarChartEmbed extends Component {
     }
 
     onPreview(e) {
-        if (this.state.regionType == "province" && this.state.eventDescription.toLowerCase().indexOf("provincial") == -1) {
-            return alert("you selected province region type but didn't selected provincial event");
-        }
-        if (this.state.regionType == "national" && this.state.eventDescription.toLowerCase().indexOf("national") == -1) {
-            return alert("you selected national region type but didn't selected national event");
-        }
         var event = new CustomEvent(events.BARCHART_PREVIEW, { detail: this.state });
         document.dispatchEvent(event);
     }
@@ -73,7 +72,7 @@ class BarChartEmbed extends Component {
             provinceName,
             muniName,
             muniCode,
-            vdNumber,
+            iecId,
             numParties,
             electionEvents
         } = this.state;
@@ -108,7 +107,10 @@ class BarChartEmbed extends Component {
                   <select className={className("form-control")} 
                      value={regionType}
                      onChange={this.onRegionTypeChange.bind(this)}>
-                        <option value="national">national</option>
+                        { 
+                            eventDescription.toLowerCase().indexOf("national") != -1 && 
+                            <option value="national">national</option>
+                        }
                         <option value="province">province</option>
                   </select>
               </div>
@@ -163,8 +165,8 @@ class BarChartEmbed extends Component {
                             type="text" 
                             className={className("form-control")} 
                             placeholder="97860055"
-                            value={vdNumber}
-                            onChange={e => this.setState({vdNumber: e.target.value})} 
+                            value={iecId}
+                            onChange={e => this.setState({iecId: e.target.value})} 
                             disabled={(regionType=="national")}/>
                     </div>
               }
@@ -192,7 +194,7 @@ class BarChartEmbed extends Component {
                             provinceName: "${provinceName}",
                             muniName: "${muniName}",
                             muniCode: "${muniCode}",
-                            vdNumber: "${vdNumber}",
+                            iecId: "${iecId}",
                             numParties: "${numParties}",
                             width: 600,
                             height: 220

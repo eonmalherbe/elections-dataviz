@@ -69,11 +69,11 @@ export function parseMainPartyData(data, props) {
         edges = data["data"]["allVotingDistrictBallots"].edges;
         edges.forEach(function(edge) {
             var node = edge.node;
-            var vdNumber = node["location"]["vdNumber"];
+            var iecId = node["location"]["iecId"];
             var partyResults = sort_results(node["partyResults"]);
 
             var partyName = partyResults["edges"][0]["node"]["party"]["name"];
-            locationToMainParty[vdNumber] = partyName;
+            locationToMainParty[iecId] = partyName;
         })
     }
     return locationToMainParty;
@@ -129,9 +129,9 @@ export function parseTurnoutData(data, props) {
       edges = data["data"]["allVotingDistrictBallots"].edges;
       edges.forEach(function(edge) {
           var node = edge.node;
-          var vdNumber = node["location"]["vdNumber"];
+          var iecId = node["location"]["iecId"];
           var percVoterTurnout = node["percVoterTurnout"]; 
-          locationToTurnout[vdNumber] = percVoterTurnout;
+          locationToTurnout[iecId] = percVoterTurnout;
       })
   }
   return locationToTurnout;
@@ -157,7 +157,7 @@ export function getRegionName(state) {
     return beautifiedMuniName(state.muniName);
   }
   if (state.regionType == "municipality-vd") {
-    return beautifiedMuniName(state.muniName) + "-" + state.vdNumber;
+    return beautifiedMuniName(state.muniName) + "-" + state.iecId;
   }
 }
 export function createTooltip(className) {

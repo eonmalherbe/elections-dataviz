@@ -2,13 +2,7 @@ import { ApolloClient } from "apollo-client"
 import { HttpLink } from "apollo-link-http"
 import { InMemoryCache } from "apollo-cache-inmemory"
 import gql from "graphql-tag"
-
-
-var API_URI = "https://elections2019.xyz/graphql";
-const client = new ApolloClient({
-  link: new HttpLink({ uri: API_URI, useGETForQueries: true, headers: {"Content-Type" : "application/graphql" } }),
-  cache: new InMemoryCache()
-})
+import {client} from "./config"
 
 
 export function getSeatsData(options) {

@@ -1,9 +1,15 @@
 import React, { Component } from "react";
-import "./barchartMap.css";
+import styles from "./quickResultsWidget.css";
+import bootstrapStyles from "bootstrap/dist/css/bootstrap.min.css";
 import BarChart from '../BarChart/barchart';
+import NavBar from '../NavBar/navbar';
 import Map from '../Map/map';
 
-class BarchartWithNavMap extends Component {    
+function className(originName) {
+    return styles[originName] || bootstrapStyles[originName] || originName;
+}
+
+class QuickResultsWidget extends Component {    
     constructor(props) {
         super(props);
         var self = this;
@@ -55,16 +61,21 @@ class BarchartWithNavMap extends Component {
 
     render() {
         return (
-        <div>
-            <div className="barchart-container">
-            <BarChart {...this.state} />
+        <div className={className("row")}>
+            <div className={className("col-md-3")}>
+                <NavBar />
             </div>
-            <div className="map-container">
-            <Map {...this.state}/>
+            <div className={className("col-md-9")}>
+                <div className={className("barchart-container")}>
+                    <BarChart {...this.state} />
+                </div>
+                <div className={className("map-container")}>
+                    <Map {...this.state}/>
+                </div>
             </div>
         </div>
         );
     }
 }
 
-export default BarchartWithNavMap;
+export default QuickResultsWidget;

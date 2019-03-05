@@ -38,7 +38,7 @@ class Map extends Component {
             provinceName: "",
             muniName: "",
             muniCode: "",
-            vdNumber: ""
+            iecId: ""
         }
 
         if (props.regionType) {
@@ -247,24 +247,23 @@ class Map extends Component {
                 return `rgb(${mixedR},${mixedG},${mixedB})`;
             }
             function getFillColorFromTurnout(turnout) {
-                
               if (turnout > 65)
-                return getMergedColorWithWhite(100);//"rgb(0,165,138)";
+                return "#39711D";//getMergedColorWithWhite(100);//"rgb(0,165,138)";
               if (turnout >= 60)
-                return getMergedColorWithWhite(90);//"rgb(4,68,95)";
+                return "#458923";//getMergedColorWithWhite(90);//"rgb(4,68,95)";
               if (turnout >= 55)
-                return getMergedColorWithWhite(80);//"rgb(4,98,138)";
+                return "#53B025";//getMergedColorWithWhite(80);//"rgb(4,98,138)";
               if (turnout >= 50)
-                return getMergedColorWithWhite(70);//"rgb(4,117,164)";
+                return "#4BDC02";//getMergedColorWithWhite(70);//"rgb(4,117,164)";
               if (turnout >= 45)
-                return getMergedColorWithWhite(60);//"rgb(4,136,191)";
+                return "#7CE547";//getMergedColorWithWhite(60);//"rgb(4,136,191)";
               if (turnout >= 40)
-                return getMergedColorWithWhite(50);//"rgb(0,154,216)";
+                return "#93E968";//getMergedColorWithWhite(50);//"rgb(0,154,216)";
               if (turnout >= 35)
-                return getMergedColorWithWhite(40);//"rgb(77,174,224)";
+                return "#A6ED83";//getMergedColorWithWhite(40);//"rgb(77,174,224)";
               if (turnout >= 30)
-                return getMergedColorWithWhite(30);//"rgb(124,194,231)";
-              return regionColor;
+                return "#C5F3AF";//getMergedColorWithWhite(30);//"rgb(124,194,231)";
+              return "#D3F6C3";//regionColor;
             }
 
             function getTurnout(d, i) {
@@ -280,11 +279,11 @@ class Map extends Component {
                     var muniCode = getMunicipalityCode(d.properties);
                     turnout = locationToTurnout[muniCode];
                 } else {// "municipality"
-                    function getMunicipalityVdNumber(properties) {
+                    function getMunicipalityiecId(properties) {
                         return properties.PKLVDNUMBE;
                     }
-                    var vdNumber = getMunicipalityVdNumber(d.properties);
-                    turnout = locationToTurnout[vdNumber];
+                    var iecId = getMunicipalityiecId(d.properties);
+                    turnout = locationToTurnout[iecId];
                 }
                 return turnout;
             }
@@ -508,7 +507,7 @@ class Map extends Component {
                         }
                         self.setState(newState);
                     } else { // "municipality"
-                        function getMunicipalityVdNumber(properties) {
+                        function getMunicipalityiecId(properties) {
                             return properties.PKLVDNUMBE;
                         }
                         var newState = {
@@ -516,7 +515,7 @@ class Map extends Component {
                             provinceName: self.state.provinceName,
                             muniName: self.state.muniName,
                             muniCode: self.state.muniCode,
-                            vdNumber: getMunicipalityVdNumber(d.properties),
+                            iecId: getMunicipalityiecId(d.properties),
                         }
                     }
                 })
@@ -540,7 +539,7 @@ class Map extends Component {
                             provinceName: self.state.provinceName,
                             muniName: self.state.muniName,
                             muniImuniCodeD: self.state.muniCode,
-                            vdNumber: self.state.vdNumber,
+                            iecId: self.state.iecId,
                         }
                         
                         if (regionType === "province") {

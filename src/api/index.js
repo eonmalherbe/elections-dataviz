@@ -6,12 +6,7 @@ import gql from "graphql-tag"
 export {getSeatsData} from "./race-for-seats"
 export {getVotesDataM, getMainParties} from "./race-for-votes"
 export {getTurnoutData} from "./turnout"
-
-var API_URI = "https://elections2019.xyz/graphql";
-const client = new ApolloClient({
-  link: new HttpLink({ uri: API_URI, useGETForQueries: true, headers: {"Content-Type" : "application/graphql" } }),
-  cache: new InMemoryCache()
-})
+import {client} from "./config"
 
 export function getElectionEvents() {
   return client.query({

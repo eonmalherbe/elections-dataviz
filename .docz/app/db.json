@@ -15,7 +15,17 @@
     ],
     "public": "./public",
     "dest": "./build/docz",
-    "base": "/elections-dataviz/docz/"
+    "base": "/elections-dataviz/docz/",
+    "htmlContext": {
+      "head": {
+        "links": [
+          {
+            "rel": "stylesheet",
+            "href": "https://cdn.rawgit.com/alpertuna/react-metismenu/master/dist/react-metismenu-standart.min.css"
+          }
+        ]
+      }
+    }
   },
   "entries": {
     "src/index.mdx": {
@@ -93,6 +103,23 @@
           "depth": 1,
           "slug": "race-for-votes---map",
           "value": "Race for Votes - Map"
+        }
+      ]
+    },
+    "src/components/QuickResultsWidget/quickResultsWidget.mdx": {
+      "name": "Quick Results Widget V1",
+      "id": "92cef238995cd80bc61803ea82170ab0",
+      "filepath": "src/components/QuickResultsWidget/quickResultsWidget.mdx",
+      "link": null,
+      "slug": "src-components-quick-results-widget-quick-results-widget",
+      "route": "/src-components-quick-results-widget-quick-results-widget",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "quick-results-widget-v1",
+          "value": "Quick Results Widget V1"
         }
       ]
     },

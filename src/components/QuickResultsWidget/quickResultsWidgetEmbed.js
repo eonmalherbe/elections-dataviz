@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import config from "../../config";
 import bootstrapStyles from "bootstrap/dist/css/bootstrap.min.css";
-import styles from "./barchartMapEmbed.css";
+import styles from "./quickResultsWidgetEmbed.css";
 import events from "../../events";
 import {
     getElectionEvents,
@@ -14,7 +14,7 @@ function className(originClassName) {
     return bootstrapStyles[originClassName] || styles[originClassName] || originClassName;
 }
 
-class BarChartWithNavMapEmbed extends Component {
+class QuickResultsWidgetEmbed extends Component {
     
     constructor(props) {
         super(props);
@@ -82,7 +82,7 @@ class BarChartWithNavMapEmbed extends Component {
         var curProvinceData = provincesData.filter(item => item.name == provinceName)[0];
         return (
           <div>
-            <h3> Map + Barchart Embed Script Generation </h3>
+            <h3> QuickResults Embed Script Generation </h3>
             <div className={className("form-group")}>
                 <label>Element ID </label>
                 <input 
@@ -182,7 +182,7 @@ class BarChartWithNavMapEmbed extends Component {
                   <label>Embed Code</label>
                   <div className={className("embedcode")}>
                     <span>{`<script src="${DOMAIN}/embed/embed.js"></script>
-                    <script>showBarchartWithNavMap(
+                    <script>showQuickResultsWidget(
                         document.getElementById("${elementId}"),
                         {
                             eventDescription: "${eventDescription}",
@@ -201,4 +201,4 @@ class BarChartWithNavMapEmbed extends Component {
         )
     }
 }
-export default BarChartWithNavMapEmbed;
+export default QuickResultsWidgetEmbed;

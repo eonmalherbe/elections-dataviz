@@ -12,3 +12,6 @@ export {default as TurnoutMapEmbed} from "./TurnoutMap/mapEmbed";
 
 export {default as BarchartWithNavMap} from "./BarchartWithNavMap/barchartMap";
 export {default as BarchartWithNavMapEmbed} from "./BarchartWithNavMap/barchartMapEmbed";
+
+export {default as QuickResultsWidget} from "./QuickResultsWidget/quickResultsWidget";
+export {default as QuickResultsWidgetEmbed} from "./QuickResultsWidget/quickResultsWidgetEmbed";

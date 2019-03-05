@@ -47,7 +47,7 @@ class BarChart extends Component {
         provinceName: "",
         muniName: "",
         muniCode: "",
-        vdNumber: "",
+        iecId: "",
       }
       if (props.numParties) {
         this.state.numParties = props.numParties;
@@ -64,8 +64,8 @@ class BarChart extends Component {
       if (props.muniCode) {
         this.state.muniCode = props.muniCode;
       }
-      if (props.vdNumber) {
-        this.state.vdNumber = props.vdNumber;
+      if (props.iecId) {
+        this.state.iecId = props.iecId;
       }
       if (props.width && props.height) {
         this.state.width = props.width;

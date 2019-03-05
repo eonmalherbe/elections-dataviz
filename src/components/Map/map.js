@@ -40,7 +40,7 @@ class Map extends Component {
             provinceName: "",
             muniName: "",
             muniCode: "",
-            vdNumber: ""
+            iecId: ""
         }
 
         if (props.regionType) {
@@ -127,7 +127,7 @@ class Map extends Component {
             disableNavigation
         } = this.state;
         return (
-            <div className="map-container">
+            <div className="map-widget">
                 {/* {
                     !disableNavigation &&
                         <div className={className("map-navbar")}>
@@ -271,11 +271,11 @@ class Map extends Component {
                     var muniCode = getMunicipalityCode(d.properties);
                     partyName = locationToMainParty[muniCode];
                 } else {// "municipality"
-                    function getMunicipalityVdNumber(properties) {
+                    function getMunicipalityiecId(properties) {
                         return properties.PKLVDNUMBE;
                     }
-                    var vdNumber = getMunicipalityVdNumber(d.properties);
-                    partyName = locationToMainParty[vdNumber];
+                    var iecId = getMunicipalityiecId(d.properties);
+                    partyName = locationToMainParty[iecId];
                 }
                 return partyName;
             }
@@ -505,7 +505,7 @@ class Map extends Component {
 
                         self.setState(newState);
                     } else { // "municipality"
-                        function getMunicipalityVdNumber(properties) {
+                        function getMunicipalityiecId(properties) {
                             return properties.PKLVDNUMBE;
                         }
                         var newState = {
@@ -513,7 +513,7 @@ class Map extends Component {
                             provinceName: self.state.provinceName,
                             muniName: self.state.muniName,
                             muniCode: self.state.muniCode,
-                            vdNumber: getMunicipalityVdNumber(d.properties),
+                            iecId: getMunicipalityiecId(d.properties),
                         }
                         var event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
                         document.dispatchEvent(event);
@@ -539,7 +539,7 @@ class Map extends Component {
                             provinceName: self.state.provinceName,
                             muniName: self.state.muniName,
                             muniImuniCodeD: self.state.muniCode,
-                            vdNumber: self.state.vdNumber,
+                            iecId: self.state.iecId,
                         }
                         
                         if (regionType === "province") {
