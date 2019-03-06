@@ -35,48 +35,83 @@ export function parseVotesData(data, props) {
     });
 }
 
+// export function parseMainPartyData(data, props) {
+//     if (!data)  return null;
+//     var locationToMainParty = {};
+//     var edges;
+//     var regionType = props.regionType;
+//     var sort_results = function(party_results) {
+//         party_results["edges"] = party_results["edges"].sort(function(a, b) {
+//             return b.node.percOfVotes - a.node.percOfVotes;
+//         })
+//         return party_results;
+//     }
+//     if (regionType === "national") {
+//         edges = data["data"]["allProvincialBallots"].edges;
+//         edges.forEach(function(edge) {
+//             var node = edge.node;
+//             var provinceName = node["location"]["name"];
+//             var partyResults = sort_results(node["partyResults"]);
+//             var partyName = partyResults["edges"][0]["node"]["party"]["name"];
+//             locationToMainParty[provinceName] = partyName;
+//         })
+//     } else if (regionType === "province") {
+//         edges = data["data"]["allMunicipalBallots"].edges;
+//         edges.forEach(function(edge) {
+//             var node = edge.node;
+//             var muniCode = node["location"]["code"];
+//             var partyResults = sort_results(node["partyResults"]);
+
+//             var partyName = partyResults["edges"][0]["node"]["party"]["name"];
+//             locationToMainParty[muniCode] = partyName;
+//         })
+//     } else {// "municipality"
+//         edges = data["data"]["allVotingDistrictBallots"].edges;
+//         edges.forEach(function(edge) {
+//             var node = edge.node;
+//             var iecId = node["location"]["iecId"];
+//             var partyResults = sort_results(node["partyResults"]);
+
+//             var partyName = partyResults["edges"][0]["node"]["party"]["name"];
+//             locationToMainParty[iecId] = partyName;
+//         })
+//     }
+//     return locationToMainParty;
+// }
+
+
+
 export function parseMainPartyData(data, props) {
-    if (!data)  return null;
-    var locationToMainParty = {};
-    var edges;
-    var regionType = props.regionType;
-    var sort_results = function(party_results) {
-        party_results["edges"] = party_results["edges"].sort(function(a, b) {
-            return b.node.percOfVotes - a.node.percOfVotes;
-        })
-        return party_results;
-    }
-    if (regionType === "national") {
-        edges = data["data"]["allProvincialBallots"].edges;
-        edges.forEach(function(edge) {
-            var node = edge.node;
-            var provinceName = node["location"]["name"];
-            var partyResults = sort_results(node["partyResults"]);
-            var partyName = partyResults["edges"][0]["node"]["party"]["name"];
-            locationToMainParty[provinceName] = partyName;
-        })
-    } else if (regionType === "province") {
-        edges = data["data"]["allMunicipalBallots"].edges;
-        edges.forEach(function(edge) {
-            var node = edge.node;
-            var muniCode = node["location"]["code"];
-            var partyResults = sort_results(node["partyResults"]);
-
-            var partyName = partyResults["edges"][0]["node"]["party"]["name"];
-            locationToMainParty[muniCode] = partyName;
-        })
-    } else {// "municipality"
-        edges = data["data"]["allVotingDistrictBallots"].edges;
-        edges.forEach(function(edge) {
-            var node = edge.node;
-            var iecId = node["location"]["iecId"];
-            var partyResults = sort_results(node["partyResults"]);
-
-            var partyName = partyResults["edges"][0]["node"]["party"]["name"];
-            locationToMainParty[iecId] = partyName;
-        })
-    }
-    return locationToMainParty;
+  if (!data)  return null;
+  var locationToMainParty = {};
+  var edges;
+  var regionType = props.regionType;
+  if (regionType === "national") {
+      edges = data["data"]["topPartiesByProvince"].edges;
+      edges.forEach(function(edge) {
+          var node = edge.node;
+          var provinceName = node["location"]["name"];
+          var partyName = node["topParty"]["party"]["name"];
+          locationToMainParty[provinceName] = partyName;
+      })
+  } else if (regionType === "province") {
+      edges = data["data"]["topPartiesByMunicipality"].edges;
+      edges.forEach(function(edge) {
+          var node = edge.node;
+          var muniCode = node["location"]["code"];
+          var partyName = node["topParty"]["party"]["name"];
+          locationToMainParty[muniCode] = partyName;
+      })
+  } else {// "municipality"
+      edges = data["data"]["topPartiesByVotingDistrict"].edges;
+      edges.forEach(function(edge) {
+          var node = edge.node;
+          var iecId = node["location"]["iecId"];
+          var partyName = node["topParty"]["party"]["name"];
+          locationToMainParty[iecId] = partyName;
+      })
+  }
+  return locationToMainParty;
 }
 
 export function parseSeatsData(data, props) {

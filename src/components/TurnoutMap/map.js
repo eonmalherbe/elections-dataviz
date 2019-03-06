@@ -553,12 +553,6 @@ class Map extends Component {
             self.getLoadingSpinner()
                 .style("display", "none");
         })
-
-        var redrawChart = function() {
-
-        };
-
-        window.addEventListener("resize", redrawChart, 200);
     }
 }
 
