@@ -81,6 +81,7 @@ class MapEmbed extends Component {
                         <select className={className("form-control")} 
                             value={provinceName}
                             onChange={e => this.setState({provinceName: e.target.value})} >
+                            <option value="">Select ...</option>
                             {
                                 provincesData && provincesData.map(province => {
                                     return <option key={province.name} value={province.name}>{province.name}</option>
@@ -96,6 +97,7 @@ class MapEmbed extends Component {
                         <select className={className("form-control")} 
                             value={muniName}
                             onChange={e => this.setState({muniName: e.target.value})} >
+                            <option value="">Select ...</option>
                             {
                                 curProvinceData && curProvinceData.munis.map(muni => {
                                     return <option key={muni.muniName} value={muni.muniName}>{muni.muniName}</option>

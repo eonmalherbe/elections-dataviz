@@ -3,8 +3,10 @@ import ReactDOM from "react-dom";
 import {
     BarChart,
     RaceForSeatsBarChart,
+    SpoiltBarChart,
     Map,
     TurnoutMap,
+    TurnoutBarChart,
     BarchartWithNavMap,
     QuickResultsWidget
 } from "./components";
@@ -44,3 +46,15 @@ window.showQuickResultsWidget = (element, options) => {
         {...options}
         />, element);
 };
+
+window.showSpoiltBarChart = (element, options) => {
+    ReactDOM.render(<SpoiltBarChart 
+        {...options}
+        />, element);
+}
+
+window.showTurnoutBarChart = (element, options) => {
+    ReactDOM.render(<TurnoutBarChart 
+        {...options}
+        />, element);
+}

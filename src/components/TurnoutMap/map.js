@@ -214,8 +214,6 @@ class Map extends Component {
 
         var tooltipDiv = createTooltip(className);
 
-        console.log("process.env", process.env)
-
         var w = 900;
         var h = 800;
         var bottomMargin = 90;// for legend

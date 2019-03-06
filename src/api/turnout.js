@@ -1,6 +1,3 @@
-import { ApolloClient } from "apollo-client"
-import { HttpLink } from "apollo-link-http"
-import { InMemoryCache } from "apollo-cache-inmemory"
 import gql from "graphql-tag"
 import {client} from "./config"
 
@@ -74,3 +71,84 @@ import {client} from "./config"
     }
   }
   
+  export function getTurnoutDataForAllEvents(options) {
+    if (options.regionType == "national") {
+      return client.query({
+        query: gql`
+        {
+          allBallots{
+            edges{
+              node{
+                event {
+                  description
+                }
+                percVoterTurnout
+              }
+            }
+          }
+        }
+        `
+      })
+    } else if (options.regionType == "province") {
+      return client.query({
+        query: gql`
+        {
+          allProvincialBallots(
+            location_Name:"${options.provinceName}"
+          ) {
+            edges{
+              node {
+                event {
+                  description
+                }
+                percVoterTurnout
+              }
+            }
+          }
+        }
+        `
+      })
+    } else if (options.regionType == "municipality") {
+        var muniCode = options.muniCode || options.muniName.split(" - ")[0];
+
+        return client.query({
+          query: gql`
+          {
+            allMunicipalBallots( 
+                location_Province_Name:"${options.provinceName}", 
+                location_Code: "${muniCode}"
+            ) {
+              edges{
+                node{
+                  event {
+                    description
+                  }
+                  percVoterTurnout
+                }
+              }
+            }
+          }
+          `
+        })
+    } else if (options.regionType == "municipality-vd") {
+        return client.query({
+          query: gql`
+          {
+            allVotingDistrictBallots(
+                location_Id:"${options.iecId}", 
+                location_Ward_Municipality_Code:"${options.muniCode}"
+            ) {
+              edges{
+                node{
+                  event {
+                    description
+                  }
+                  percVoterTurnout
+                }
+              }
+            }
+          }
+          `
+        })
+      }
+  }

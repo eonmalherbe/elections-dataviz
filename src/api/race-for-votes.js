@@ -72,7 +72,7 @@ export function getVotesDataM(options) {
         `
       })
     } else if (options.regionType == "municipality") {
-      var muniCode = options.muniName.split(" - ")[0];
+      var muniCode = options.muniCode || options.muniName.split(" - ")[0];
   
       return client.query({
         query: gql`
@@ -113,9 +113,10 @@ export function getVotesDataM(options) {
         query: gql`
         {
           allVotingDistrictBallots(
-          event_Description:"${eventDescription}",
-          location_Id:"${options.iecId}", 
-          location_Ward_Municipality_Code:"${options.muniCode}") {
+            event_Description:"${eventDescription}",
+            location_Id:"${options.iecId}", 
+            location_Ward_Municipality_Code:"${options.muniCode}"
+          ) {
             edges{
               node{
                 location {

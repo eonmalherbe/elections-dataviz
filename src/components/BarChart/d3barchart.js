@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import {createTooltip} from "../../utils";
+import { type } from "os";
 
 export function Chart(container, width, height, className, options) {
 
@@ -66,17 +67,47 @@ export function Chart(container, width, height, className, options) {
     var barTextSvg = svg.append("g")
       .attr("class", className("bartext-container"));
   
-    this.draw = function(chartData, partyColorsData) {
+    this.draw = function(chartData, colorsData) {
       var partyColorByName = {};
-      if (partyColorsData && partyColorsData["data"]["allParties"]["edges"]) {
-        partyColorsData["data"]["allParties"]["edges"].forEach(edge => {
-          partyColorByName[edge.node.name] = edge.node.colour;
-        })
+
+      if (options.noXaxisByParty) {
+
+      } else {
+        var partyColorsData = colorsData;
+        if (partyColorsData && partyColorsData["data"]["allParties"]["edges"]) {
+          partyColorsData["data"]["allParties"]["edges"].forEach(edge => {
+            partyColorByName[edge.node.name] = edge.node.colour;
+          })
+        }
       }
 
       function getFillColorFromPartyName(partyName, i) {
         return partyColorByName[partyName.split("/")[0]] || predefColors[i%predefColors.length];
       }
+
+      function getFillColor(d, i) {
+        if (options.noXaxisByParty) {
+          if (typeof colorsData == "object")
+            return colorsData[d.name];
+          if (typeof colorsData == "function")
+            return colorsData(d, i);
+          return colorsData;
+        } else {
+          return getFillColorFromPartyName(d.partyInfo.name, i);
+        }
+      }
+
+      function getTooltipText(d, i) {
+        if (options.noXaxisByParty) {
+          return d.name + " : " + options.yValueFormat(options.yValue(d));
+        } else {
+          function formatPartyName(name) {
+            return name.split("/")[0].toLowerCase().replace(/\b\w/g, function(l){ return l.toUpperCase() })
+          }
+          return formatPartyName(d.partyInfo.name) + " : " + options.yValueFormat(options.yValue(d));
+        }	
+      }
+
       x.domain(chartData.map(function (d) {
           return d.name;
         }));
@@ -111,19 +142,14 @@ export function Chart(container, width, height, className, options) {
             return x(d.name)+x.bandwidth()/20;
           })
           .attr("width", x.bandwidth()*9/10)
-          .attr("fill", (d,i) => {
-            return getFillColorFromPartyName(d.partyInfo.name, i);
-          })
-          .on("mousemove", function(d) {		
+          .attr("fill", (d,i) => getFillColor(d, i))
+          .on("mousemove", function(d, i) {		
               d3.select(this)
                 .attr("opacity", 0.8);
               tooltipDiv.transition()		
                   .duration(200)		
                   .style("opacity", .9);		
-              function formatPartyName(name) {
-                return name.split("/")[0].toLowerCase().replace(/\b\w/g, function(l){ return l.toUpperCase() })
-              }
-              tooltipDiv.html(formatPartyName(d.partyInfo.name) + " : " + options.yValueFormat(options.yValue(d)))
+              tooltipDiv.html(getTooltipText(d, i))
                   .style("left", (d3.event.pageX) + "px")		
                   .style("top", (d3.event.pageY - 28) + "px");	
               })					
@@ -140,7 +166,7 @@ export function Chart(container, width, height, className, options) {
           .attr("height", 0)        
   
         barSvg.selectAll(`.${className("bar")}`).data(chartData)
-          .attr("fill", (d, i) => getFillColorFromPartyName(d.partyInfo.name, i))
+          .attr("fill", (d, i) => getFillColor(d, i))
           .transition()
           .duration(300)
           .attr("y", function (d) {

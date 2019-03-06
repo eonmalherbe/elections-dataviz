@@ -5,25 +5,24 @@ import {Chart} from "../BarChart/d3barchart";
 
 import events from "../../events";
 import {
-  getSeatsData,
-  getPartyColors
+  getTurnoutDataForAllEvents,
 } from "../../api";
 import {
-  parseSeatsData,
+  parseTurnoutDataForAllEvents,
   getRegionName
 } from "../../utils";
 
 
 var dataRefreshTime = 30 * 1000;
 var chartOptions = {
-  chartType: 'Race For Seats',
-  yAxisLabel: 'Seats Count',
-  dynamicYAxisFromValues: true,
+  chartType: 'Turnout Barchart',
+  yAxisLabel: 'PERCENTAGE',
+  noXaxisByParty: true,
   yValue: function(d) {
-    return d.seats;
+    return d.percVoterTurnout;
   },
-  yValueFormat: function(seats) {
-    return seats;
+  yValueFormat: function(percVoterTurnout) {
+    return percVoterTurnout + '%';
   } 
 };
 
@@ -32,7 +31,6 @@ function className(originName) {
 }
 
 var chart;
-var partyColorsData;
 var refreshIntervalID = 0;
 
 class BarChart extends Component {
@@ -41,16 +39,12 @@ class BarChart extends Component {
       super(props);
       var self = this;
       this.state = {
-        numParties: 5,
-        eventDescription: "2014 National Election",
+        eventType: "national",
         regionType: "national",
         provinceName: "",
         muniName: "",
         muniCode: "",
         iecId: "",
-      }
-      if (props.numParties) {
-        this.state.numParties = props.numParties;
       }
       if (props.regionType) {
         this.state.regionType = props.regionType;
@@ -159,30 +153,23 @@ class BarChart extends Component {
 
     draw(container, props) {
       var self = this;
-      var seatsDataLoader = getSeatsData(props);
-      var dataLoaders = [seatsDataLoader];
-
-      // if (!partyColorsData) {
-      //   var partyColorsLoader = getPartyColors();
-      //   dataLoaders.push(partyColorsLoader);
-      // }
+      var turnoutDataLoader = getTurnoutDataForAllEvents(props);
+      var dataLoaders = [turnoutDataLoader];
 
       Promise.all(dataLoaders).then(function(values){ 
-        var seatsData = values[0];
-        partyColorsData = partyColorsData || values[1];         
-        self.drawGraph(container, props, seatsData, partyColorsData);
+        var turnoutData = values[0];
+        self.drawGraph(container, props, turnoutData, 'rgb(157,51,55)');
       }).catch(error => console.error(error));
     }
 
-    drawGraph(container, props, data, partyColorsData) {
-        var chartData = parseSeatsData(data, props);
-      //  console.log("chart component", chart)
+    drawGraph(container, props, data, colorsData) {
+        var chartData = parseTurnoutDataForAllEvents(data, props);
         var width = parseInt(props.width);
         var height = parseInt(props.height);
         if (!chart)
           chart = new Chart(container, width, height, className, chartOptions);
         
-        chart.draw(chartData, partyColorsData);
+        chart.draw(chartData, colorsData);
     }
 }
 

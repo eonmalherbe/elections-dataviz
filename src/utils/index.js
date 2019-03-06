@@ -172,6 +172,68 @@ export function parseTurnoutData(data, props) {
   return locationToTurnout;
 }
 
+export function parseTurnoutDataForAllEvents(data, props) {
+  if (!data)  return null;
+  var edges;
+  var regionType = props.regionType;
+  if (regionType == "national") {
+    edges = data["data"]["allBallots"].edges;
+  } else if (regionType == "province") {
+    edges = data["data"]["allProvincialBallots"].edges;
+  } else if (regionType == "municipality") {
+    edges = data["data"]["allMunicipalBallots"].edges;
+  } else if (regionType == "municipality-vd") {
+    edges = data["data"]["allVotingDistrictBallots"].edges;
+  }
+  
+  return edges.map(function(edge) {
+    var node = edge.node;
+    var event = node["event"]["description"];
+    var percVoterTurnout = node["percVoterTurnout"]; 
+    return {
+      name: event,
+      percVoterTurnout
+    }
+  }).filter(edge => edge.name.toLowerCase().indexOf(props.eventType) != -1)
+}
+
+export function parseSpoiltVotesData(data, props) {
+  var firstEdge;
+  var regionType = props.regionType;
+  if (regionType == "national") {
+    firstEdge = data["data"]["allBallots"].edges[0];
+  } else if (regionType == "province") {
+    firstEdge = data["data"]["allProvincialBallots"].edges[0];
+  } else if (regionType == "municipality") {
+    firstEdge= data["data"]["allMunicipalBallots"].edges[0];
+  } else { //"municipality-vd"
+    firstEdge = data["data"]["allVotingDistrictBallots"].edges[0];
+  }
+  if (!firstEdge){
+    console.error("spoilt data is empty!!");
+    return null;
+  }
+
+  var nodeData = firstEdge["node"];
+
+  function calcPercent(a, b) {
+    if (b == 0) {
+      return 0;
+    } else {
+      return (a/b*100).toFixed(2);
+    }
+  }
+  return [
+    {
+      name: "Valid",
+      percent: calcPercent(nodeData["totalValidVotes"], nodeData["totalVotesCast"])
+    }, {
+      name: "Spoilt",
+      percent: calcPercent(nodeData["spoiltVotes"], nodeData["totalVotesCast"])
+    }
+  ]
+}
+
 export function getRegionName(state) {
   function beautifiedMuniName(muniName) {
     if (muniName.indexOf(" - ") != -1) {

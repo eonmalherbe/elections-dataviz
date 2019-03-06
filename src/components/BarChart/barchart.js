@@ -111,7 +111,6 @@ class BarChart extends Component {
     }
 
     componentWillUnmount() {
-      console.log("barchart unmount");
       chart = null;
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
       document.removeEventListener(events.BARCHART_PREVIEW, this.handlePreviewEvent);
@@ -171,7 +170,6 @@ class BarChart extends Component {
     }
 
     draw(container, props) {
-      console.log("drawing ...barchart");
       var self = this;
       var votesDataLoader = getVotesDataM(props);
       var dataLoaders = [votesDataLoader];
@@ -195,7 +193,6 @@ class BarChart extends Component {
         var height = parseInt(props.height);
         if (!chart)
           chart = new Chart(container, width, height, className);
-        console.log("chart component", chart)
         chart.draw(chartData, partyColorsData);
     }
 }

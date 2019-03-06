@@ -5,26 +5,21 @@ import {Chart} from "../BarChart/d3barchart";
 
 import events from "../../events";
 import {
-  getSeatsData,
-  getPartyColors
+  getSpoiltData
 } from "../../api";
 import {
-  parseSeatsData,
+  parseSpoiltVotesData,
   getRegionName
 } from "../../utils";
 
 
 var dataRefreshTime = 30 * 1000;
 var chartOptions = {
-  chartType: 'Race For Seats',
-  yAxisLabel: 'Seats Count',
-  dynamicYAxisFromValues: true,
-  yValue: function(d) {
-    return d.seats;
-  },
-  yValueFormat: function(seats) {
-    return seats;
-  } 
+  chartType: 'Spoilt vs Valid Votes',
+  yAxisLabel: 'PERCENTAGE VOTES',
+  noXaxisByParty: true,
+  yValue: d => d.percent,
+  yValueFormat: value => value + '%'
 };
 
 function className(originName) {
@@ -32,7 +27,6 @@ function className(originName) {
 }
 
 var chart;
-var partyColorsData;
 var refreshIntervalID = 0;
 
 class BarChart extends Component {
@@ -159,30 +153,26 @@ class BarChart extends Component {
 
     draw(container, props) {
       var self = this;
-      var seatsDataLoader = getSeatsData(props);
-      var dataLoaders = [seatsDataLoader];
-
-      // if (!partyColorsData) {
-      //   var partyColorsLoader = getPartyColors();
-      //   dataLoaders.push(partyColorsLoader);
-      // }
+      var spoiltDataLoader = getSpoiltData(props);
+      var dataLoaders = [spoiltDataLoader];
 
       Promise.all(dataLoaders).then(function(values){ 
-        var seatsData = values[0];
-        partyColorsData = partyColorsData || values[1];         
-        self.drawGraph(container, props, seatsData, partyColorsData);
+        var spoiltData = values[0];
+        self.drawGraph(container, props, spoiltData);
       }).catch(error => console.error(error));
     }
 
-    drawGraph(container, props, data, partyColorsData) {
-        var chartData = parseSeatsData(data, props);
-      //  console.log("chart component", chart)
+    drawGraph(container, props, data) {
+        var chartData = parseSpoiltVotesData(data, props);
         var width = parseInt(props.width);
         var height = parseInt(props.height);
         if (!chart)
           chart = new Chart(container, width, height, className, chartOptions);
         
-        chart.draw(chartData, partyColorsData);
+        chart.draw(chartData, {
+          "Valid": "rgb(0,255,0)",
+          "Spoilt": "rgb(255,0,0)"
+        });
     }
 }
 

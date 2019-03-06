@@ -6,7 +6,8 @@ import {client} from "./config"
 
 export {getSeatsData} from "./race-for-seats"
 export {getVotesDataM, getMainParties} from "./race-for-votes"
-export {getTurnoutData} from "./turnout"
+export {getTurnoutData, getTurnoutDataForAllEvents} from "./turnout"
+export {getSpoiltData} from "./spoilt"
 
 export function getElectionEvents() {
   return client.query({

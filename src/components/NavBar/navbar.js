@@ -25,7 +25,6 @@ class CustomLink extends React.Component {
     }
   
     onClick(e) {
-      console.log("onClick item", e, this.props.hasSubMenu);
       if (this.props.hasSubMenu) this.props.toggleSubMenu(e);
       else {
         this.props.activateMe({
@@ -156,7 +155,6 @@ class NavBar extends Component {
         var event = new CustomEvent(events.MAP_PREVIEW, { detail: newState });
         document.dispatchEvent(event);
         newState.activeLinkId = activeLinkId;
-        console.log("activeLinkId", activeLinkId);
         this.setState(newState);
     }
       

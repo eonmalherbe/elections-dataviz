@@ -96,6 +96,23 @@
         }
       ]
     },
+    "src/components/ProgVotesCountBarchart/barchart.mdx": {
+      "name": "Progress on Votes - Bar Chart",
+      "id": "281199b63cfc08c14a39433180fdf614",
+      "filepath": "src/components/ProgVotesCountBarchart/barchart.mdx",
+      "link": null,
+      "slug": "src-components-prog-votes-count-barchart-barchart",
+      "route": "/src-components-prog-votes-count-barchart-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "progress-on-votes---bar-chart",
+          "value": "Progress on Votes - Bar Chart"
+        }
+      ]
+    },
     "src/components/QuickResultsWidget/quickResultsWidget.mdx": {
       "name": "Quick Results Widget V1",
       "id": "92cef238995cd80bc61803ea82170ab0",
@@ -127,6 +144,40 @@
           "depth": 1,
           "slug": "race-for-seats---bar-chart",
           "value": "Race for Seats - Bar Chart"
+        }
+      ]
+    },
+    "src/components/SpoiltBarchart/barchart.mdx": {
+      "name": "Spoilt vs Valid votes - Bar Chart",
+      "id": "3e4292e1c20078f9abd78957ee503148",
+      "filepath": "src/components/SpoiltBarchart/barchart.mdx",
+      "link": null,
+      "slug": "src-components-spoilt-barchart-barchart",
+      "route": "/src-components-spoilt-barchart-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "spoilt-vs-valid-votes---bar-chart",
+          "value": "Spoilt vs Valid votes - Bar Chart"
+        }
+      ]
+    },
+    "src/components/TurnoutBarchart/barchart.mdx": {
+      "name": "Turnout - Bar Chart",
+      "id": "b36422fc786227aa75a17692560cda39",
+      "filepath": "src/components/TurnoutBarchart/barchart.mdx",
+      "link": null,
+      "slug": "src-components-turnout-barchart-barchart",
+      "route": "/src-components-turnout-barchart-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "turnout---bar-chart",
+          "value": "Turnout - Bar Chart"
         }
       ]
     },
