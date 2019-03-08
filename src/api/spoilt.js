@@ -83,7 +83,7 @@ import {client} from "./config"
           {
             allVotingDistrictBallots(
                 event_Description:"${eventDescription}",
-                location_Id:"${options.iecId}", 
+                location_IecId:"${options.iecId}", 
                 location_Ward_Municipality_Code:"${options.muniCode}"
             ) {
               edges{

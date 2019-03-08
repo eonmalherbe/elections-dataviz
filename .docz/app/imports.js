@@ -9,10 +9,10 @@ export const imports = {
     import(/* webpackPrefetch: true, webpackChunkName: "src-components-map-map" */ 'src/components/Map/map.mdx'),
   'src/components/ProgVotesCountPiechart/piechart.mdx': () =>
     import(/* webpackPrefetch: true, webpackChunkName: "src-components-prog-votes-count-piechart-piechart" */ 'src/components/ProgVotesCountPiechart/piechart.mdx'),
-  'src/components/QuickResultsWidget/quickResultsWidget.mdx': () =>
-    import(/* webpackPrefetch: true, webpackChunkName: "src-components-quick-results-widget-quick-results-widget" */ 'src/components/QuickResultsWidget/quickResultsWidget.mdx'),
   'src/components/RaceForSeatBarchart/barchart.mdx': () =>
     import(/* webpackPrefetch: true, webpackChunkName: "src-components-race-for-seat-barchart-barchart" */ 'src/components/RaceForSeatBarchart/barchart.mdx'),
+  'src/components/QuickResultsWidget/quickResultsWidget.mdx': () =>
+    import(/* webpackPrefetch: true, webpackChunkName: "src-components-quick-results-widget-quick-results-widget" */ 'src/components/QuickResultsWidget/quickResultsWidget.mdx'),
   'src/components/SpoiltBarchart/barchart.mdx': () =>
     import(/* webpackPrefetch: true, webpackChunkName: "src-components-spoilt-barchart-barchart" */ 'src/components/SpoiltBarchart/barchart.mdx'),
   'src/components/TurnoutBarchart/barchart.mdx': () =>
