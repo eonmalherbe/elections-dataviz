@@ -85,24 +85,13 @@ class BarChart extends Component {
   
     componentDidMount() {
 
-      // if (this.state.width && this.state.height) {
-
-      // } else {
-      //   var {
-      //     modifW,
-      //     modifH
-      //   } = this.getWidthHeightByScreenSize();
-      //   this.state.width = modifW;
-      //   this.state.height = modifH;
-      // }
-
       var self = this;
       this.draw(this.getContainer(), this.state);
       refreshIntervalID = setInterval(() => {
         self.draw(self.getContainer(), self.state)
       }, dataRefreshTime);
       document.addEventListener(events.REGION_CHANGE, this.handleRegionChange);
-      document.addEventListener(events.BARCHART_PREVIEW, this.handlePreviewEvent);
+      document.addEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
       window.addEventListener("resize", this.redrawChart, 200);
     }
 
@@ -113,7 +102,7 @@ class BarChart extends Component {
     componentWillUnmount() {
       chart = null;
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
-      document.removeEventListener(events.BARCHART_PREVIEW, this.handlePreviewEvent);
+      document.removeEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
       window.removeEventListener("resize", this.redrawChart);
       clearInterval(refreshIntervalID);
     }

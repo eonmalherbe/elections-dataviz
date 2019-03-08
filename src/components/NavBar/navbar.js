@@ -9,6 +9,10 @@ import {
     getMetrosData
 } from "../../api";
 
+import {
+    triggerCustomEvent
+} from "../../utils";
+
 function className(originName) {
   return styles[originName] || originName;
 }
@@ -97,6 +101,9 @@ class NavBar extends Component {
     }
 
     handleNavBarSelection(e) {
+        if (e.target.className.indexOf("metismenu-link") == -1) {
+            return;
+        }
         var iconClass = e.target.childNodes[0].className;
         var classList = iconClass.split(' ');
         var lastClass = classList[classList.length - 1];
@@ -149,11 +156,9 @@ class NavBar extends Component {
                 return;
         }
 
-        var event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
-        document.dispatchEvent(event);
+        triggerCustomEvent(events.REGION_CHANGE, newState);
+        triggerCustomEvent(events.MAP_PREVIEW, newState);
 
-        var event = new CustomEvent(events.MAP_PREVIEW, { detail: newState });
-        document.dispatchEvent(event);
         newState.activeLinkId = activeLinkId;
         this.setState(newState);
     }
@@ -175,13 +180,14 @@ class NavBar extends Component {
                     return {
                         icon: `2-${i}`,
                         label: province.name,
-                        content: province.munis.map((muni, j) => {
-                            return {
-                                icon: `3-${i}-${j}`,
-                                label: muni.muniName.split("-")[1].split("[")[0],
-                                to: `2-${i}`,
-                            }
-                        })
+                        to: `2-${i}`,
+                        // content: province.munis.map((muni, j) => {
+                        //     return {
+                        //         icon: `3-${i}-${j}`,
+                        //         label: muni.muniName.split("-")[1].split("[")[0],
+                        //         to: `3-${i}-${j}`,
+                        //     }
+                        // })
                     }
                 })
             },

@@ -8,6 +8,7 @@ export {getSeatsData} from "./race-for-seats"
 export {getVotesDataM, getMainParties} from "./race-for-votes"
 export {getTurnoutData, getTurnoutDataForAllEvents} from "./turnout"
 export {getSpoiltData} from "./spoilt"
+export {getProgressVotesCount} from "./prog-votescount"
 
 export function getElectionEvents() {
   return client.query({

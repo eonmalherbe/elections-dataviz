@@ -8,6 +8,10 @@ import {
     getProvincesData
 } from "../../api";
 
+import {
+    triggerCustomEvent
+} from "../../utils";
+
 var provincesData = getProvincesData();
 
 function className(originClassName) {
@@ -59,11 +63,8 @@ class BarChartWithNavMapEmbed extends Component {
     }
 
     onPreview(e) {
-        var event1 = new CustomEvent(events.BARCHART_PREVIEW, { detail: this.state });
-        document.dispatchEvent(event1);
-
-        var event2 = new CustomEvent(events.MAP_PREVIEW, { detail: this.state });
-        document.dispatchEvent(event2);
+        triggerCustomEvent(events.CHART_PREVIEW, this.state);
+        triggerCustomEvent(events.MAP_PREVIEW, this.state);
     }
       
     render () {

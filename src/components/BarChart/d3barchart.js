@@ -66,8 +66,19 @@ export function Chart(container, width, height, className, options) {
       .attr("class", className("bar-container"));
     var barTextSvg = svg.append("g")
       .attr("class", className("bartext-container"));
+    var errorText = svg.append("g")
+      .attr("transform", "translate("+(width/2)+","+(height/2)+")")
+      .append("text")
+      .attr("text-anchor", "middle");
   
     this.draw = function(chartData, colorsData) {
+
+      if (!chartData) {
+        errorText.text("chart data is not available");
+        return;
+      } else {
+        errorText.text("");
+      }
       var partyColorByName = {};
 
       if (options.noXaxisByParty) {

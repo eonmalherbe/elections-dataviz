@@ -84,7 +84,7 @@ class BarChart extends Component {
         self.draw(self.getContainer(), self.state)
       }, dataRefreshTime);
       document.addEventListener(events.REGION_CHANGE, this.handleRegionChange);
-      document.addEventListener(events.BARCHART_PREVIEW, this.handlePreviewEvent);
+      document.addEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
       window.addEventListener("resize", this.redrawChart, 200);
     }
 
@@ -95,7 +95,7 @@ class BarChart extends Component {
     componentWillUnmount() {
       chart = null;
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
-      document.removeEventListener(events.BARCHART_PREVIEW, this.handlePreviewEvent);
+      document.removeEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
       window.removeEventListener("resize", this.redrawChart);
       clearInterval(refreshIntervalID);
     }

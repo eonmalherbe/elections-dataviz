@@ -1,30 +1,21 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
-import styles from "./barchart.css";
-import {Chart} from "../BarChart/d3barchart";
+import styles from "./piechart.css";
+import {Chart} from "./d3piechart";
 
 import events from "../../events";
 import {
-  getSeatsData,
-  getPartyColors
+  getProgressVotesCount
 } from "../../api";
 import {
-  parseSeatsData,
+  parseProgressVotesCount,
   getRegionName
 } from "../../utils";
 
 
 var dataRefreshTime = 30 * 1000;
 var chartOptions = {
-  chartType: 'Race For Seats',
-  yAxisLabel: 'Seats Count',
-  dynamicYAxisFromValues: true,
-  yValue: function(d) {
-    return d.seats;
-  },
-  yValueFormat: function(seats) {
-    return seats;
-  } 
+  chartType: 'Progress on Votes Count'
 };
 
 function className(originName) {
@@ -32,14 +23,12 @@ function className(originName) {
 }
 
 var chart;
-var partyColorsData;
 var refreshIntervalID = 0;
 
-class BarChart extends Component {
+class PieChart extends Component {
 
     constructor(props) {
       super(props);
-      var self = this;
       this.state = {
         numParties: 5,
         eventDescription: "2014 National Election",
@@ -90,7 +79,7 @@ class BarChart extends Component {
         self.draw(self.getContainer(), self.state)
       }, dataRefreshTime);
       document.addEventListener(events.REGION_CHANGE, this.handleRegionChange);
-      document.addEventListener(events.BARCHART_PREVIEW, this.handlePreviewEvent);
+      document.addEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
       window.addEventListener("resize", this.redrawChart, 200);
     }
 
@@ -101,7 +90,7 @@ class BarChart extends Component {
     componentWillUnmount() {
       chart = null;
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
-      document.removeEventListener(events.BARCHART_PREVIEW, this.handlePreviewEvent);
+      document.removeEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
       window.removeEventListener("resize", this.redrawChart);
       clearInterval(refreshIntervalID);
     }
@@ -147,7 +136,7 @@ class BarChart extends Component {
       
     render () {
       return (
-          <div className="barchart">
+          <div className="piechart">
             <div className={className("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
             <div 
               ref="vizcontainer" 
@@ -159,31 +148,27 @@ class BarChart extends Component {
 
     draw(container, props) {
       var self = this;
-      var seatsDataLoader = getSeatsData(props);
-      var dataLoaders = [seatsDataLoader];
-
-      // if (!partyColorsData) {
-      //   var partyColorsLoader = getPartyColors();
-      //   dataLoaders.push(partyColorsLoader);
-      // }
+      var progressVotesDataLoader = getProgressVotesCount(props);
+      var dataLoaders = [progressVotesDataLoader];
 
       Promise.all(dataLoaders).then(function(values){ 
-        var seatsData = values[0];
-        partyColorsData = partyColorsData || values[1];         
-        self.drawGraph(container, props, seatsData, partyColorsData);
+        var progressVotesData = values[0];
+        self.drawGraph(container, props, progressVotesData);
       }).catch(error => console.error(error));
     }
 
-    drawGraph(container, props, data, partyColorsData) {
-        var chartData = parseSeatsData(data, props);
-      //  console.log("chart component", chart)
+    drawGraph(container, props, data) {
+        var chartData = parseProgressVotesCount(data, props);
         var width = parseInt(props.width);
         var height = parseInt(props.height);
         if (!chart)
           chart = new Chart(container, width, height, className, chartOptions);
         
-        chart.draw(chartData, partyColorsData);
+        chart.draw(chartData, {
+          "Completed": "#15707C",
+          "Not Completed": "#CCCCCC"
+        });
     }
 }
 
-export default BarChart;
+export default PieChart;

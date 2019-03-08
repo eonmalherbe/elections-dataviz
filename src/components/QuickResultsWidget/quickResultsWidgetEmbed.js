@@ -8,6 +8,10 @@ import {
     getProvincesData
 } from "../../api";
 
+import {
+    triggerCustomEvent
+} from "../../utils";
+
 var provincesData = getProvincesData();
 
 function className(originClassName) {
@@ -59,11 +63,7 @@ class QuickResultsWidgetEmbed extends Component {
     }
 
     onPreview(e) {
-        var event1 = new CustomEvent(events.BARCHART_PREVIEW, { detail: this.state });
-        document.dispatchEvent(event1);
-
-        var event2 = new CustomEvent(events.MAP_PREVIEW, { detail: this.state });
-        document.dispatchEvent(event2);
+        triggerCustomEvent(events.QUICK_RESULTS_PREVIEW, this.state);
     }
       
     render () {
@@ -82,7 +82,7 @@ class QuickResultsWidgetEmbed extends Component {
         var curProvinceData = provincesData.filter(item => item.name == provinceName)[0];
         return (
           <div>
-            <h3> QuickResults Embed Script Generation </h3>
+            <h3> Quick Results Embed Script Generation </h3>
             <div className={className("form-group")}>
                 <label>Element ID </label>
                 <input 
@@ -150,7 +150,7 @@ class QuickResultsWidgetEmbed extends Component {
                     </div>
               }
               <div className={className("form-group")}>
-                  <label>Number Of Parties</label>
+                  <label>Number Of Parties for Bar Chart</label>
                   <input 
                     type="number" 
                     className={className("form-control")} 

@@ -10,7 +10,22 @@
     border-radius: 3px;			
     pointer-events: none;			
   }
-.sidebar {
+.submenu {
+  padding: 15px;
 }
-.main-component {
+.label {
+  font-size: 12px;
+  line-height: 45px;
 }
+button {
+  font-size: 14px;
+  height: 45px;
+  border-radius: 4px;
+  width: 100%;
+  outline: none;
+}
+
+.active {
+  border: solid green 1px;
+}
+

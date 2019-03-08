@@ -1,12 +1,16 @@
 import React, { Component } from "react";
 import config from "../../config";
 import bootstrapStyles from "bootstrap/dist/css/bootstrap.min.css";
-import styles from "./barchartEmbed.css";
+import styles from "./piechartEmbed.css";
 import events from "../../events";
 import {
     getElectionEvents,
     getProvincesData
 } from "../../api";
+
+import {
+    triggerCustomEvent
+} from "../../utils";
 
 var provincesData = getProvincesData();
 
@@ -14,7 +18,7 @@ function className(originClassName) {
     return bootstrapStyles[originClassName] || styles[originClassName] || originClassName;
 }
 
-class BarChartEmbed extends Component {
+class PieChartEmbed extends Component {
     
     constructor(props) {
         super(props);
@@ -26,7 +30,6 @@ class BarChartEmbed extends Component {
             muniName: "",
             muniCode: "",
             iecId: "",
-            numParties: 5,
 
             electionEvents: []
         }
@@ -59,8 +62,7 @@ class BarChartEmbed extends Component {
     }
 
     onPreview(e) {
-        var event = new CustomEvent(events.BARCHART_PREVIEW, { detail: this.state });
-        document.dispatchEvent(event);
+        triggerCustomEvent(events.CHART_PREVIEW, this.state);
     }
       
     render () {
@@ -73,14 +75,13 @@ class BarChartEmbed extends Component {
             muniName,
             muniCode,
             iecId,
-            numParties,
             electionEvents
         } = this.state;
 
         var curProvinceData = provincesData.filter(item => item.name == provinceName)[0];
         return (
           <div>
-            <h3> Race For Seat Bar Chart Embed Script Generation </h3>
+            <h3> Progress on Votes Count Embed Script Generation </h3>
             <div className={className("form-group")}>
                 <label>Element ID </label>
                 <input 
@@ -112,6 +113,8 @@ class BarChartEmbed extends Component {
                             <option value="national">national</option>
                         }
                         <option value="province">province</option>
+                        <option value="municipality">municipality</option>
+                        <option value="municipality-vd">voting district</option>
                   </select>
               </div>
               {
@@ -173,15 +176,6 @@ class BarChartEmbed extends Component {
                     </div>
               }
               <div className={className("form-group")}>
-                  <label>Number Of Parties</label>
-                  <input 
-                    type="number" 
-                    className={className("form-control")} 
-                    placeholder="5"
-                    value={numParties}
-                    onChange={e => this.setState({numParties: e.target.value})} />
-              </div>
-              <div className={className("form-group")}>
                 <button type="button" onClick={this.onPreview.bind(this)} className={className("btn") + " " + className("btn-primary") }>Preview</button>
               </div>
               <div className={className("form-group")}>
@@ -197,7 +191,6 @@ class BarChartEmbed extends Component {
                             muniName: "${muniName}",
                             muniCode: "${muniCode}",
                             iecId: "${iecId}",
-                            numParties: "${numParties}",
                             width: 600,
                             height: 220
                         });</script>`.replace(/(\r\n|\n|\r)/gm, "")}</span>
@@ -207,4 +200,4 @@ class BarChartEmbed extends Component {
         )
     }
 }
-export default BarChartEmbed;
+export default PieChartEmbed;

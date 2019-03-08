@@ -1,5 +1,13 @@
 import * as d3 from "d3";
 
+function calcPercent(a, b) {
+  if (b == 0) {
+    return 0;
+  } else {
+    return (a/b*100).toFixed(2);
+  }
+}
+
 export function parseVotesData(data, props) {
     var results, firstEdge;
     var regionType = props.regionType;
@@ -33,6 +41,40 @@ export function parseVotesData(data, props) {
             partyInfo: el["party"]
         }
     });
+}
+
+export function parseProgressVotesCount(data, props) {
+  var firstEdge;
+  var regionType = props.regionType;
+  if (regionType == "national") {
+    firstEdge = data["data"]["allBallots"].edges[0];
+  } else if (regionType == "province") {
+    firstEdge = data["data"]["allProvincialBallots"].edges[0];
+  } else if (regionType == "municipality") {
+    firstEdge= data["data"]["allMunicipalBallots"].edges[0];
+  } else { //"municipality-vd"
+    firstEdge = data["data"]["allVotingDistrictBallots"].edges[0];
+  }
+  if (!firstEdge){
+    console.error("progress votes count data is empty!!");
+    return null;
+  }
+
+  var nodeData = firstEdge["node"];
+
+  return [
+    {
+      name: "Completed",
+      percent: calcPercent(nodeData["vdWithResultsCaptured"], nodeData["vdCount"]),
+      totalCount: nodeData["vdCount"],
+      count: nodeData["vdWithResultsCaptured"]
+    }, {
+      name: "Not Completed",
+      percent: 100 - calcPercent(nodeData["vdWithResultsCaptured"], nodeData["vdCount"]),
+      totalCount: nodeData["vdCount"],
+      count: nodeData["vdCount"] - nodeData["vdWithResultsCaptured"]
+    }
+  ]
 }
 
 // export function parseMainPartyData(data, props) {
@@ -216,13 +258,6 @@ export function parseSpoiltVotesData(data, props) {
 
   var nodeData = firstEdge["node"];
 
-  function calcPercent(a, b) {
-    if (b == 0) {
-      return 0;
-    } else {
-      return (a/b*100).toFixed(2);
-    }
-  }
   return [
     {
       name: "Valid",
@@ -257,6 +292,24 @@ export function getRegionName(state) {
     return beautifiedMuniName(state.muniName) + "-" + state.iecId;
   }
 }
+
+export function getSubRegionName(properties, state) {
+  if (state.regionType === "national") {
+      return properties.SPROVINCE;
+  } else if (state.regionType === "province") {
+      return properties.smunicipal && properties.smunicipal.split(" - ")[1].split("[")[0]; 
+  } else {//municipality
+      return properties.SMUNICIPAL && properties.SMUNICIPAL.split(" - ")[1].split("[")[0]; 
+  }
+}
+
+export function getNationOrProvinceName(state) {
+  if (state.regionType == "national") {
+    return "South Africa";
+  }
+  return state.provinceName;
+}
+
 export function createTooltip(className) {
   if (document.getElementsByClassName(className("tooltip"))[0]) {
     return d3.select(`.${className("tooltip")}`);
@@ -265,4 +318,45 @@ export function createTooltip(className) {
       .attr("class", className("tooltip"))				
       .style("opacity", 0);
   }
+}
+
+export function getMunicipalityCode(properties) {
+  return properties.code || (properties.smunicipal && properties.smunicipal.split(" - ")[0].replace(/\s/g, ""));
+}
+
+export function fixMapLabelIntersect() {
+  var labelElements = document.getElementsByClassName("place-label");
+  var regions = {};
+  var overlapCnt = {};
+  var i;
+
+  for (i = 0; i < labelElements.length; i ++) {
+      regions[i] = labelElements[i].getBoundingClientRect();
+  }
+
+  for (i = 0; i < labelElements.length; i ++) {
+      for (var j = 0; j < i; j ++) {
+          var rect1 = regions[i];
+          var rect2 = regions[j];
+          var overlap = !(rect1.right < rect2.left || 
+              rect1.left > rect2.right || 
+              rect1.bottom < rect2.top || 
+              rect1.top > rect2.bottom);
+          if (overlap) {
+              overlapCnt[i] = overlapCnt[i]? (overlapCnt[i] + 1): 1;
+          }
+      }
+      if (overlapCnt[i] > 2) {
+          labelElements[i].setAttribute("opacity", 0)
+      } else if (overlapCnt[i] > 0){
+          labelElements[i].innerHTML = labelElements[i].innerHTML.slice(0, 3) + "...";
+      } else {
+
+      }
+  }
+}
+
+export function triggerCustomEvent(eventName, eventParam) {
+  var event = new CustomEvent(eventName, { detail: eventParam });
+  document.dispatchEvent(event);
 }

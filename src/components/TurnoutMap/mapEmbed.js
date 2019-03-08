@@ -9,6 +9,10 @@ import {
     getProvincesData
 } from "../../api";
 
+import {
+    triggerCustomEvent
+} from "../../utils";
+
 var provincesData = getProvincesData();
 function className(originClassName) {
     return bootstrapStyles[originClassName] || styles[originClassName] || originClassName;
@@ -56,8 +60,7 @@ class MapEmbed extends Component {
     }
 
     onPreview(e) {
-        var event = new CustomEvent(events.MAP_PREVIEW, { detail: this.state });
-        document.dispatchEvent(event);
+        triggerCustomEvent(events.MAP_PREVIEW, this.state);
     }
       
     render () {

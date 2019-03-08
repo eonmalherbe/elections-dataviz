@@ -96,20 +96,20 @@
         }
       ]
     },
-    "src/components/ProgVotesCountBarchart/barchart.mdx": {
-      "name": "Progress on Votes - Bar Chart",
-      "id": "281199b63cfc08c14a39433180fdf614",
-      "filepath": "src/components/ProgVotesCountBarchart/barchart.mdx",
+    "src/components/ProgVotesCountPiechart/piechart.mdx": {
+      "name": "Progress on Votes Count - Pie Chart",
+      "id": "ff82f668a4c8375dced2f0ea3ecf0aa0",
+      "filepath": "src/components/ProgVotesCountPiechart/piechart.mdx",
       "link": null,
-      "slug": "src-components-prog-votes-count-barchart-barchart",
-      "route": "/src-components-prog-votes-count-barchart-barchart",
+      "slug": "src-components-prog-votes-count-piechart-piechart",
+      "route": "/src-components-prog-votes-count-piechart-piechart",
       "order": 0,
       "menu": null,
       "headings": [
         {
           "depth": 1,
-          "slug": "progress-on-votes---bar-chart",
-          "value": "Progress on Votes - Bar Chart"
+          "slug": "progress-on-votes-count---pie-chart",
+          "value": "Progress on Votes Count - Pie Chart"
         }
       ]
     },

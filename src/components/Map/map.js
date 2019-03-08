@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
-import { SideNav, Nav } from "react-sidenav";
 
 import config from "../../config";
 import polylabel from "polylabel";
@@ -16,7 +15,11 @@ import {
 import {
   parseMainPartyData,
   getRegionName,
-  createTooltip
+  getSubRegionName,
+  createTooltip,
+  getMunicipalityCode,
+  fixMapLabelIntersect,
+  triggerCustomEvent
 } from "../../utils";
 
 var regionColor = "#9c9c9c";
@@ -52,6 +55,9 @@ class Map extends Component {
         if (props.muniName) {
             this.state.muniName = props.muniName;
         }
+        if (props.muniCode) {
+            this.state.muniCode = props.muniCode;
+        }
         if (props.disableNavigation) {
             this.state.disableNavigation = props.disableNavigation;
         }
@@ -80,37 +86,6 @@ class Map extends Component {
         this.setState(newState)
     }
 
-    handleNavBarSelection(regionType, selectionData) {
-        var newState;
-        if (regionType == "national") {
-            newState = {regionType: regionType};
-            if (this.state.regionType == newState.regionType)
-                return;
-        } else if (regionType == "province") {
-            newState = {
-                regionType: regionType,
-                provinceName: selectionData.name
-            };
-            if (this.state.regionType == newState.regionType && this.state.provinceName == newState.provinceName)
-                return;
-        } else if (regionType == "municipality") {
-            newState = {
-                regionType: regionType,
-                provinceName: selectionData.provinceName,
-                muniName: selectionData.muniName,
-                muniCode: selectionData.muniCode,
-            }; 
-            if (this.state.regionType == newState.regionType 
-                && this.state.provinceName == newState.provinceName
-                && this.state.newState == newState.muniName)
-                return;
-        }
-
-        var event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
-        document.dispatchEvent(event);
-        this.setState(newState);
-    }
-
     getContainer() {
         return d3.select(this.refs.vizcontainer)
     }
@@ -128,49 +103,12 @@ class Map extends Component {
         } = this.state;
         return (
             <div className={className("map-widget")}>
-                {/* {
-                    !disableNavigation &&
-                        <div className={className("map-navbar")}>
-                            <SideNav
-                                defaultSelectedPath="1"
-                                theme={theme}
-                                onItemSelection={this.onItemSelection}
-                                className={className("map-navbar")}
-                            >
-                                <Nav id="navbar-national" onClick={this.handleNavBarSelection.bind(this, "national")}>
-                                    National
-                                </Nav>
-                                {
-                                    provincesData.map(province => {
-                                        return <Nav 
-                                            key={province.abbreviation} 
-                                            id={"navbar-province-"+province.abbreviation}
-                                            onClick={this.handleNavBarSelection.bind(this, "province", province)}>
-                                                { province.name }
-                                                {
-                                                    province.munis.map(muni => {
-                                                        return <Nav 
-                                                            key={muni.muniCode} 
-                                                            id={"navbar-muni-"+muni.muniCode}
-                                                            onClick={this.handleNavBarSelection.bind(this, "municipality", muni)}
-                                                            >
-                                                                {muni.muniName.split("-")[1].split("[")[0] }
-                                                            </Nav>
-                                                    })
-                                                }
-                                        </Nav>
-                                    })
-                                }
-                            </SideNav>
-                        </div> 
-                } */}
-
                 <div className={className("map-title")}>{getRegionName(this.state)}</div>
 
+                <div ref="vizcontainer" className={className("map")}></div>
                 <div className={className("loading-spinner")} ref="loading">
                     <ReactLoading type={"spin"} color={"#777"} height={100} width={100} />
                 </div>
-                <div ref="vizcontainer" className={className("map")}></div>
             </div>
         )
     }
@@ -215,8 +153,6 @@ class Map extends Component {
             .style("opacity", 1);
 
         var tooltipDiv = createTooltip(className);
-
-        console.log("process.env", process.env)
 
         var w = 900;
         var h = 800;
@@ -265,9 +201,6 @@ class Map extends Component {
                     var provinceName = d.properties.SPROVINCE;
                     partyName = locationToMainParty[provinceName];
                 } else if (regionType === "province") {
-                    function getMunicipalityCode(properties) {
-                        return properties.code || properties.smunicipal.split(" - ")[0].replace(/\s/g, "");
-                    }
                     var muniCode = getMunicipalityCode(d.properties);
                     partyName = locationToMainParty[muniCode];
                 } else {// "municipality"
@@ -347,20 +280,6 @@ class Map extends Component {
                 .attr('y', 16)
                 .text(party => partyAbbrByName[party])
             
-            // if (self.state.regionType == "province") {
-            //    console.log("fetch muni Names and codes", JSON.stringify(jsonDataFeatures.map(d => {
-            //         function getMunicipalityCode(properties) {
-            //             return properties.code || properties.smunicipal.split("-")[0].replace(/\s/g, "");
-            //         }
-            //         var newState = {
-            //             provinceName: self.state.provinceName,
-            //             muniName: d.properties.smunicipal,
-            //             muniCode: getMunicipalityCode(d.properties),
-            //         }
-            //         return newState;
-            //     })));
-            // }
-            
             if (self.state.regionType !== "municipality") {
                 svg.selectAll(".place-label")
                     .data(jsonDataFeatures)
@@ -383,48 +302,11 @@ class Map extends Component {
                     })
                     .attr("dy", ".35em")
                     .style("text-anchor", "middle")
-                    .text(function(d) { 
-                        if (self.state.regionType === "national") {
-                            return d.properties.SPROVINCE;
-                        } else if (self.state.regionType === "province") {
-                            return d.properties.smunicipal.split(" - ")[1].split("[")[0]; 
-                        } else {//municipality
-                            return d.properties.SMUNICIPAL.split(" - ")[1].split("[")[0]; 
-                        }
-                    })
+                    .text(d => getSubRegionName(d.properties, self.state))
             }
 
             if (self.state.regionType !== "municipality") {
-                var labelElements = document.getElementsByClassName("place-label");
-
-                var regions = {};
-                var overlapCnt = {};
-                var i;
-
-                for (i = 0; i < jsonDataFeatures.length; i ++) {
-                    regions[i] = labelElements[i].getBoundingClientRect();
-                }
-    
-                for (i = 0; i < jsonDataFeatures.length; i ++) {
-                    for (var j = 0; j < i; j ++) {
-                        var rect1 = regions[i];
-                        var rect2 = regions[j];
-                        var overlap = !(rect1.right < rect2.left || 
-                            rect1.left > rect2.right || 
-                            rect1.bottom < rect2.top || 
-                            rect1.top > rect2.bottom);
-                        if (overlap) {
-                            overlapCnt[i] = overlapCnt[i]? (overlapCnt[i] + 1): 1;
-                        }
-                    }
-                    if (overlapCnt[i] > 2) {
-                        labelElements[i].setAttribute("opacity", 0)
-                    } else if (overlapCnt[i] > 0){
-                        labelElements[i].innerHTML = labelElements[i].innerHTML.slice(0, 3) + "...";
-                    } else {
-    
-                    }
-                }
+                fixMapLabelIntersect();
             }
 
             //hidden area for catching events
@@ -448,16 +330,8 @@ class Map extends Component {
                     tooltipDiv.transition()		
                         .duration(200)		
                         .style("opacity", 1);
-                    function regionName() {
-                        if (self.state.regionType === "national") {
-                            return d.properties.SPROVINCE;
-                        } else if (self.state.regionType === "province") {
-                            return d.properties.smunicipal.split(" - ")[1].split("[")[0]; 
-                        } else {//municipality
-                            return d.properties.SMUNICIPAL.split(" - ")[1].split("[")[0]; 
-                        }
-                    }
-                    tooltipDiv.html(regionName() + " : " + getMainPartyName(d, i))	
+
+                    tooltipDiv.html(getSubRegionName(d.properties, self.state) + " : " + getMainPartyName(d, i))	
                         .style("left", (d3.event.pageX) + "px")		
                         .style("top", (d3.event.pageY - 28) + "px");	
                 })
@@ -487,21 +361,16 @@ class Map extends Component {
                             regionType: "province",
                             provinceName: d.properties.SPROVINCE
                         }
-                        event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
-                        document.dispatchEvent(event);
+                        triggerCustomEvent(events.REGION_CHANGE, newState);
                         self.setState(newState);
                     } else if (regionType === "province") {
-                        function getMunicipalityCode(properties) {
-                            return properties.code || properties.smunicipal.split(" - ")[0].replace(/\s/g, "");
-                        }
                         newState = {
                             regionType: "municipality", 
                             provinceName: self.state.provinceName,
                             muniName: d.properties.smunicipal,
                             muniCode: getMunicipalityCode(d.properties),
                         }
-                        event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
-                        document.dispatchEvent(event);
+                        triggerCustomEvent(events.REGION_CHANGE, newState);
 
                         self.setState(newState);
                     } else { // "municipality"
@@ -515,8 +384,7 @@ class Map extends Component {
                             muniCode: self.state.muniCode,
                             iecId: getMunicipalityiecId(d.properties),
                         }
-                        var event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
-                        document.dispatchEvent(event);
+                        triggerCustomEvent(events.REGION_CHANGE, newState);
                     }
                 })
             if (!self.state.disableNavigation) {
@@ -548,8 +416,7 @@ class Map extends Component {
                             newState.regionType = "province";
                         }
     
-                        event = new CustomEvent(events.REGION_CHANGE, { detail: newState });
-                        document.dispatchEvent(event);
+                        triggerCustomEvent(events.REGION_CHANGE, newState);
                         self.setState(newState);
                     });
             }

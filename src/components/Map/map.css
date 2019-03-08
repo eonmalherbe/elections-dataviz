@@ -3,6 +3,7 @@ text {
 }
 .map-title {
     font-weight: bold;
+    text-align: center;
 }
 
 .loading-spinner {

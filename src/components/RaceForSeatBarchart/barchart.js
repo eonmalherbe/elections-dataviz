@@ -5,12 +5,11 @@ import {Chart} from "../BarChart/d3barchart";
 
 import events from "../../events";
 import {
-  getSeatsData,
-  getPartyColors
+  getSeatsData
 } from "../../api";
 import {
   parseSeatsData,
-  getRegionName
+  getNationOrProvinceName
 } from "../../utils";
 
 
@@ -39,7 +38,6 @@ class BarChart extends Component {
 
     constructor(props) {
       super(props);
-      var self = this;
       this.state = {
         numParties: 5,
         eventDescription: "2014 National Election",
@@ -90,7 +88,7 @@ class BarChart extends Component {
         self.draw(self.getContainer(), self.state)
       }, dataRefreshTime);
       document.addEventListener(events.REGION_CHANGE, this.handleRegionChange);
-      document.addEventListener(events.BARCHART_PREVIEW, this.handlePreviewEvent);
+      document.addEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
       window.addEventListener("resize", this.redrawChart, 200);
     }
 
@@ -101,7 +99,7 @@ class BarChart extends Component {
     componentWillUnmount() {
       chart = null;
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
-      document.removeEventListener(events.BARCHART_PREVIEW, this.handlePreviewEvent);
+      document.removeEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
       window.removeEventListener("resize", this.redrawChart);
       clearInterval(refreshIntervalID);
     }
@@ -146,9 +144,10 @@ class BarChart extends Component {
     }
       
     render () {
+
       return (
           <div className="barchart">
-            <div className={className("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
+            <div className={className("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>
             <div 
               ref="vizcontainer" 
               className={className("chart-body")} 
@@ -162,11 +161,6 @@ class BarChart extends Component {
       var seatsDataLoader = getSeatsData(props);
       var dataLoaders = [seatsDataLoader];
 
-      // if (!partyColorsData) {
-      //   var partyColorsLoader = getPartyColors();
-      //   dataLoaders.push(partyColorsLoader);
-      // }
-
       Promise.all(dataLoaders).then(function(values){ 
         var seatsData = values[0];
         partyColorsData = partyColorsData || values[1];         
@@ -176,7 +170,6 @@ class BarChart extends Component {
 
     drawGraph(container, props, data, partyColorsData) {
         var chartData = parseSeatsData(data, props);
-      //  console.log("chart component", chart)
         var width = parseInt(props.width);
         var height = parseInt(props.height);
         if (!chart)

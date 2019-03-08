@@ -59,8 +59,7 @@ class BarChartEmbed extends Component {
     }
 
     onPreview(e) {
-        var event = new CustomEvent(events.BARCHART_PREVIEW, { detail: this.state });
-        document.dispatchEvent(event);
+        triggerCustomEvent(events.CHART_PREVIEW, this.state);
     }
       
     render () {

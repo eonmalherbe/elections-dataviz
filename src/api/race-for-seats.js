@@ -34,7 +34,10 @@ export function getSeatsData(options) {
         }
         `
       })
-    } else if (options.regionType == "province") {
+    } else { //  if (options.regionType == "province")
+      eventDescription = eventDescription.replace("National", "Provincial");
+      eventDescription = eventDescription.replace("NATIONAL", "PROVINCIAL");
+      eventDescription = eventDescription.replace("national", "provincial");
       return client.query({
         query: gql`
         {
