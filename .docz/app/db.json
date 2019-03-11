@@ -113,23 +113,6 @@
         }
       ]
     },
-    "src/components/RaceForSeatBarchart/barchart.mdx": {
-      "name": "Race for Seats - Bar Chart",
-      "id": "564ae6a7598bdbe935c66b31a7fcaca1",
-      "filepath": "src/components/RaceForSeatBarchart/barchart.mdx",
-      "link": null,
-      "slug": "src-components-race-for-seat-barchart-barchart",
-      "route": "/src-components-race-for-seat-barchart-barchart",
-      "order": 0,
-      "menu": null,
-      "headings": [
-        {
-          "depth": 1,
-          "slug": "race-for-seats---bar-chart",
-          "value": "Race for Seats - Bar Chart"
-        }
-      ]
-    },
     "src/components/QuickResultsWidget/quickResultsWidget.mdx": {
       "name": "Quick Results Widget V1",
       "id": "92cef238995cd80bc61803ea82170ab0",
@@ -144,6 +127,23 @@
           "depth": 1,
           "slug": "quick-results-widget-v1",
           "value": "Quick Results Widget V1"
+        }
+      ]
+    },
+    "src/components/RaceForSeatBarchart/barchart.mdx": {
+      "name": "Race for Seats - Bar Chart",
+      "id": "564ae6a7598bdbe935c66b31a7fcaca1",
+      "filepath": "src/components/RaceForSeatBarchart/barchart.mdx",
+      "link": null,
+      "slug": "src-components-race-for-seat-barchart-barchart",
+      "route": "/src-components-race-for-seat-barchart-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "race-for-seats---bar-chart",
+          "value": "Race for Seats - Bar Chart"
         }
       ]
     },

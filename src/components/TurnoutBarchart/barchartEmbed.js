@@ -55,6 +55,10 @@ class BarChartEmbed extends Component {
     onPreview(e) {
         triggerCustomEvent(events.CHART_PREVIEW, this.state);
     }
+
+    onExportAsPNG(e) {
+        triggerCustomEvent(events.EXPORT_PNG, this.state);
+    }
       
     render () {
         var DOMAIN = config.DOMAIN;
@@ -166,6 +170,11 @@ class BarChartEmbed extends Component {
               }
               <div className={className("form-group")}>
                 <button type="button" onClick={this.onPreview.bind(this)} className={className("btn") + " " + className("btn-primary") }>Preview</button>
+              </div>
+              <div className={className("form-group")}>
+                <button type="button" 
+                    onClick={this.onExportAsPNG.bind(this)} 
+                    className={className("btn") + " " + className("btn-primary") }>Export As PNG</button>
               </div>
               <div className={className("form-group")}>
                   <label>Embed Code</label>

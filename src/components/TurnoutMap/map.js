@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
+import svgToPng from "save-svg-as-png";
+import canvg from "canvg";
 
 import config from "../../config";
 import polylabel from "polylabel";
@@ -59,6 +61,7 @@ class Map extends Component {
         if (props.disableNavigation) {
             this.state.disableNavigation = props.disableNavigation;
         }
+        this.exportAsPNG = this.exportAsPNG.bind(this);
         this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
     }
 
@@ -68,15 +71,46 @@ class Map extends Component {
 
     componentDidMount() {
         this.draw(this.getContainer(), this.state)
+        document.addEventListener(events.EXPORT_PNG, this.exportAsPNG);
         document.addEventListener(events.MAP_PREVIEW, this.handlePreviewEvent);
     }
 
     componentWillUnmount() {
-      document.removeEventListener(events.MAP_PREVIEW, this.handlePreviewEvent);
+        document.removeEventListener(events.EXPORT_PNG, this.exportAsPNG);
+        document.removeEventListener(events.MAP_PREVIEW, this.handlePreviewEvent);
     }
 
     componentDidUpdate() {
         this.draw(this.getContainer(), this.state)
+    }
+
+    exportAsPNG(event) {
+        var rect = {width: 950, height: 890};
+        var rendercanvas = document.createElement('canvas');
+        rendercanvas.setAttribute("width", rect.width);
+        rendercanvas.setAttribute("height", rect.height);
+
+        canvg(rendercanvas, this.refs.vizcontainer.innerHTML, {
+            ignoreDimensions: true,
+            scaleWidth: rect.width,
+            scaleHeight: rect.height
+        });
+
+        var canvas = rendercanvas, filename = "race-for-votes-map.png";
+        var lnk = document.createElement("a"), e;
+
+        lnk.download = filename;
+        lnk.href = canvas.toDataURL("image/png;base64");
+
+        if (document.createEvent) {
+            e = document.createEvent("MouseEvents");
+            e.initMouseEvent("click", true, true, window,
+                            0, 0, 0, 0, 0, false, false, false,
+                            false, 0, null);
+            lnk.dispatchEvent(e);
+        } else if (lnk.fireEvent) {
+            lnk.fireEvent("onclick");
+        }
     }
 
     handlePreviewEvent(event) {
@@ -104,6 +138,7 @@ class Map extends Component {
                 <div className={className("map-title")}>{getRegionName(this.state)}</div>
 
                 <div ref="vizcontainer" className={className("map")}></div>
+
                 <div className={className("loading-spinner")} ref="loading">
                     <ReactLoading type={"spin"} color={"#777"} height={100} width={100} />
                 </div>

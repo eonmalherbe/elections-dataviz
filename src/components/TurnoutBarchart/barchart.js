@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import * as d3 from "d3";
 import styles from "./barchart.css";
 import {Chart} from "../BarChart/d3barchart";
+import svgToPng from "save-svg-as-png";
 
 import events from "../../events";
 import {
@@ -72,9 +73,9 @@ class BarChart extends Component {
         this.state.width = modifW;
         this.state.height = modifH;
       }
+      this.exportAsPNG = this.exportAsPNG.bind(this);
       this.handleRegionChange = this.handleRegionChange.bind(this);
       this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
-      this.redrawChart = this.redrawChart.bind(this);
     }
   
     componentDidMount() {
@@ -83,9 +84,9 @@ class BarChart extends Component {
       refreshIntervalID = setInterval(() => {
         self.draw(self.getContainer(), self.state)
       }, dataRefreshTime);
+      document.addEventListener(events.EXPORT_PNG, this.exportAsPNG);
       document.addEventListener(events.REGION_CHANGE, this.handleRegionChange);
       document.addEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
-      window.addEventListener("resize", this.redrawChart, 200);
     }
 
     componentDidUpdate() {
@@ -94,9 +95,9 @@ class BarChart extends Component {
 
     componentWillUnmount() {
       chart = null;
+      document.removeEventListener(events.EXPORT_PNG, this.exportAsPNG);
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
       document.removeEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
-      window.removeEventListener("resize", this.redrawChart);
       clearInterval(refreshIntervalID);
     }
 
@@ -111,20 +112,13 @@ class BarChart extends Component {
       }
     }
 
-    redrawChart() {
-      var {
-        modifW,
-        modifH
-      } = this.getWidthHeightByScreenSize();
-      if (chart)
-        chart.destroy();
-      chart = new Chart(this.getContainer(), modifW, modifH, className, chartOptions);
-      this.setState({width: modifW, height: modifH});
-    };
-
     handleRegionChange(event) {
       var newState = event.detail;
       this.setState(newState)
+    }
+
+    exportAsPNG(event) {
+      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], "turnout-barchart.png");
     }
 
     handlePreviewEvent(event) {

@@ -42,20 +42,13 @@ class BarchartWithNavMap extends Component {
             this.state.width = props.width;
             this.state.height = props.height;
         }
-        this.onResize = this.onResize.bind(this);
     }
 
     componentDidMount() {
-        window.addEventListener("resize", this.onResize, 200);
     }
   
     componentWillUnmount() {
-        window.removeEventListener("resize", this.onResize);
     }
-
-    onResize() {
-        
-    };
 
     render() {
         return (
