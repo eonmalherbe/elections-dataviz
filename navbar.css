@@ -55,7 +55,6 @@
   }
   
   .metismenu-link {
-    color: #000;
     transition: height .3s, color .3s, background-color .3s;
     -webkit-transition: height .3s, color .3s, background-color .3s;
     display: block;
