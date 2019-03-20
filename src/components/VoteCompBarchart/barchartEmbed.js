@@ -1,16 +1,18 @@
 import React, { Component } from "react";
 import config from "../../config";
 import bootstrapStyles from "bootstrap/dist/css/bootstrap.min.css";
-import styles from "./barchartMapEmbed.css";
+import styles from "./barchartEmbed.css";
 import events from "../../events";
 import {
     getElectionEvents,
-    getProvincesData
+    getProvincesData,
+    getPartyColors,
 } from "../../api";
 
 import {
     triggerCustomEvent
 } from "../../utils";
+
 
 var provincesData = getProvincesData();
 
@@ -18,43 +20,69 @@ function className(originClassName) {
     return bootstrapStyles[originClassName] || styles[originClassName] || originClassName;
 }
 
-class BarChartWithNavMapEmbed extends Component {
+class BarChartEmbed extends Component {
     
     constructor(props) {
         super(props);
-        var self = this;
         this.state = {
             elementId: "root",
-            eventDescription: "2014 National Election",
-            regionType: "national",
-            provinceName: "",
+            eventDescriptions: [
+                "National Elections 1999",
+                // "Provincial Elections 1999",
+                "14 Apr 2004 National Election",
+                // "14 Apr 2004 Provincial Election",
+                "22 Apr 2009 National Election",
+                // "22 Apr 2009 Provincial Election",
+                "2014 National Election",
+                // "2014 Provincial Election",
+                "2019 NATIONAL ELECTION",
+                // "2019 PROVINCIAL ELECTION",
+            ],
+            regionType: "province",
+            provinceName: "Western Cape",
             muniName: "",
             muniCode: "",
             iecId: "",
-            numParties: 5,
+            partyAbbr: "ANC",
 
-            electionEvents: []
+            electionEvents: [],
+            allParties: []
         }
+    }
+
+    componentDidMount() {
+        var self = this;
         getElectionEvents()
             .then(function(data) {
                 var electionEvents = data["data"]["allEvents"].map(edge => edge["description"])
                 self.setState({electionEvents});
             }).catch(error => console.error(error));
-    }
-
-    componentDidMount() {
+        getPartyColors()
+            .then(function(data) {
+                var allParties = data["data"]["allParties"]["edges"].map(edge => edge["node"])
+                allParties = allParties.filter((thing, index, self) =>
+                    index === self.findIndex((t) => (
+                        t.abbreviation === thing.abbreviation
+                    ))
+                )
+                self.setState({allParties});         
+            }).catch(error => console.error(error))
     }
 
     componentDidUpdate() {
     }
 
     onEventDescriptionChange(e) {
-        if (e.target.value.toLowerCase().indexOf("national") == -1 &&
-                this.state.regionType == "national") {
-            this.setState({eventDescription: e.target.value, regionType: "province", provinceName: "Western Cape"});
-        } else {
-            this.setState({eventDescription: e.target.value });
+        var options = e.target.options;
+        var values = [];
+        for (var i = 0, l = options.length; i < l; i++) {
+          if (options[i].selected) {
+            values.push(options[i].value);
+          }
         }
+        this.setState({
+            eventDescriptions: values 
+        })
     }
 
     onRegionTypeChange(e) {
@@ -64,30 +92,31 @@ class BarChartWithNavMapEmbed extends Component {
 
     onPreview(e) {
         triggerCustomEvent(events.CHART_PREVIEW, this.state);
-        triggerCustomEvent(events.MAP_PREVIEW, this.state);
     }
 
     onExportAsPNG(e) {
-        triggerCustomEvent(events.EXPORT_SUPERWIDGET_PNG, this.state);
+        triggerCustomEvent(events.EXPORT_PNG, this.state);
     }
       
     render () {
         var DOMAIN = config.DOMAIN;
         var {
             elementId,
-            eventDescription,
+            eventDescriptions,
             regionType,            
             provinceName,
             muniName,
             muniCode,
             iecId,
-            numParties,
-            electionEvents
+            partyAbbr,
+            electionEvents,
+            allParties
         } = this.state;
+
         var curProvinceData = provincesData.filter(item => item.name == provinceName)[0];
         return (
           <div>
-            <h3> Map + Barchart Embed Script Generation </h3>
+            <h3> Race For Votes Comparison Bar Chart Embed Script Generation </h3>
             <div className={className("form-group")}>
                 <label>Element ID </label>
                 <input 
@@ -97,29 +126,10 @@ class BarChartWithNavMapEmbed extends Component {
                     onChange={e => this.setState({elementId: e.target.value})}
                     />
             </div>
-            <div>
-                Way to customize size and position of Bar Chart and Map.<br/>
-                For bar chart, you can use .barchart-container
-                <div className={className("embedcode")}>
-                    {`.barchart-container {
-                        width: 1000px;
-                        height: 300px;
-                        margin-left: 100px;
-                    }`}
-                </div>
-                For Map, you can use .map-container
-                <div className={className("embedcode")}>
-                    {`.map-container {
-                        width: 1000px;
-                        height: 300px;
-                        margin-left: 100px;
-                    }`}
-                </div>
-            </div>
               <div className={className("form-group")}>
                   <label>Event </label>
-                  <select className={className("form-control")} 
-                     value={eventDescription}
+                  <select multiple className={className("form-control")+" "+className("multievent-container")} 
+                     value={eventDescriptions}
                      onChange={this.onEventDescriptionChange.bind(this)}>
                         {
                             electionEvents.map(item => {
@@ -133,12 +143,10 @@ class BarChartWithNavMapEmbed extends Component {
                   <select className={className("form-control")} 
                      value={regionType}
                      onChange={this.onRegionTypeChange.bind(this)}>
-                        { 
-                            eventDescription.toLowerCase().indexOf("national") != -1 && 
-                            <option value="national">national</option>
-                        }
+                        <option value="national">national</option>
                         <option value="province">province</option>
                         <option value="municipality">municipality</option>
+                        <option value="municipality-vd">voting district</option>
                   </select>
               </div>
               {
@@ -173,14 +181,45 @@ class BarChartWithNavMapEmbed extends Component {
                         </select>
                     </div>
               }
+              {
+                  (regionType == "municipality-vd") &&
+                    <div className={className("form-group")}>
+                        <label>Municipality Code</label>
+                        <input 
+                            type="text" 
+                            className={className("form-control")} 
+                            placeholder="CPT"
+                            value={muniCode}
+                            onChange={e => this.setState({muniCode: e.target.value})} 
+                            />
+                    </div>
+              }
+              {
+                  (regionType == "municipality-vd") &&
+                    <div className={className("form-group")}>
+                        <label>Voting District Number</label>
+                        <input 
+                            type="text" 
+                            className={className("form-control")} 
+                            placeholder="97860055"
+                            value={iecId}
+                            onChange={e => this.setState({iecId: e.target.value})} 
+                            />
+                    </div>
+              }
               <div className={className("form-group")}>
-                  <label>Number Of Parties</label>
-                  <input 
-                    type="number" 
-                    className={className("form-control")} 
-                    placeholder="5"
-                    value={numParties}
-                    onChange={e => this.setState({numParties: e.target.value})} />
+                  <label>Party Name</label>
+                  
+                  <select className={className("form-control")} 
+                        value={partyAbbr}
+                        onChange={e => this.setState({partyAbbr: e.target.value})} >
+                        <option value="">Select ...</option>
+                        {
+                            allParties && allParties.map(party => {
+                                return <option key={party["name"]} value={party["abbreviation"]}>{party["name"]}</option>
+                            })
+                        }
+                  </select>
               </div>
               <div className={className("form-group")}>
                 <button type="button" onClick={this.onPreview.bind(this)} className={className("btn") + " " + className("btn-primary") }>Preview</button>
@@ -194,16 +233,16 @@ class BarChartWithNavMapEmbed extends Component {
                   <label>Embed Code</label>
                   <div className={className("embedcode")}>
                     <span>{`<script src="${DOMAIN}/embed/embed.js"></script>
-                    <script>showBarchartWithNavMap(
+                    <script>showRaceForVotesCompBarChart(
                         document.getElementById("${elementId}"),
                         {
-                            eventDescription: "${eventDescription}",
+                            eventDescriptions: ${JSON.stringify(eventDescriptions)},
                             regionType: "${regionType}",
                             provinceName: "${provinceName}",
                             muniName: "${muniName}",
                             muniCode: "${muniCode}",
                             iecId: "${iecId}",
-                            numParties: "${numParties}",
+                            partyAbbr: "${partyAbbr}",
                             width: 600,
                             height: 220
                         });</script>`.replace(/(\r\n|\n|\r)/gm, "")}</span>
@@ -213,4 +252,4 @@ class BarChartWithNavMapEmbed extends Component {
         )
     }
 }
-export default BarChartWithNavMapEmbed;
+export default BarChartEmbed;

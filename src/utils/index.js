@@ -43,6 +43,41 @@ export function parseVotesData(data, props) {
     });
 }
 
+export function parseVotesComparisonData(data, props) {
+  var results, edges;
+  var regionType = props.regionType;
+  if (regionType == "national") {
+    edges = data["data"]["allBallots"].edges;
+  } else if (regionType == "province") {
+    edges = data["data"]["allProvincialBallots"].edges;
+  } else if (regionType == "municipality") {
+    edges= data["data"]["allMunicipalBallots"].edges;
+  } else { //"municipality-vd"
+    edges = data["data"]["allVotingDistrictBallots"].edges;
+  }
+
+  var partyfilter_edges = edges.map(edge => {
+    var nodeData = edge["node"];
+    var partyResults = nodeData["partyResults"] || nodeData["topResult"];
+    results = partyResults["edges"].filter(a => a.node["party"]["abbreviation"] == props.partyAbbr);
+    var result = results[0];
+    if (result) {
+      var el = result["node"];
+      return {
+          name: nodeData["event"]["description"],
+          percOfVotes: el["percOfVotes"],
+          partyInfo: el["party"]
+      }
+    }
+    return {
+      name: nodeData["event"]["description"],
+      percOfVotes: 0,
+      partyInfo: null
+    }
+  });
+  return partyfilter_edges.filter(edge => props.eventDescriptions.indexOf(edge.name) != -1 && edge.partyInfo != null)
+}
+
 export function parseProgressVotesCount(data, props) {
   var firstEdge;
   var regionType = props.regionType;
@@ -164,7 +199,7 @@ export function parseSeatsData(data, props) {
     var node = edge.node;
     var seats = 0;
     if (regionType === "national") {
-      seats = node["nationalPr"];
+      seats = node["nationalPr"] + node["regional"];
     } else {//"province"
       seats = node["regional"];
     }
@@ -179,6 +214,33 @@ export function parseSeatsData(data, props) {
   //   return b["seats"] - a["seats"];
   // })
   return results.slice(0, props.numParties);
+}
+
+export function parseSeatsComparisonData(data, props) {
+  if (!data)  return null;
+  var edges = data["data"]["allSeatCalculations"].edges;
+  var regionType = props.regionType;
+
+  var results = edges.map(edge => {
+    var node = edge.node;
+    var seats = 0;
+    if (regionType === "national") {
+      seats = node["nationalPr"] + node["regional"];
+    } else {//"province"
+      seats = node["regional"];
+    }
+    return {
+      seats,
+      name: node["party"]["event"]["description"],
+      partyInfo: node["party"]
+    }
+  }).filter(result => result.partyInfo["abbreviation"] == props.partyAbbr)
+  .filter(result => props.eventDescriptions.indexOf(result.name) != -1)
+  
+  // results.sort(function(a,b) {
+  //   return b["seats"] - a["seats"];
+  // })
+  return results;
 }
 
 export function parseTurnoutData(data, props) {

@@ -147,6 +147,40 @@
         }
       ]
     },
+    "src/components/SeatCompBarchart/barchart.mdx": {
+      "name": "Race for Seats Comparison - Bar Chart",
+      "id": "7ef72205b401ce3eebf6c60532e986f0",
+      "filepath": "src/components/SeatCompBarchart/barchart.mdx",
+      "link": null,
+      "slug": "src-components-seat-comp-barchart-barchart",
+      "route": "/src-components-seat-comp-barchart-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "race-for-seats-comparison---bar-chart",
+          "value": "Race for Seats Comparison - Bar Chart"
+        }
+      ]
+    },
+    "src/components/SeatHorseShoeChart/horseshoe.mdx": {
+      "name": "Race for Seats - HorseShore Chart",
+      "id": "ac20c1ce274161cc2afe46afb667e234",
+      "filepath": "src/components/SeatHorseShoeChart/horseshoe.mdx",
+      "link": null,
+      "slug": "src-components-seat-horse-shoe-chart-horseshoe",
+      "route": "/src-components-seat-horse-shoe-chart-horseshoe",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "race-for-seats---horseshore-chart",
+          "value": "Race for Seats - HorseShore Chart"
+        }
+      ]
+    },
     "src/components/SpoiltBarchart/barchart.mdx": {
       "name": "Spoilt vs Valid votes - Bar Chart",
       "id": "3e4292e1c20078f9abd78957ee503148",
@@ -161,6 +195,40 @@
           "depth": 1,
           "slug": "spoilt-vs-valid-votes---bar-chart",
           "value": "Spoilt vs Valid votes - Bar Chart"
+        }
+      ]
+    },
+    "src/components/TVSeatCompBarchart/barchart.mdx": {
+      "name": "TV Race for Seats Comparison - Bar Chart",
+      "id": "a5dbc2d688d43cc1ebb0cc443c49d45d",
+      "filepath": "src/components/TVSeatCompBarchart/barchart.mdx",
+      "link": null,
+      "slug": "src-components-tv-seat-comp-barchart-barchart",
+      "route": "/src-components-tv-seat-comp-barchart-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "tv-race-for-seats-comparison---bar-chart",
+          "value": "TV Race for Seats Comparison - Bar Chart"
+        }
+      ]
+    },
+    "src/components/TVVoteCompBarchart/barchart.mdx": {
+      "name": "TV Race for Votes Comparison - Bar Chart",
+      "id": "21b120abba08930063edda339e2a76bb",
+      "filepath": "src/components/TVVoteCompBarchart/barchart.mdx",
+      "link": null,
+      "slug": "src-components-tv-vote-comp-barchart-barchart",
+      "route": "/src-components-tv-vote-comp-barchart-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "tv-race-for-votes-comparison---bar-chart",
+          "value": "TV Race for Votes Comparison - Bar Chart"
         }
       ]
     },
@@ -195,6 +263,23 @@
           "depth": 1,
           "slug": "turnout---map",
           "value": "Turnout - Map"
+        }
+      ]
+    },
+    "src/components/VoteCompBarchart/barchart.mdx": {
+      "name": "Race for Votes Comparison - Bar Chart",
+      "id": "7b55679831d2355183bda1b3f2899e27",
+      "filepath": "src/components/VoteCompBarchart/barchart.mdx",
+      "link": null,
+      "slug": "src-components-vote-comp-barchart-barchart",
+      "route": "/src-components-vote-comp-barchart-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "race-for-votes-comparison---bar-chart",
+          "value": "Race for Votes Comparison - Bar Chart"
         }
       ]
     }

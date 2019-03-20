@@ -2,6 +2,13 @@ import React, { Component } from "react";
 import styles from "./barchartMap.css";
 import BarChart from '../BarChart/barchart';
 import Map from '../Map/map';
+import events from "../../events";
+import JSZip from "jszip";
+import {saveAs} from "file-saver";
+
+import {
+    getRegionName
+} from "../../utils";
 
 function className(originName) {
     return styles[originName] || originName;
@@ -42,22 +49,52 @@ class BarchartWithNavMap extends Component {
             this.state.width = props.width;
             this.state.height = props.height;
         }
+        this.exportAsPNG = this.exportAsPNG.bind(this);
+    }
+
+    exportAsPNG(event) {
+        var self = this;
+        Promise.all([
+            self.barchartInstance.exportAsPNGUri(),
+            self.mapInstance.exportAsPNGUri()
+        ]).then(values => {
+            console.log("exporting ...");
+            var zip = new JSZip();
+
+            var imgs = zip.folder("export-images");
+            imgs.file("barchart.png", values[0], {base64: true});
+            imgs.file("map.png", values[1], {base64: true});
+
+            zip.generateAsync({type:"blob"})
+            .then(function(content) {
+                saveAs(content, `race-for-votes-barchart-map(${getRegionName(self.state)}).zip`);
+                console.log("exporting ended successfully");
+            });
+        }).catch(error => {
+            console.error("export error", error);
+        })
     }
 
     componentDidMount() {
+        document.addEventListener(events.EXPORT_SUPERWIDGET_PNG, this.exportAsPNG);
     }
   
     componentWillUnmount() {
+        document.removeEventListener(events.EXPORT_SUPERWIDGET_PNG, this.exportAsPNG);
     }
 
     render() {
         return (
-        <div>
-            <div className={className("barchart-container")}>
-            <BarChart {...this.state} />
+        <div ref="superwidget" >
+            <div className={className("barchart-container")} ref="barchart">
+                <BarChart 
+                    ref={instance => { this.barchartInstance = instance; }} 
+                    {...this.state} />
             </div>
             <div className={className("map-container")}>
-            <Map {...this.state}/>
+                <Map 
+                    ref={instance => { this.mapInstance = instance; }} 
+                    {...this.state}/>
             </div>
         </div>
         );

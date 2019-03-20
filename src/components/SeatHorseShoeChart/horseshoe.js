@@ -1,22 +1,23 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
-import styles from "./piechart.css";
-import {Chart} from "./d3piechart";
+import styles from "./horseshoe.css";
+import {Chart} from "../SeatHorseShoeChart/d3horseshoe";
 import svgToPng from "save-svg-as-png";
 
 import events from "../../events";
 import {
-  getProgressVotesCount
+  getSeatsData,
+  getPartyColors
 } from "../../api";
 import {
-  parseProgressVotesCount,
-  getRegionName
+  parseSeatsData,
+  getNationOrProvinceName
 } from "../../utils";
 
 
 var dataRefreshTime = 30 * 1000;
 var chartOptions = {
-  chartType: 'Progress on Votes Count'
+  chartType: 'Race For Seats HorseShoe Chart',
 };
 
 function className(originName) {
@@ -24,14 +25,15 @@ function className(originName) {
 }
 
 var chart;
+var partyColorsData;
 var refreshIntervalID = 0;
 
-class PieChart extends Component {
+class HorseShoeChart extends Component {
 
     constructor(props) {
       super(props);
       this.state = {
-        numParties: 5,
+        numParties: 100,
         eventDescription: "2014 National Election",
         regionType: "national",
         provinceName: "",
@@ -39,9 +41,7 @@ class PieChart extends Component {
         muniCode: "",
         iecId: "",
       }
-      if (props.numParties) {
-        this.state.numParties = props.numParties;
-      }
+
       if (props.regionType) {
         this.state.regionType = props.regionType;
       }
@@ -123,7 +123,7 @@ class PieChart extends Component {
     }
 
     exportAsPNG(event) {
-      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `progress-on-votes-piechart(${getRegionName(this.state)}).png`);
+      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-seats-horseshoe-chart(${getNationOrProvinceName(this.state)}).png`);
     }
 
     handlePreviewEvent(event) {
@@ -137,11 +137,12 @@ class PieChart extends Component {
     getContainer() {
       return d3.select(this.refs.vizcontainer)
     }
-   
+      
     render () {
+
       return (
-          <div className="piechart">
-            <div className={className("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
+          <div className="horseshoechart">
+            <div className={className("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>
             <div 
               ref="vizcontainer" 
               className={className("chart-body")} 
@@ -152,27 +153,30 @@ class PieChart extends Component {
 
     draw(container, props) {
       var self = this;
-      var progressVotesDataLoader = getProgressVotesCount(props);
-      var dataLoaders = [progressVotesDataLoader];
+      var seatsDataLoader = getSeatsData(props);
+      var dataLoaders = [seatsDataLoader];
+
+      if (!partyColorsData) {
+        var partyColorsLoader = getPartyColors();
+        dataLoaders.push(partyColorsLoader);
+      }
 
       Promise.all(dataLoaders).then(function(values){ 
-        var progressVotesData = values[0];
-        self.drawGraph(container, props, progressVotesData);
+        var seatsData = values[0];
+        partyColorsData = partyColorsData || values[1];         
+        self.drawGraph(container, props, seatsData, partyColorsData);
       }).catch(error => console.error(error));
     }
 
-    drawGraph(container, props, data) {
-        var chartData = parseProgressVotesCount(data, props);
+    drawGraph(container, props, data, partyColorsData) {
+        var chartData = parseSeatsData(data, props);
         var width = parseInt(props.width);
         var height = parseInt(props.height);
         if (!chart)
           chart = new Chart(container, width, height, className, chartOptions);
         
-        chart.draw(chartData, {
-          "Completed": "#15707C",
-          "Not Completed": "#CCCCCC"
-        });
+        chart.draw(chartData, partyColorsData);
     }
 }
 
-export default PieChart;
+export default HorseShoeChart;

@@ -22,7 +22,6 @@ class QuickResultsWidgetEmbed extends Component {
     
     constructor(props) {
         super(props);
-        var self = this;
         this.state = {
             elementId: "root",
             eventDescription: "2014 National Election",
@@ -35,14 +34,15 @@ class QuickResultsWidgetEmbed extends Component {
 
             electionEvents: []
         }
+    }
+
+    componentDidMount() {
+        var self = this;
         getElectionEvents()
             .then(function(data) {
                 var electionEvents = data["data"]["allEvents"].map(edge => edge["description"])
                 self.setState({electionEvents});
             }).catch(error => console.error(error));
-    }
-
-    componentDidMount() {
     }
 
     componentDidUpdate() {
@@ -64,6 +64,10 @@ class QuickResultsWidgetEmbed extends Component {
 
     onPreview(e) {
         triggerCustomEvent(events.QUICK_RESULTS_PREVIEW, this.state);
+    }    
+    
+    onExportAsPNG(e) {
+        triggerCustomEvent(events.EXPORT_SUPERWIDGET_PNG, this.state);
     }
       
     render () {
@@ -160,6 +164,11 @@ class QuickResultsWidgetEmbed extends Component {
               </div>
               <div className={className("form-group")}>
                 <button type="button" onClick={this.onPreview.bind(this)} className={className("btn") + " " + className("btn-primary") }>Preview</button>
+              </div>              
+              <div className={className("form-group")}>
+                <button type="button" 
+                    onClick={this.onExportAsPNG.bind(this)} 
+                    className={className("btn") + " " + className("btn-primary") }>Export As PNG</button>
               </div>
               <div className={className("form-group")}>
                   <label>Embed Code</label>

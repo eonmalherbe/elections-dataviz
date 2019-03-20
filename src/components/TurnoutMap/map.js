@@ -61,6 +61,7 @@ class Map extends Component {
         if (props.disableNavigation) {
             this.state.disableNavigation = props.disableNavigation;
         }
+        this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
         this.exportAsPNG = this.exportAsPNG.bind(this);
         this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
     }
@@ -76,12 +77,36 @@ class Map extends Component {
     }
 
     componentWillUnmount() {
+        this.getContainer().selectAll("svg").remove();
         document.removeEventListener(events.EXPORT_PNG, this.exportAsPNG);
         document.removeEventListener(events.MAP_PREVIEW, this.handlePreviewEvent);
     }
 
     componentDidUpdate() {
         this.draw(this.getContainer(), this.state)
+    }
+
+
+    exportAsPNGUri() {
+        var self = this;
+        return new Promise(function(resolve, reject) {
+            var rect = {width: 950, height: 890};
+            var rendercanvas = document.createElement('canvas');
+            rendercanvas.setAttribute("width", rect.width);
+            rendercanvas.setAttribute("height", rect.height);
+    
+            // var ctx = rendercanvas.getContext("2d");
+            // ctx.globalCompositeOperation = "source-out";
+            // ctx.fillStyle = "#ffffff";
+            // ctx.fillRect(0, 0, rect.width, rect.height);
+
+            canvg(rendercanvas, self.refs.vizcontainer.innerHTML, {
+                ignoreDimensions: true,
+                scaleWidth: rect.width,
+                scaleHeight: rect.height
+            });
+            resolve(rendercanvas.toDataURL("image/png;base64").split(',')[1])
+        });
     }
 
     exportAsPNG(event) {
@@ -96,7 +121,7 @@ class Map extends Component {
             scaleHeight: rect.height
         });
 
-        var canvas = rendercanvas, filename = "race-for-votes-map.png";
+        var canvas = rendercanvas, filename = `turnout-map(${getRegionName(this.state)}).png`;
         var lnk = document.createElement("a"), e;
 
         lnk.download = filename;
@@ -260,9 +285,10 @@ class Map extends Component {
                 var fillColor = getFillColorFromTurnout(turnout);
                 return fillColor;
             }
-
             var jsonDataFeatures;
             if (fullRouteGeoJsonFile.indexOf(".topojson") !== -1) {//topojson is used for only munis
+                if (!geoJsonData.objects[self.state.muniCode])
+                    return;
                 geoJsonData = topojson.feature(geoJsonData, geoJsonData.objects[self.state.muniCode]);
             }
 

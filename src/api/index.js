@@ -1,11 +1,8 @@
-import { ApolloClient } from "apollo-client"
-import { HttpLink } from "apollo-link-http"
-import { InMemoryCache } from "apollo-cache-inmemory"
 import gql from "graphql-tag"
 import {client} from "./config"
 
-export {getSeatsData} from "./race-for-seats"
-export {getVotesDataM, getMainParties} from "./race-for-votes"
+export {getSeatsData, getSeatsDataForComparison} from "./race-for-seats"
+export {getVotesDataM, getVotesDataForComparison, getMainParties} from "./race-for-votes"
 export {getTurnoutData, getTurnoutDataForAllEvents} from "./turnout"
 export {getSpoiltData} from "./spoilt"
 export {getProgressVotesCount} from "./prog-votescount"

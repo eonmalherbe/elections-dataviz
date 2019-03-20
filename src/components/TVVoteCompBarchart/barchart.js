@@ -1,46 +1,65 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
-import styles from "./piechart.css";
-import {Chart} from "./d3piechart";
+import styles from "./barchart.css";
+import {Chart} from "../BarChart/d3barchart";
 import svgToPng from "save-svg-as-png";
 
 import events from "../../events";
 import {
-  getProgressVotesCount
+  getVotesDataForComparison,
+  getPartyColors,
+  getProvincesData
 } from "../../api";
 import {
-  parseProgressVotesCount,
+  parseVotesComparisonData,
   getRegionName
 } from "../../utils";
 
+var provincesData = getProvincesData();
 
 var dataRefreshTime = 30 * 1000;
-var chartOptions = {
-  chartType: 'Progress on Votes Count'
-};
 
 function className(originName) {
   return styles[originName] || originName;
 }
 
 var chart;
+var partyColorsData;
 var refreshIntervalID = 0;
 
-class PieChart extends Component {
+var chartOptions = {
+  chartType: "Race For Votes Comparison",
+  yAxisLabel: "PERCENTAGE VOTES",
+  yValue: d => d.percOfVotes,
+  yValueFormat: value => value + '%'
+}
+
+class BarChart extends Component {
 
     constructor(props) {
       super(props);
       this.state = {
-        numParties: 5,
-        eventDescription: "2014 National Election",
+        partyAbbrs: ["ANC", "DA", "EFF"],
+        eventDescriptions: [
+            "National Elections 1999",
+            // "Provincial Elections 1999",
+            "14 Apr 2004 National Election",
+            // "14 Apr 2004 Provincial Election",
+            "22 Apr 2009 National Election",
+            // "22 Apr 2009 Provincial Election",
+            "2014 National Election",
+            // "2014 Provincial Election",
+            "2019 NATIONAL ELECTION",
+            // "2019 PROVINCIAL ELECTION",
+        ],
         regionType: "national",
         provinceName: "",
         muniName: "",
         muniCode: "",
-        iecId: "",
+        iecId: ""
       }
-      if (props.numParties) {
-        this.state.numParties = props.numParties;
+      if (props.partyAbbrs) {
+        this.state.partyAbbrs = props.partyAbbrs;
       }
       if (props.regionType) {
         this.state.regionType = props.regionType;
@@ -57,17 +76,7 @@ class PieChart extends Component {
       if (props.iecId) {
         this.state.iecId = props.iecId;
       }
-      if (props.width && props.height) {
-        this.state.width = props.width;
-        this.state.height = props.height;
-      } else {
-        var {
-          modifW,
-          modifH
-        } = this.getWidthHeightByScreenSize();
-        this.state.width = modifW;
-        this.state.height = modifH;
-      }
+
       this.exportAsPNG = this.exportAsPNG.bind(this);
       this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
       this.handleRegionChange = this.handleRegionChange.bind(this);
@@ -75,6 +84,7 @@ class PieChart extends Component {
     }
   
     componentDidMount() {
+
       var self = this;
       this.draw(this.getContainer(), this.state);
       refreshIntervalID = setInterval(() => {
@@ -90,27 +100,14 @@ class PieChart extends Component {
     }
 
     componentWillUnmount() {
-      chart = null;
+      if (chart) {
+        chart.destroy();
+        chart = null;
+      }
       document.removeEventListener(events.EXPORT_PNG, this.exportAsPNG);
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
       document.removeEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
       clearInterval(refreshIntervalID);
-    }
-
-    getWidthHeightByScreenSize() {
-      var modifW = Math.min(810, document.body.clientWidth- 350);
-      if (document.body.clientWidth < 775)
-        modifW = document.body.clientWidth - 50;
-      var modifH = modifW/3.5;
-      return {
-        modifW,
-        modifH
-      }
-    }
-
-    handleRegionChange(event) {
-      var newState = event.detail;
-      this.setState(newState)
     }
 
     exportAsPNGUri() {
@@ -123,24 +120,29 @@ class PieChart extends Component {
     }
 
     exportAsPNG(event) {
-      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `progress-on-votes-piechart(${getRegionName(this.state)}).png`);
+      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-votes-comparation-barchart(${getRegionName(this.state)}).png`);
+    }
+
+    handleRegionChange(event) {
+      var newState = event.detail;
+      this.setState(newState)
     }
 
     handlePreviewEvent(event) {
       var newState = event.detail;
       if (chart)
         chart.destroy();
-      chart = new Chart(this.getContainer(), this.state.width, this.state.height, className, chartOptions);
+      chart = new Chart(this.getContainer(), null, null, className);
       this.setState(newState)
     }
 
     getContainer() {
       return d3.select(this.refs.vizcontainer)
     }
-   
+      
     render () {
       return (
-          <div className="piechart">
+          <div className={className("barchart")}>
             <div className={className("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
             <div 
               ref="vizcontainer" 
@@ -152,27 +154,28 @@ class PieChart extends Component {
 
     draw(container, props) {
       var self = this;
-      var progressVotesDataLoader = getProgressVotesCount(props);
-      var dataLoaders = [progressVotesDataLoader];
+      var votesDataLoader = getVotesDataForComparison(props);
+      var dataLoaders = [votesDataLoader];
+
+      if (!partyColorsData) {
+        var partyColorsLoader = getPartyColors();
+        dataLoaders.push(partyColorsLoader);
+      }
 
       Promise.all(dataLoaders).then(function(values){ 
-        var progressVotesData = values[0];
-        self.drawGraph(container, props, progressVotesData);
+        var votesData = values[0];
+        partyColorsData = partyColorsData || values[1];          
+        self.drawGraph(container, props, votesData, partyColorsData);
       }).catch(error => console.error(error));
     }
 
-    drawGraph(container, props, data) {
-        var chartData = parseProgressVotesCount(data, props);
-        var width = parseInt(props.width);
-        var height = parseInt(props.height);
+    drawGraph(container, props, data, partyColorsData) {
+        var chartData = parseVotesComparisonData(data, props);
+
         if (!chart)
-          chart = new Chart(container, width, height, className, chartOptions);
-        
-        chart.draw(chartData, {
-          "Completed": "#15707C",
-          "Not Completed": "#CCCCCC"
-        });
+          chart = new Chart(container, null, null, className);
+        chart.draw(chartData, partyColorsData);
     }
 }
 
-export default PieChart;
+export default BarChart;

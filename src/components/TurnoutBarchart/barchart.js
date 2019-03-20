@@ -74,6 +74,7 @@ class BarChart extends Component {
         this.state.height = modifH;
       }
       this.exportAsPNG = this.exportAsPNG.bind(this);
+      this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
       this.handleRegionChange = this.handleRegionChange.bind(this);
       this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
     }
@@ -117,8 +118,17 @@ class BarChart extends Component {
       this.setState(newState)
     }
 
+    exportAsPNGUri() {
+      var self = this;
+      return new Promise(function(resolve, reject) {
+        svgToPng.svgAsPngUri(self.refs.vizcontainer.childNodes[0], {}, function(uri) {
+          resolve(uri.split(',')[1]);
+        });
+      });
+    }
+
     exportAsPNG(event) {
-      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], "turnout-barchart.png");
+      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `turnout-barchart(${getRegionName(this.state)}).png`);
     }
 
     handlePreviewEvent(event) {

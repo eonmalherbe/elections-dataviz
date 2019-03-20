@@ -6,7 +6,8 @@ import svgToPng from "save-svg-as-png";
 
 import events from "../../events";
 import {
-  getSeatsData
+  getSeatsData,
+  getPartyColors
 } from "../../api";
 import {
   parseSeatsData,
@@ -78,6 +79,7 @@ class BarChart extends Component {
         this.state.height = modifH;
       }
       this.exportAsPNG = this.exportAsPNG.bind(this);
+      this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
       this.handleRegionChange = this.handleRegionChange.bind(this);
       this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
     }
@@ -121,14 +123,24 @@ class BarChart extends Component {
       this.setState(newState)
     }
 
+    exportAsPNGUri() {
+      var self = this;
+      return new Promise(function(resolve, reject) {
+        svgToPng.svgAsPngUri(self.refs.vizcontainer.childNodes[0], {}, function(uri) {
+          resolve(uri.split(',')[1]);
+        });
+      });
+    }
+
     exportAsPNG(event) {
-      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], "race-for-seats-barchart.png");
+      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-seats-barchart(${getNationOrProvinceName(this.state)}).png`);
     }
 
     handlePreviewEvent(event) {
       var newState = event.detail;
       if (chart)
         chart.destroy();
+        
       chart = new Chart(this.getContainer(), this.state.width, this.state.height, className, chartOptions);
       this.setState(newState)
     }
@@ -154,6 +166,11 @@ class BarChart extends Component {
       var self = this;
       var seatsDataLoader = getSeatsData(props);
       var dataLoaders = [seatsDataLoader];
+
+      if (!partyColorsData) {
+        var partyColorsLoader = getPartyColors();
+        dataLoaders.push(partyColorsLoader);
+      }
 
       Promise.all(dataLoaders).then(function(values){ 
         var seatsData = values[0];

@@ -148,7 +148,7 @@ export function Chart(container, width, height, className, options) {
   
       bars.enter()
           .append("rect")
-          .attr("class", className("bar"))
+          .attr("class", (d) => className("bar") + " bar_" + d.name)
           .attr("x", function (d) {
             return x(d.name)+x.bandwidth()/20;
           })

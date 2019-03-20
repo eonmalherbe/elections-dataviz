@@ -13,10 +13,20 @@ export const imports = {
     import(/* webpackPrefetch: true, webpackChunkName: "src-components-quick-results-widget-quick-results-widget" */ 'src/components/QuickResultsWidget/quickResultsWidget.mdx'),
   'src/components/RaceForSeatBarchart/barchart.mdx': () =>
     import(/* webpackPrefetch: true, webpackChunkName: "src-components-race-for-seat-barchart-barchart" */ 'src/components/RaceForSeatBarchart/barchart.mdx'),
+  'src/components/SeatCompBarchart/barchart.mdx': () =>
+    import(/* webpackPrefetch: true, webpackChunkName: "src-components-seat-comp-barchart-barchart" */ 'src/components/SeatCompBarchart/barchart.mdx'),
+  'src/components/SeatHorseShoeChart/horseshoe.mdx': () =>
+    import(/* webpackPrefetch: true, webpackChunkName: "src-components-seat-horse-shoe-chart-horseshoe" */ 'src/components/SeatHorseShoeChart/horseshoe.mdx'),
   'src/components/SpoiltBarchart/barchart.mdx': () =>
     import(/* webpackPrefetch: true, webpackChunkName: "src-components-spoilt-barchart-barchart" */ 'src/components/SpoiltBarchart/barchart.mdx'),
+  'src/components/TVSeatCompBarchart/barchart.mdx': () =>
+    import(/* webpackPrefetch: true, webpackChunkName: "src-components-tv-seat-comp-barchart-barchart" */ 'src/components/TVSeatCompBarchart/barchart.mdx'),
+  'src/components/TVVoteCompBarchart/barchart.mdx': () =>
+    import(/* webpackPrefetch: true, webpackChunkName: "src-components-tv-vote-comp-barchart-barchart" */ 'src/components/TVVoteCompBarchart/barchart.mdx'),
   'src/components/TurnoutBarchart/barchart.mdx': () =>
     import(/* webpackPrefetch: true, webpackChunkName: "src-components-turnout-barchart-barchart" */ 'src/components/TurnoutBarchart/barchart.mdx'),
   'src/components/TurnoutMap/map.mdx': () =>
     import(/* webpackPrefetch: true, webpackChunkName: "src-components-turnout-map-map" */ 'src/components/TurnoutMap/map.mdx'),
+  'src/components/VoteCompBarchart/barchart.mdx': () =>
+    import(/* webpackPrefetch: true, webpackChunkName: "src-components-vote-comp-barchart-barchart" */ 'src/components/VoteCompBarchart/barchart.mdx'),
 }

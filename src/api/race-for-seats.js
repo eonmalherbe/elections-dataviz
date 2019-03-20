@@ -1,6 +1,64 @@
 import gql from "graphql-tag"
 import {client} from "./config"
 
+export function getSeatsDataForComparison(options) {
+  if (options.regionType == "national") {
+    return client.query({
+      query: gql`
+      {
+          allSeatCalculations(
+            party_Event_Description_Icontains:"national",
+            orderBy:["-national_pr"]){
+            edges{
+              node
+              {
+                nationalPr
+                regional
+                party{
+                  event {
+                    description
+                  }
+                  name
+                  abbreviation
+                }
+                province{
+                  name
+                }
+              }
+            }
+          }
+      }
+      `
+    })
+  } else { //  if (options.regionType == "province")
+    return client.query({
+      query: gql`
+      {
+          allSeatCalculations(province_Name:"${options.provinceName}", orderBy:["-regional"]){
+            edges{
+              node
+              {
+                nationalPr
+                regional
+                party{
+                  event {
+                    description
+                  }
+                  name
+                  abbreviation
+                }
+                province{
+                  name
+                }
+              }
+            }
+          }
+      }
+      `
+    })
+  }
+}
+
 
 export function getSeatsData(options) {
     var eventDescription = options.eventDescription;

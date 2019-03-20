@@ -3,6 +3,7 @@ const CHART_PREVIEW = "chart-preview";
 const MAP_PREVIEW = "map-preview";
 const QUICK_RESULTS_PREVIEW = "quick-results-preview"
 const EXPORT_PNG = "export-png";
+const EXPORT_SUPERWIDGET_PNG = "export-superwidget-png";
 
 export default {
     REGION_CHANGE,

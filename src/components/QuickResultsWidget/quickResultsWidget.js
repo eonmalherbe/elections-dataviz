@@ -19,6 +19,13 @@ import TurnoutMap from '../TurnoutMap/map';
 import NavBar from '../NavBar/navbar';
 import Map from '../Map/map';
 
+import JSZip from "jszip";
+import {saveAs} from "file-saver";
+import {
+    getRegionName
+} from "../../utils";
+
+
 function className(originName) {
     return styles[originName] || bootstrapStyles[originName] || originName;
 }
@@ -54,16 +61,19 @@ class QuickResultsWidget extends Component {
         if (props.iecId) {
             this.state.iecId = props.iecId;
         }
+        this.exportAsPNG = this.exportAsPNG.bind(this);
         this.handleRegionChange = this.handleRegionChange.bind(this);
         this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
     }
 
     componentDidMount() {
+        document.addEventListener(events.EXPORT_SUPERWIDGET_PNG, this.exportAsPNG);
         document.addEventListener(events.REGION_CHANGE, this.handleRegionChange);
         document.addEventListener(events.QUICK_RESULTS_PREVIEW, this.handlePreviewEvent);
     }
   
     componentWillUnmount() {
+        document.removeEventListener(events.EXPORT_SUPERWIDGET_PNG, this.exportAsPNG);
         document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
         document.removeEventListener(events.QUICK_RESULTS_PREVIEW, this.handlePreviewEvent);
     }
@@ -72,6 +82,57 @@ class QuickResultsWidget extends Component {
       var newState = event.detail;
       if (newState.regionType != "municipality-vd")
         this.setState(newState)
+    }
+
+    exportAsPNG(event) {
+        var {
+            comp
+        } = this.state;
+        var self = this;
+        var zipfileName = `quick-results-widget-${comp.replace(/\s/gi, '-')}(${getRegionName(self.state)})`;
+        var imageLoadPromises = [];
+        if (comp == 'race for votes') {
+            imageLoadPromises = [
+                this.votesInstance1.exportAsPNGUri(), 
+                this.votesInstance2.exportAsPNGUri()
+            ];
+        } else if (comp == 'race for seats') {
+            imageLoadPromises = [
+                this.seatsInstance1.exportAsPNGUri(), 
+                this.seatsInstance2.exportAsPNGUri()
+            ];
+        } else if (comp == 'turnout') {
+            imageLoadPromises = [
+                this.turnoutInstance1.exportAsPNGUri(), 
+                this.turnoutInstance2.exportAsPNGUri()
+            ];
+        } else if (comp == 'counting progress') {
+            imageLoadPromises = [
+                this.progressInstance1.exportAsPNGUri(), 
+                this.progressInstance2.exportAsPNGUri()
+            ];
+        } else if (comp == 'spoilt votes') {
+            imageLoadPromises = [
+                this.spoiltInstance1.exportAsPNGUri(), 
+                this.spoiltInstance2.exportAsPNGUri()
+            ];
+        }
+        Promise.all(imageLoadPromises).then(values => {
+            console.log("exporting ...");
+            var zip = new JSZip();
+
+            var imgs = zip.folder(zipfileName);
+            imgs.file("image1.png", values[0], {base64: true});
+            imgs.file("image2.png", values[1], {base64: true});
+
+            zip.generateAsync({type:"blob"})
+            .then(function(content) {
+                saveAs(content, `${zipfileName}.zip`);
+                console.log("exporting ended successfully");
+            });
+        }).catch(error => {
+            console.error("export error", error);
+        })
     }
 
     handlePreviewEvent(event) {
@@ -134,10 +195,14 @@ class QuickResultsWidget extends Component {
                                 comp == 'race for votes' && 
                                 <div className={className("col-md-8")}>
                                     <div className={className("barchart-container")}>
-                                        <BarChart {...this.state} />
+                                        <BarChart 
+                                            ref={instance => { this.votesInstance1 = instance; }} 
+                                            {...this.state} />
                                     </div>
                                     <div className={className("map-container")}>
-                                        <Map {...this.state}/>
+                                        <Map 
+                                            ref={instance => { this.votesInstance2 = instance; }} 
+                                            {...this.state} />
                                     </div>
                                 </div>
                             }
@@ -145,10 +210,14 @@ class QuickResultsWidget extends Component {
                                 comp == 'race for seats' && 
                                 <div className={className("col-md-8")}>
                                     <div className={className("barchart-container")}>
-                                        <RaceForSeatBarChart {...this.state} />
+                                        <RaceForSeatBarChart 
+                                            ref={instance => { this.seatsInstance1 = instance; }} 
+                                            {...this.state} />
                                     </div>
                                     <div className={className("map-container")}>
-                                        <Map {...this.state}/>
+                                        <Map 
+                                            ref={instance => { this.seatsInstance2 = instance; }} 
+                                            {...this.state} />
                                     </div>
                                 </div>
                             }
@@ -156,10 +225,14 @@ class QuickResultsWidget extends Component {
                                 comp == 'turnout' && 
                                 <div className={className("col-md-8")}>
                                     <div className={className("barchart-container")}>
-                                        <TurnoutBarchart {...this.state} />
+                                        <TurnoutBarchart 
+                                            ref={instance => { this.turnoutInstance1 = instance; }} 
+                                            {...this.state} />
                                     </div>
                                     <div className={className("map-container")}>
-                                        <TurnoutMap {...this.state}/>
+                                        <TurnoutMap 
+                                            ref={instance => { this.turnoutInstance2 = instance; }} 
+                                            {...this.state} />
                                     </div>
                                 </div>
                                 
@@ -168,10 +241,14 @@ class QuickResultsWidget extends Component {
                                 comp == 'counting progress' && 
                                 <div className={className("col-md-8")}>
                                     <div className={className("barchart-container")}>
-                                        <ProgressVotesPieChart {...this.state} />
+                                        <ProgressVotesPieChart 
+                                            ref={instance => { this.progressInstance1 = instance; }} 
+                                            {...this.state} />
                                     </div>
                                     <div className={className("map-container")}>
-                                        <Map {...this.state}/>
+                                        <Map 
+                                            ref={instance => { this.progressInstance2 = instance; }} 
+                                            {...this.state} />
                                     </div>
                                 </div>
                             }
@@ -179,10 +256,14 @@ class QuickResultsWidget extends Component {
                                 comp == 'spoilt votes' &&
                                 <div className={className("col-md-8")}>
                                     <div className={className("barchart-container")}>
-                                        <SpoiltBarChart {...this.state} />
+                                        <SpoiltBarChart 
+                                            ref={instance => { this.spoiltInstance1 = instance; }} 
+                                            {...this.state} />
                                     </div>
                                     <div className={className("map-container")}>
-                                        <Map {...this.state}/>
+                                        <Map 
+                                            ref={instance => { this.spoiltInstance2 = instance; }} 
+                                            {...this.state} />
                                     </div>
                                 </div> 
                             }
