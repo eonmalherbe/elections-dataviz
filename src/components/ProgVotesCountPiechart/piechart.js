@@ -58,17 +58,7 @@ class PieChart extends Component {
       if (props.iecId) {
         this.state.iecId = props.iecId;
       }
-      if (props.width && props.height) {
-        this.state.width = props.width;
-        this.state.height = props.height;
-      } else {
-        var {
-          modifW,
-          modifH
-        } = this.getWidthHeightByScreenSize();
-        this.state.width = modifW;
-        this.state.height = modifH;
-      }
+
       this.exportAsPNG = this.exportAsPNG.bind(this);
       this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
       this.handleRegionChange = this.handleRegionChange.bind(this);
@@ -98,17 +88,6 @@ class PieChart extends Component {
       clearInterval(refreshIntervalID);
     }
 
-    getWidthHeightByScreenSize() {
-      var modifW = Math.min(810, document.body.clientWidth- 350);
-      if (document.body.clientWidth < 775)
-        modifW = document.body.clientWidth - 50;
-      var modifH = modifW/3.5;
-      return {
-        modifW,
-        modifH
-      }
-    }
-
     handleRegionChange(event) {
       var newState = event.detail;
       this.setState(newState)
@@ -131,7 +110,7 @@ class PieChart extends Component {
       var newState = event.detail;
       if (chart)
         chart.destroy();
-      chart = new Chart(this.getContainer(), this.state.width, this.state.height, className, chartOptions);
+      chart = new Chart(this.getContainer(), null, null, className, chartOptions);
       this.setState(newState)
     }
 
@@ -164,10 +143,8 @@ class PieChart extends Component {
 
     drawGraph(container, props, data) {
         var chartData = parseProgressVotesCount(data, props);
-        var width = parseInt(props.width);
-        var height = parseInt(props.height);
         if (!chart)
-          chart = new Chart(container, width, height, className, chartOptions);
+          chart = new Chart(container, null, null, className, chartOptions);
         
         chart.draw(chartData, {
           "Completed": "#15707C",

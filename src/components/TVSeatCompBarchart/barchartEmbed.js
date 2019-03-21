@@ -242,9 +242,7 @@ class BarChartEmbed extends Component {
                             muniName: "${muniName}",
                             muniCode: "${muniCode}",
                             iecId: "${iecId}",
-                            partyAbbr: "${partyAbbr}",
-                            width: 600,
-                            height: 220
+                            partyAbbr: "${partyAbbr}"
                         });</script>`.replace(/(\r\n|\n|\r)/gm, "")}</span>
                   </div>
               </div>

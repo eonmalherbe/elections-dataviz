@@ -25,8 +25,8 @@ export const imports = {
     import(/* webpackPrefetch: true, webpackChunkName: "src-components-tv-vote-comp-barchart-barchart" */ 'src/components/TVVoteCompBarchart/barchart.mdx'),
   'src/components/TurnoutBarchart/barchart.mdx': () =>
     import(/* webpackPrefetch: true, webpackChunkName: "src-components-turnout-barchart-barchart" */ 'src/components/TurnoutBarchart/barchart.mdx'),
-  'src/components/TurnoutMap/map.mdx': () =>
-    import(/* webpackPrefetch: true, webpackChunkName: "src-components-turnout-map-map" */ 'src/components/TurnoutMap/map.mdx'),
   'src/components/VoteCompBarchart/barchart.mdx': () =>
     import(/* webpackPrefetch: true, webpackChunkName: "src-components-vote-comp-barchart-barchart" */ 'src/components/VoteCompBarchart/barchart.mdx'),
+  'src/components/TurnoutMap/map.mdx': () =>
+    import(/* webpackPrefetch: true, webpackChunkName: "src-components-turnout-map-map" */ 'src/components/TurnoutMap/map.mdx'),
 }

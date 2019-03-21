@@ -196,9 +196,7 @@ class QuickResultsWidgetEmbed extends Component {
                             muniName: "${muniName}",
                             muniCode: "${muniCode}",
                             iecId: "${iecId}",
-                            numParties: "${numParties}",
-                            width: 600,
-                            height: 220
+                            numParties: "${numParties}"
                         });</script>`.replace(/(\r\n|\n|\r)/gm, "")}</span>
                   </div>
               </div>

@@ -199,9 +199,7 @@ class PieChartEmbed extends Component {
                             provinceName: "${provinceName}",
                             muniName: "${muniName}",
                             muniCode: "${muniCode}",
-                            iecId: "${iecId}",
-                            width: 600,
-                            height: 220
+                            iecId: "${iecId}"
                         });</script>`.replace(/(\r\n|\n|\r)/gm, "")}</span>
                   </div>
               </div>

@@ -45,10 +45,7 @@ class BarchartWithNavMap extends Component {
         if (props.iecId) {
             this.state.iecId = props.iecId;
         }
-        if (props.width && props.height) {
-            this.state.width = props.width;
-            this.state.height = props.height;
-        }
+
         this.exportAsPNG = this.exportAsPNG.bind(this);
     }
 

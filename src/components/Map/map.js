@@ -150,6 +150,7 @@ class Map extends Component {
 
     handlePreviewEvent(event) {
         var newState = event.detail;
+        console.log("handlePreviewEvent", newState);
         this.setState(newState)
     }
 
@@ -466,6 +467,7 @@ class Map extends Component {
                     .append("button")
                     .attr("class", "go-back")
                     .style("height", "30px")
+                    .style("color", "black")
                     .html("go back")
                     .on("click", function() {
                         var regionType = self.state.regionType;

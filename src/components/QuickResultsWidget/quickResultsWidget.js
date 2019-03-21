@@ -22,7 +22,8 @@ import Map from '../Map/map';
 import JSZip from "jszip";
 import {saveAs} from "file-saver";
 import {
-    getRegionName
+    getRegionName,
+    triggerCustomEvent
 } from "../../utils";
 
 
@@ -141,7 +142,10 @@ class QuickResultsWidget extends Component {
 
     handlePreviewEvent(event) {
         var newState = event.detail;
-        this.setState(newState)
+        this.setState(newState);
+
+        triggerCustomEvent(events.CHART_PREVIEW, newState);
+        triggerCustomEvent(events.MAP_PREVIEW, newState);
     };
 
     render() {

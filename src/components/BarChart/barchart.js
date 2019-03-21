@@ -69,17 +69,7 @@ class BarChart extends Component {
       if (props.iecId) {
         this.state.iecId = props.iecId;
       }
-      if (props.width && props.height) {
-        this.state.width = props.width;
-        this.state.height = props.height;
-      } else {
-        var {
-          modifW,
-          modifH
-        } = this.getWidthHeightByScreenSize();
-        this.state.width = modifW;
-        this.state.height = modifH;
-      }
+
       this.exportAsPNG = this.exportAsPNG.bind(this);
       this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
       this.handleRegionChange = this.handleRegionChange.bind(this);
@@ -113,17 +103,6 @@ class BarChart extends Component {
       clearInterval(refreshIntervalID);
     }
 
-    getWidthHeightByScreenSize() {
-      var modifW = Math.min(810, document.body.clientWidth- 350);
-      if (document.body.clientWidth < 775)
-        modifW = document.body.clientWidth - 50;
-      var modifH = modifW/3.5;
-      return {
-        modifW,
-        modifH
-      }
-    }
-
     exportAsPNG(event) {
       svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-votes-barchart(${getRegionName(this.state)}).png`);
     }
@@ -146,7 +125,7 @@ class BarChart extends Component {
       var newState = event.detail;
       if (chart)
         chart.destroy();
-      chart = new Chart(this.getContainer(), this.state.width, this.state.height, className);
+      chart = new Chart(this.getContainer(), null, null, className);
       this.setState(newState)
     }
 
@@ -186,10 +165,8 @@ class BarChart extends Component {
     drawGraph(container, props, data, partyColorsData) {
         var chartData = parseVotesData(data, props);
        
-        var width = parseInt(props.width);
-        var height = parseInt(props.height);
         if (!chart)
-          chart = new Chart(container, width, height, className);
+          chart = new Chart(container, null, null, className);
         chart.draw(chartData, partyColorsData);
     }
 }

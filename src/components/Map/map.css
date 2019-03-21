@@ -25,6 +25,14 @@ text {
     pointer-events: none;			
 }
 
+.ELVIZ_stylesheet-tv {
+    
+}
+
 .ELVIZ_stylesheet-tv .legend {
+    fill: white;
+}
+
+.ELVIZ_stylesheet-tv .legend text{
     fill: white;
 }

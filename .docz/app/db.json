@@ -249,23 +249,6 @@
         }
       ]
     },
-    "src/components/TurnoutMap/map.mdx": {
-      "name": "Turnout - Map",
-      "id": "60c55c6c658be37f118a6d4c2b1b43cb",
-      "filepath": "src/components/TurnoutMap/map.mdx",
-      "link": null,
-      "slug": "src-components-turnout-map-map",
-      "route": "/src-components-turnout-map-map",
-      "order": 0,
-      "menu": null,
-      "headings": [
-        {
-          "depth": 1,
-          "slug": "turnout---map",
-          "value": "Turnout - Map"
-        }
-      ]
-    },
     "src/components/VoteCompBarchart/barchart.mdx": {
       "name": "Race for Votes Comparison - Bar Chart",
       "id": "7b55679831d2355183bda1b3f2899e27",
@@ -280,6 +263,23 @@
           "depth": 1,
           "slug": "race-for-votes-comparison---bar-chart",
           "value": "Race for Votes Comparison - Bar Chart"
+        }
+      ]
+    },
+    "src/components/TurnoutMap/map.mdx": {
+      "name": "Turnout - Map",
+      "id": "60c55c6c658be37f118a6d4c2b1b43cb",
+      "filepath": "src/components/TurnoutMap/map.mdx",
+      "link": null,
+      "slug": "src-components-turnout-map-map",
+      "route": "/src-components-turnout-map-map",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "turnout---map",
+          "value": "Turnout - Map"
         }
       ]
     }
