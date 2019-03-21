@@ -5,6 +5,7 @@ import {Chart} from "../SeatHorseShoeChart/d3horseshoe";
 import svgToPng from "save-svg-as-png";
 
 import events from "../../events";
+import config from "../../config";
 import {
   getSeatsData,
   getPartyColors
@@ -142,7 +143,7 @@ class HorseShoeChart extends Component {
 
       return (
           <div className="horseshoechart">
-            <div className={className("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>
+            <div className={className(config.CSS_PREFIX + "chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>
             <div 
               ref="vizcontainer" 
               className={className("chart-body")} 

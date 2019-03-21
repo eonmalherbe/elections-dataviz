@@ -1,20 +1,20 @@
-.menu-widget {
+.ELVIZ_menu-widget {
     max-height: 80vh;
     overflow-y: scroll;
 }
 
-.menu-widget::-webkit-scrollbar-track
+.ELVIZ_menu-widget::-webkit-scrollbar-track
 {
 	background-color: transparent;
 }
 
-.menu-widget::-webkit-scrollbar
+.ELVIZ_menu-widget::-webkit-scrollbar
 {
 	width: 6px;
 	background-color: transparent;
 }
 
-.menu-widget::-webkit-scrollbar-thumb
+.ELVIZ_menu-widget::-webkit-scrollbar-thumb
 {
 	background-color: #000000;
 }

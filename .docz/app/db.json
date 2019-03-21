@@ -165,7 +165,7 @@
       ]
     },
     "src/components/SeatHorseShoeChart/horseshoe.mdx": {
-      "name": "Race for Seats - HorseShore Chart",
+      "name": "Race for Seats - HorseShoe Chart",
       "id": "ac20c1ce274161cc2afe46afb667e234",
       "filepath": "src/components/SeatHorseShoeChart/horseshoe.mdx",
       "link": null,
@@ -176,8 +176,8 @@
       "headings": [
         {
           "depth": 1,
-          "slug": "race-for-seats---horseshore-chart",
-          "value": "Race for Seats - HorseShore Chart"
+          "slug": "race-for-seats---horseshoe-chart",
+          "value": "Race for Seats - HorseShoe Chart"
         }
       ]
     },

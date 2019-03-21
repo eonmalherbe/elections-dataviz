@@ -6,7 +6,7 @@ import canvg from "canvg";
 
 import config from "../../config";
 import polylabel from "polylabel";
-import styles from "./map.css";
+import styles from "../Map/map.css";
 import events from "../../events";
 import ReactLoading from "react-loading";
 import {
@@ -161,12 +161,12 @@ class Map extends Component {
             stylesheetFor
         } = this.state;
         return (
-            <div className={className("map-container")+" "+className(`stylesheet-${stylesheetFor}`)}>
-                <div className={className("map-title")}>{getRegionName(this.state)}</div>
+            <div className={className("map-container")+" "+className(`${config.CSS_PREFIX}stylesheet-${stylesheetFor}`)}>
+                <div className={className(config.CSS_PREFIX + "map-title")}>{getRegionName(this.state)}</div>
 
                 <div ref="vizcontainer" className={className("map")}></div>
 
-                <div className={className("loading-spinner")} ref="loading">
+                <div className={className(config.CSS_PREFIX + "loading-spinner")} ref="loading">
                     <ReactLoading type={"spin"} color={"#777"} height={100} width={100} />
                 </div>
             </div>

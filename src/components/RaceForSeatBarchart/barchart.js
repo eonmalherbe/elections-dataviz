@@ -5,6 +5,7 @@ import {Chart} from "../BarChart/d3barchart";
 import svgToPng from "save-svg-as-png";
 
 import events from "../../events";
+import config from "../../config";
 import {
   getSeatsData,
   getPartyColors
@@ -153,7 +154,7 @@ class BarChart extends Component {
 
       return (
           <div className="barchart">
-            <div className={className("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>
+            <div className={className(config.CSS_PREFIX + "chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>
             <div 
               ref="vizcontainer" 
               className={className("chart-body")} 

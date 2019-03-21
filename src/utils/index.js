@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import config from "../config";
 
 function calcPercent(a, b) {
   if (b == 0) {
@@ -384,11 +385,12 @@ export function getNationOrProvinceName(state) {
 }
 
 export function createTooltip(className) {
-  if (document.getElementsByClassName(className("tooltip"))[0]) {
-    return d3.select(`.${className("tooltip")}`);
+  var tooltipClassName = className(config.CSS_PREFIX + "tooltip")
+  if (document.getElementsByClassName(tooltipClassName)[0]) {
+    return d3.select(`.${tooltipClassName}`);
   } else {
     return d3.select("body").append("div")	
-      .attr("class", className("tooltip"))				
+      .attr("class", tooltipClassName)				
       .style("opacity", 0);
   }
 }

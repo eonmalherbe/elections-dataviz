@@ -1,18 +1,18 @@
 text {
     user-select: none;
 }
-.map-title {
+.ELVIZ_map-title {
     font-weight: bold;
     text-align: center;
 }
 
-.loading-spinner {
+.ELVIZ_loading-spinner {
     position: absolute;
     left: calc(50% - 50px);
     top: calc(50% - 50px);
 }
 
-.tooltip {	
+.ELVIZ_tooltip {	
     position: absolute;			
     text-align: center;				
     display: inline-block;		
@@ -23,8 +23,8 @@ text {
     border: 0px;		
     border-radius: 3px;			
     pointer-events: none;			
-  }
+}
 
-  .stylesheet-tv .legend {
+.ELVIZ_stylesheet-tv .legend {
     fill: white;
-  }
+}

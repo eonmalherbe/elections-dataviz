@@ -1,46 +1,9 @@
-.chart-label {
-  font-size: 1.5em;
-  line-height: normal;
-  color: black;
-}
-
-.chart-title {
+.ELVIZ_chart-title {
   font-weight: bold;
   text-align: center;
 }
 
-.percentage-label {
-  font-style: italic;
-}
-
-.chart svg {
-  overflow: visible !important;
-}
-
-.chart.large {
-  height: 400px;
-}
-
-.y-axis-label {
-  white-space: nowrap;
-}
-
-.y-label {
-  white-space: nowrap;
-}
-
-d3fc-svg svg {
-  overflow: visible !important;
-}
-
-.annotation-line > line {
-  fill-opacity: 0;
-  stroke: #999;
-  stroke-width: 1;
-  stroke-dasharray: 3, 3;
-}
-
-.tooltip {	
+.ELVIZ_tooltip {	
   position: absolute;			
   text-align: center;				
   display: inline-block;		
@@ -51,8 +14,4 @@ d3fc-svg svg {
   border: 0px;		
   border-radius: 3px;			
   pointer-events: none;			
-}
-
-.grid {
-  color: grey;
 }

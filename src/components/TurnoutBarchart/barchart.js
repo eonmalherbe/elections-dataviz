@@ -5,6 +5,7 @@ import {Chart} from "../BarChart/d3barchart";
 import svgToPng from "save-svg-as-png";
 
 import events from "../../events";
+import config from "../../config";
 import {
   getTurnoutDataForAllEvents,
 } from "../../api";
@@ -146,7 +147,7 @@ class BarChart extends Component {
     render () {
       return (
           <div className="barchart">
-            <div className={className("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
+            <div className={className(config.CSS_PREFIX + "chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
             <div 
               ref="vizcontainer" 
               className={className("chart-body")} 

@@ -158,8 +158,8 @@ class QuickResultsWidget extends Component {
             comp
         } = this.state;
         return (
-            <div className={className(`stylesheet-${stylesheetFor}`)}>
-                <div className={className("row") + " " + className("submenu")}>
+            <div className={className(`${config.CSS_PREFIX}stylesheet-${stylesheetFor}`)}>
+                <div className={className("row") + " " + className(config.CSS_PREFIX + "component-transition-menu")}>
                     <div className={className("col-md-2") + " " + className("label")}>
                         Show Results for 
                     </div>

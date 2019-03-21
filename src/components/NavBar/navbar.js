@@ -18,7 +18,7 @@ function className(originName) {
 }
 
 function cssPrefix(originName) {
-    return config.CSS_PREFIX+"menu-widget";
+    return config.CSS_PREFIX+originName;
 }
 
 var provincesData = getProvincesData();
@@ -203,10 +203,10 @@ class NavBar extends Component {
                     }
                 })
             }
-        ]
+        ];
         
         return (
-            <div className={[className("menu-widget"), cssPrefix("menu-widget")].join(" ")} ref="navbar">
+            <div className={[className(cssPrefix("menu-widget")), cssPrefix("menu-widget")].join(" ")} ref="navbar">
                 <MetisMenu activeLinkId={this.state.activeLinkId} content={content} LinkComponent={CustomLink}/>
             </div>
         )

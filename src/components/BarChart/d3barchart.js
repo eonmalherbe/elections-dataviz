@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import {createTooltip} from "../../utils";
 import { type } from "os";
+import config from "../../config";
 
 export function Chart(container, width, height, className, options) {
 
@@ -49,7 +50,7 @@ export function Chart(container, width, height, className, options) {
     svg.append("g")
       .attr("transform", "translate(20,"+(height/2+YaxisOffset/2)+")")
       .append("text")
-      .attr("class", className("percentage-label"))
+      .attr("class", className(config.CSS_PREFIX + "percentage-label"))
       .attr("transform", "rotate(-90)")
       .text(options.yAxisLabel)
       .attr("text-anchor", "middle");
