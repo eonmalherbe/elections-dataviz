@@ -59,7 +59,8 @@
   -webkit-transition: height .3s, color .3s, background-color .3s;
   display: block;
   line-height: 2.5em;
-  text-decoration: none
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .ELVIZ_menu-widget  .metismenu-link:hover {
