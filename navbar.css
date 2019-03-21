@@ -2,7 +2,8 @@
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;
   overflow: hidden;
-  position: relative
+  position: relative;
+  text-align: left;
 }
 
 .ELVIZ_menu-widget .metismenu>.metismenu-container>.metismenu-item>.metismenu-link {
