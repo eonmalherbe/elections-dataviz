@@ -228,7 +228,7 @@ class BarChartEmbed extends Component {
                         onChange={this.onPartyAbbrsChange.bind(this)} >
                         {
                             allParties && allParties.map(party => {
-                                return <option key={party["name"]} value={party["abbreviation"]}>{party["name"]}</option>
+                                return <option key={party["abbreviation"]} value={party["abbreviation"]}>{party["name"]}</option>
                             })
                         }
                   </select>

@@ -21,3 +21,15 @@ export {default as BarchartWithNavMapEmbed} from "./BarchartWithNavMap/barchartM
 
 export {default as QuickResultsWidget} from "./QuickResultsWidget/quickResultsWidget";
 export {default as QuickResultsWidgetEmbed} from "./QuickResultsWidget/quickResultsWidgetEmbed";
+
+export {default as ProgVotesCountPiechart} from "./ProgVotesCountPiechart/piechart";
+export {default as ProgVotesCountPiechartEmbed} from "./ProgVotesCountPiechart/piechartEmbed";
+
+export {default as RaceForSeatsComparisonBarChart} from "./SeatCompBarchart/barchart";
+export {default as RaceForSeatsComparisonBarChartEmbed} from "./SeatCompBarchart/barchartEmbed";
+
+export {default as SeatHorseShoeChart} from "./SeatHorseShoeChart/horseshoe";
+export {default as SeatHorseShoeChartEmbed} from "./SeatHorseShoeChart/horseshoeEmbed";
+
+export {default as VoteComparisonBarchart} from "./VoteCompBarchart/barchart";
+export {default as VoteComparisonBarchartEmbed} from "./VoteCompBarchart/barchartEmbed";

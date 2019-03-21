@@ -24,3 +24,7 @@ text {
     border-radius: 3px;			
     pointer-events: none;			
   }
+
+  .stylesheet-tv .legend {
+    fill: white;
+  }

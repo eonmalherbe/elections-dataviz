@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
-import styles from "./barchart.css";
-import {Chart} from "../BarChart/d3barchart";
+import styles from "../BarChart/barchart.css";
+import {Chart} from "../TVVoteCompBarchart/d3groupbarchart";
 import svgToPng from "save-svg-as-png";
 
 import events from "../../events";
@@ -11,7 +11,7 @@ import {
   getProvincesData
 } from "../../api";
 import {
-  parseVotesComparisonData,
+  parseVotesComparisonDataMultipleParties,
   getRegionName
 } from "../../utils";
 
@@ -31,7 +31,7 @@ var chartOptions = {
   chartType: "Race For Votes Comparison",
   yAxisLabel: "PERCENTAGE VOTES",
   yValue: d => d.percOfVotes,
-  yValueFormat: value => value + '%'
+  yValueFormat: value => value + '%',
 }
 
 class BarChart extends Component {
@@ -132,7 +132,7 @@ class BarChart extends Component {
       var newState = event.detail;
       if (chart)
         chart.destroy();
-      chart = new Chart(this.getContainer(), null, null, className);
+      chart = new Chart(this.getContainer(), null, null, className, chartOptions);
       this.setState(newState)
     }
 
@@ -170,10 +170,10 @@ class BarChart extends Component {
     }
 
     drawGraph(container, props, data, partyColorsData) {
-        var chartData = parseVotesComparisonData(data, props);
+        var chartData = parseVotesComparisonDataMultipleParties(data, props);
 
         if (!chart)
-          chart = new Chart(container, null, null, className);
+          chart = new Chart(container, null, null, className, chartOptions);
         chart.draw(chartData, partyColorsData);
     }
 }

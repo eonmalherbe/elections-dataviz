@@ -17,6 +17,10 @@ function className(originName) {
   return styles[originName] || originName;
 }
 
+function cssPrefix(originName) {
+    return config.CSS_PREFIX+"menu-widget";
+}
+
 var provincesData = getProvincesData();
 var metrosData = getMetrosData();
 
@@ -164,9 +168,6 @@ class NavBar extends Component {
     }
       
     render () {
-        const theme = {
-            selectionColor: "#C51162"
-        };
         var content = [
             {
                 icon: '1',
@@ -205,7 +206,7 @@ class NavBar extends Component {
         ]
         
         return (
-            <div className={className("menu-widget")} ref="navbar">
+            <div className={[className("menu-widget"), cssPrefix("menu-widget")].join(" ")} ref="navbar">
                 <MetisMenu activeLinkId={this.state.activeLinkId} content={content} LinkComponent={CustomLink}/>
             </div>
         )

@@ -8,23 +8,15 @@ import {
     TurnoutMap,
     TurnoutBarChart,
     BarchartWithNavMap,
-    QuickResultsWidget
+    QuickResultsWidget,
+    ProgVotesCountPiechart,
+    RaceForSeatsComparisonBarChart,
+    SeatHorseShoeChart,
+    VoteComparisonBarchart
 } from "./components";
 
 window.showBarChart = (element, options) => {
     ReactDOM.render(<BarChart 
-        {...options}
-        />, element);
-};
-
-window.showMap = (element, options) => {
-    ReactDOM.render(<Map 
-        {...options}
-        />, element);
-};
-
-window.showTurnoutMap = (element, options) => {
-    ReactDOM.render(<TurnoutMap 
         {...options}
         />, element);
 };
@@ -35,17 +27,41 @@ window.showBarchartWithNavMap = (element, options) => {
         />, element);
 };
 
-window.showRaceForSeatsBarChart = (element, options) => {
-    ReactDOM.render(<RaceForSeatsBarChart 
+window.showMap = (element, options) => {
+    ReactDOM.render(<Map 
         {...options}
         />, element);
 };
+
+window.showProgVotesPiechart = (element, options) => {
+    ReactDOM.render(<ProgVotesCountPiechart 
+        {...options}
+        />, element);
+}
 
 window.showQuickResultsWidget = (element, options) => {
     ReactDOM.render(<QuickResultsWidget 
         {...options}
         />, element);
 };
+
+window.showRaceForSeatsBarChart = (element, options) => {
+    ReactDOM.render(<RaceForSeatsBarChart 
+        {...options}
+        />, element);
+};
+
+window.showSeatsComparisonBarChart = (element, options) => {
+    ReactDOM.render(<RaceForSeatsComparisonBarChart 
+        {...options}
+        />, element);
+};
+
+window.showSeatHorseShoeChart = (element, options) => {
+    ReactDOM.render(<SeatHorseShoeChart 
+        {...options}
+        />, element);
+}
 
 window.showSpoiltBarChart = (element, options) => {
     ReactDOM.render(<SpoiltBarChart 
@@ -58,3 +74,20 @@ window.showTurnoutBarChart = (element, options) => {
         {...options}
         />, element);
 }
+
+window.showTurnoutMap = (element, options) => {
+    ReactDOM.render(<TurnoutMap 
+        {...options}
+        />, element);
+};
+
+window.showVoteComparisonBarchart = (element, options) => {
+    ReactDOM.render(<VoteComparisonBarchart 
+        {...options}
+        />, element);
+};
+
+
+
+
+

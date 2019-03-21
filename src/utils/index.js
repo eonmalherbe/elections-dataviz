@@ -78,6 +78,17 @@ export function parseVotesComparisonData(data, props) {
   return partyfilter_edges.filter(edge => props.eventDescriptions.indexOf(edge.name) != -1 && edge.partyInfo != null)
 }
 
+export function parseVotesComparisonDataMultipleParties(data, props) {
+  return props.partyAbbrs.map(partyAbbr => {
+    var newProps = {...props};
+    newProps.partyAbbr = partyAbbr;
+    return {
+      partyAbbr,
+      data: parseVotesComparisonData(data, newProps)
+    }
+  })
+}
+
 export function parseProgressVotesCount(data, props) {
   var firstEdge;
   var regionType = props.regionType;

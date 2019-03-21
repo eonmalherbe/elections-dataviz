@@ -13,7 +13,7 @@ export function Chart(container, width, height, className, options) {
     var predefColors = ["blue", "yellow", "red"];
 
     var svg = container.append("svg")
-        .attr("preserveAspectRatio", "xMinYMin meet").style("background-color","#ffffff")
+        .attr("preserveAspectRatio", "xMinYMin meet")
         .attr("viewBox", "0 0 " + (width) + " " + (height))
         .classed("svg-content", true);
         

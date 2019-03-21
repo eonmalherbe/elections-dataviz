@@ -43,7 +43,8 @@ class Map extends Component {
             provinceName: "",
             muniName: "",
             muniCode: "",
-            iecId: ""
+            iecId: "",
+            stylesheetFor: "tv"
         }
 
         if (props.regionType) {
@@ -60,6 +61,9 @@ class Map extends Component {
         }
         if (props.disableNavigation) {
             this.state.disableNavigation = props.disableNavigation;
+        }
+        if (props.stylesheetFor) {
+            this.state.stylesheetFor = props.stylesheetFor;
         }
         this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
         this.exportAsPNG = this.exportAsPNG.bind(this);
@@ -152,14 +156,12 @@ class Map extends Component {
     }
       
     render () {
-        const theme = {
-            selectionColor: "#C51162"
-        };
         var {
-            disableNavigation
+            disableNavigation,
+            stylesheetFor
         } = this.state;
         return (
-            <div className={className("map-container")}>
+            <div className={className("map-container")+" "+className(`stylesheet-${stylesheetFor}`)}>
                 <div className={className("map-title")}>{getRegionName(this.state)}</div>
 
                 <div ref="vizcontainer" className={className("map")}></div>
@@ -219,7 +221,7 @@ class Map extends Component {
 
         container.selectAll("svg").remove();
         var svg = container.append("svg")
-            .attr("preserveAspectRatio", "xMinYMin meet").style("background-color","#ffffff")
+            .attr("preserveAspectRatio", "xMinYMin meet")
             .attr("viewBox", "0 0 " + (w+rightMargin) + " " + (h+bottomMargin))
             .classed("svg-content", true);
 
@@ -346,10 +348,10 @@ class Map extends Component {
                 .data(turnoutColors)
                 .enter()
                 .append('g')
+                .attr("class", className("legend"))
                 .attr('transform', (d, i) => "translate(" + getLegendXY(i) + ")")
             legends
                 .append("rect")
-                .attr("class", className("legend"))
                 .attr('width', 20)
                 .attr('height', 20)
                 .attr('x', 0)
@@ -477,6 +479,7 @@ class Map extends Component {
                 fo.append("xhtml:div")
                     .append("button")
                     .attr("class", "go-back")
+                    .style("height", "30px")
                     .html("go back")
                     .on("click", function() {
                         var regionType = self.state.regionType;

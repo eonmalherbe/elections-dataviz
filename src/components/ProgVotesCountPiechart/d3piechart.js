@@ -36,7 +36,7 @@ export function Chart(container, width, height, className, options) {
         .padAngle(padAngle);
 
     var svg = container.append("svg")
-        .attr("preserveAspectRatio", "xMinYMin meet").style("background-color","#ffffff")
+        .attr("preserveAspectRatio", "xMinYMin meet")
         .attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom))
         .classed("svg-content", true)
         .append('g')

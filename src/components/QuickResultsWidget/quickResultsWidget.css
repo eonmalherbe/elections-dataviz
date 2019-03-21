@@ -23,9 +23,29 @@ button {
   border-radius: 4px;
   width: 100%;
   outline: none;
+  color: black;
 }
 
 .active {
   border: solid green 1px;
 }
+
+.stylesheet-tv {
+  background: rgb(0, 53, 97);
+  color: white;
+  overflow: hidden;
+}
+.stylesheet-tv .main-left-part {
+}
+.stylesheet-tv .main-right-part {
+}
+
+.stylesheet-tv .barchart-container svg {
+  color: white;
+}
+.stylesheet-tv .barchart-container text {
+  fill: white;
+  color: white;
+}
+
 
