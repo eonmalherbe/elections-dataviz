@@ -98,7 +98,3 @@
   transform: rotate(-90deg);
   -webkit-transform: rotate(-90deg)
 }
-
-.ELVIZ_menu-widget I.metismenu-state-icon.fa.fa-caret-left::before {
-  content: "\f0d9";
-}
