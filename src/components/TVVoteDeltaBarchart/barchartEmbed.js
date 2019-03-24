@@ -27,15 +27,15 @@ class BarChartEmbed extends Component {
         this.state = {
             elementId: "root",
             eventDescriptions: [
-                "National Elections 1999",
+                // "National Elections 1999",
                 // "Provincial Elections 1999",
-                "14 Apr 2004 National Election",
+                // "14 Apr 2004 National Election",
                 // "14 Apr 2004 Provincial Election",
                 "22 Apr 2009 National Election",
                 // "22 Apr 2009 Provincial Election",
                 "2014 National Election",
                 // "2014 Provincial Election",
-                "2019 NATIONAL ELECTION",
+                // "2019 NATIONAL ELECTION",
                 // "2019 PROVINCIAL ELECTION",
             ],
             regionType: "province",
@@ -80,7 +80,7 @@ class BarChartEmbed extends Component {
             values.push(options[i].value);
           }
         }
-        values = values.slice(0, 4);
+        values = values.slice(0, 2);
         this.setState({
             eventDescriptions: values 
         })

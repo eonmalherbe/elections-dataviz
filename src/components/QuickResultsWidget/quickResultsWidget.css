@@ -50,3 +50,47 @@
 }
 
 
+.ELVIZ_row {
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.ELVIZ_row::before {
+  display: table;
+  content: " ";
+}
+
+.ELVIZ_row::after {    
+  clear: both;
+  display: table;
+  content: " ";
+}
+
+@media (min-width: 992px) {
+  .ELVIZ_col-md-2 {
+    width: 14%;
+    float: left;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+  
+  .ELVIZ_col-md-4 {
+    width: 32%;
+    float: left;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+  
+  .ELVIZ_col-md-8 {
+    width: 62%;
+    float: left;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+}

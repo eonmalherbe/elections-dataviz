@@ -73,10 +73,36 @@ export function parseVotesComparisonData(data, props) {
     return {
       name: nodeData["event"]["description"],
       percOfVotes: 0,
-      partyInfo: null
+      partyInfo: {
+        name: props.partyAbbr,
+        abbreviation: props.partyAbbr,
+      }
     }
   });
-  return partyfilter_edges.filter(edge => props.eventDescriptions.indexOf(edge.name) != -1 && edge.partyInfo != null)
+  var results = partyfilter_edges.filter(edge => props.eventDescriptions.indexOf(edge.name) != -1).reverse();
+
+  var new_results = [];
+  for(var i = 0; i < props.eventDescriptions.length; i ++) {
+    var available = false;
+    for (var j = 0; j < results.length; j ++) {
+      if (results[j].name == props.eventDescriptions[i]) {
+        var available = true;
+        new_results.push(results[j]);
+        break;
+      }
+    }
+    if (!available) {
+      new_results.push({
+        name: props.eventDescriptions[i],
+        percOfVotes: 0,
+        partyInfo: {
+          name: props.partyAbbr,
+          abbreviation: props.partyAbbr,
+        } 
+      })
+    }
+  }
+  return new_results;
 }
 
 export function parseVotesComparisonDataMultipleParties(data, props) {
@@ -246,13 +272,51 @@ export function parseSeatsComparisonData(data, props) {
       name: node["party"]["event"]["description"],
       partyInfo: node["party"]
     }
-  }).filter(result => result.partyInfo["abbreviation"] == props.partyAbbr)
-  .filter(result => props.eventDescriptions.indexOf(result.name) != -1)
-  
+  }).filter(result => props.eventDescriptions.indexOf(result.name) != -1)
+  .filter(result => result.partyInfo["abbreviation"] == props.partyAbbr)
+
+  var new_results = [];
+  for(var i = 0; i < props.eventDescriptions.length; i ++) {
+    var available = false;
+    for (var j = 0; j < results.length; j ++) {
+      if (results[j].name == props.eventDescriptions[i]) {
+        var available = true;
+        new_results.push(results[j]);
+        break;
+      }
+    }
+    if (!available) {
+      new_results.push({
+        name: props.eventDescriptions[i],
+        seats: 0,
+        partyInfo: {
+          name: props.partyAbbr,
+          abbreviation: props.partyAbbr,
+        } 
+      })
+    }
+  }
+      // name: nodeData["event"]["description"],
+      // percOfVotes: 0,
+      // partyInfo: {
+      //   name: props.partyAbbr,
+      //   abbreviation: props.partyAbbr,
+      // }
   // results.sort(function(a,b) {
   //   return b["seats"] - a["seats"];
   // })
-  return results;
+  return new_results;
+}
+
+export function parseSeatsComparisonDataMultipleParties(data, props) {
+  return props.partyAbbrs.map(partyAbbr => {
+    var newProps = {...props};
+    newProps.partyAbbr = partyAbbr;
+    return {
+      partyAbbr,
+      data: parseSeatsComparisonData(data, newProps)
+    }
+  })
 }
 
 export function parseTurnoutData(data, props) {

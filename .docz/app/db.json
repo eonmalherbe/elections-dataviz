@@ -215,6 +215,23 @@
         }
       ]
     },
+    "src/components/TVSeatDeltaBarchart/barchart.mdx": {
+      "name": "TV Race for Seats Comparison - Bar Chart",
+      "id": "55f58de3cbe6621a4b12aea5a8b964a1",
+      "filepath": "src/components/TVSeatDeltaBarchart/barchart.mdx",
+      "link": null,
+      "slug": "src-components-tv-seat-delta-barchart-barchart",
+      "route": "/src-components-tv-seat-delta-barchart-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "tv-race-for-seats-comparison---bar-chart",
+          "value": "TV Race for Seats Comparison - Bar Chart"
+        }
+      ]
+    },
     "src/components/TVVoteCompBarchart/barchart.mdx": {
       "name": "TV Race for Votes Comparison - Bar Chart",
       "id": "21b120abba08930063edda339e2a76bb",
@@ -229,6 +246,23 @@
           "depth": 1,
           "slug": "tv-race-for-votes-comparison---bar-chart",
           "value": "TV Race for Votes Comparison - Bar Chart"
+        }
+      ]
+    },
+    "src/components/TVVoteDeltaBarchart/barchart.mdx": {
+      "name": "TV Race for Votes Delta - Bar Chart",
+      "id": "5bfa27700077059cdf83c6bf8eee869a",
+      "filepath": "src/components/TVVoteDeltaBarchart/barchart.mdx",
+      "link": null,
+      "slug": "src-components-tv-vote-delta-barchart-barchart",
+      "route": "/src-components-tv-vote-delta-barchart-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "tv-race-for-votes-delta---bar-chart",
+          "value": "TV Race for Votes Delta - Bar Chart"
         }
       ]
     },
@@ -249,23 +283,6 @@
         }
       ]
     },
-    "src/components/VoteCompBarchart/barchart.mdx": {
-      "name": "Race for Votes Comparison - Bar Chart",
-      "id": "7b55679831d2355183bda1b3f2899e27",
-      "filepath": "src/components/VoteCompBarchart/barchart.mdx",
-      "link": null,
-      "slug": "src-components-vote-comp-barchart-barchart",
-      "route": "/src-components-vote-comp-barchart-barchart",
-      "order": 0,
-      "menu": null,
-      "headings": [
-        {
-          "depth": 1,
-          "slug": "race-for-votes-comparison---bar-chart",
-          "value": "Race for Votes Comparison - Bar Chart"
-        }
-      ]
-    },
     "src/components/TurnoutMap/map.mdx": {
       "name": "Turnout - Map",
       "id": "60c55c6c658be37f118a6d4c2b1b43cb",
@@ -280,6 +297,23 @@
           "depth": 1,
           "slug": "turnout---map",
           "value": "Turnout - Map"
+        }
+      ]
+    },
+    "src/components/VoteCompBarchart/barchart.mdx": {
+      "name": "Race for Votes Comparison - Bar Chart",
+      "id": "7b55679831d2355183bda1b3f2899e27",
+      "filepath": "src/components/VoteCompBarchart/barchart.mdx",
+      "link": null,
+      "slug": "src-components-vote-comp-barchart-barchart",
+      "route": "/src-components-vote-comp-barchart-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "race-for-votes-comparison---bar-chart",
+          "value": "Race for Votes Comparison - Bar Chart"
         }
       ]
     }

@@ -121,7 +121,7 @@ class BarChart extends Component {
     }
 
     exportAsPNG(event) {
-      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-votes-comparation-barchart(${getRegionName(this.state)}).png`);
+      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-votes-comparison-barchart(${getRegionName(this.state)}).png`);
     }
 
     handleRegionChange(event) {

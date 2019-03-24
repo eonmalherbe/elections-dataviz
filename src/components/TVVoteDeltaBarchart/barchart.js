@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
 import styles from "../BarChart/barchart.css";
-import {Chart} from "../TVVoteCompBarchart/d3groupbarchart";
+import {Chart} from "../TVVoteDeltaBarchart/d3deltabarchart";
 import svgToPng from "save-svg-as-png";
 
 import events from "../../events";
@@ -32,7 +32,7 @@ var chartOptions = {
   topLabel: "NATIONAL ASSEMBLY: 2009, 2014, 2019",
   usedValue: "% VDS COUNTED",
   yValue: d => d.percOfVotes,
-  yValueFormat: value => value + '%',
+  yValueFormat: value => (value > 0? '+': '') + (value.toFixed(2)) + '%',
   dynamicYAxisFromValues: true
 }
 
@@ -45,13 +45,13 @@ class BarChart extends Component {
         eventDescriptions: [
             // "National Elections 1999",
             // "Provincial Elections 1999",
-            "14 Apr 2004 National Election",
+            // "14 Apr 2004 National Election",
             // "14 Apr 2004 Provincial Election",
             "22 Apr 2009 National Election",
             // "22 Apr 2009 Provincial Election",
             "2014 National Election",
             // "2014 Provincial Election",
-            "2019 NATIONAL ELECTION",
+            // "2019 NATIONAL ELECTION",
             // "2019 PROVINCIAL ELECTION",
         ],
         regionType: "national",
@@ -158,12 +158,13 @@ class BarChart extends Component {
       var self = this;
       var votesDataLoader = getVotesDataForComparison(props);
       var dataLoaders = [votesDataLoader];
-      chartOptions.topLabel = `${props.regionType.toUpperCase()} ASSEMBLY: ${props.eventDescriptions.map(desc => /(19|20)\d{2}/g.exec(desc)[0]).join(", ")}`
+      chartOptions.topLabel = `${props.regionType.toUpperCase()} ASSEMBLY: `
       
+      var years = props.eventDescriptions.map(desc => /(19|20)\d{2}/g.exec(desc)[0]).join("/");
       if (props.regionType == "national") {
-        chartOptions.topLabel = "Race for Votes Comparison - National Assembly";
+        chartOptions.topLabel = `National Assembly: Swing ${years}`;
       } else {
-        chartOptions.topLabel = `Race for Votes Comparison - ${getRegionName(props)}`;
+        chartOptions.topLabel = `${getRegionName(props)}: Swing ${years}`;
       }
       
       if (!partyColorsData) {

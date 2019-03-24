@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import styles from "./quickResultsWidget.css";
-import bootstrapStyles from "bootstrap/dist/css/bootstrap.min.css";
 
 import config from '../../config'
 import events from "../../events";
@@ -28,7 +27,11 @@ import {
 
 
 function className(originName) {
-    return styles[originName] || bootstrapStyles[originName] || originName;
+    return styles[originName] || originName;
+}
+
+function cn(originName) {
+    return className(config.CSS_PREFIX + originName);
 }
 
 class QuickResultsWidget extends Component {    
@@ -162,47 +165,47 @@ class QuickResultsWidget extends Component {
             comp
         } = this.state;
         return (
-            <div className={className(`${config.CSS_PREFIX}stylesheet-${stylesheetFor}`)}>
-                <div className={className("row") + " " + className(config.CSS_PREFIX + "component-transition-menu")}>
-                    <div className={className("col-md-2") + " " + className("label")}>
-                        Show Results for 
+            <div className={cn(`stylesheet-${stylesheetFor}`)}>
+                <div className={cn("row") + " " + cn("component-transition-menu")}>
+                    <div className={cn("col-md-2") + " " + className("label")}>
+                        Show Results 
                     </div>
-                    <div className={className("col-md-2")}>
+                    <div className={cn("col-md-2")}>
                         <button 
                             className={comp == 'race for votes'? className("active") : ""} 
                             onClick={() => this.setState({comp: 'race for votes'})}> Race for votes </button>
                     </div>
-                    <div className={className("col-md-2")}>
+                    <div className={cn("col-md-2")}>
                         <button  
                             className={comp == 'race for seats'? className("active") : ""} 
                             onClick={() => this.setState({comp: 'race for seats'})}> Race for seats</button>
                     </div>
-                    <div className={className("col-md-2")}>
+                    <div className={cn("col-md-2")}>
                         <button  
                             className={comp == 'turnout'? className("active") : ""} 
                             onClick={() => this.setState({comp: 'turnout'})}> Turnout</button>
                     </div>
                     {
                         (eventDescription.indexOf("2014") != -1) &&
-                        <div className={className("col-md-2")}>
+                        <div className={cn("col-md-2")}>
                             <button  
                                 className={comp == 'counting progress'? className("active") : ""} 
                                 onClick={() => this.setState({comp: 'counting progress'})}> Counting progress </button>
                         </div>
                     }
-                    <div className={className("col-md-2")}>
+                    <div className={cn("col-md-2")}>
                         <button  
                             className={comp == 'spoilt votes'? className("active") : ""} 
                             onClick={() => this.setState({comp: 'spoilt votes'})}> Spoilt Votes </button>
                     </div>
                 </div>
-                <div className={className("row")}>
-                    <div className={className("col-md-4")+" "+className("main-left-part")}>
+                <div className={cn("row")}>
+                    <div className={cn("col-md-4")+" "+className("main-left-part")}>
                         <NavBar />
                     </div>
                             {
                                 comp == 'race for votes' && 
-                                <div className={className("col-md-8")+" "+className("main-right-part")}>
+                                <div className={cn("col-md-8")+" "+className("main-right-part")}>
                                     <div className={className("barchart-container")}>
                                         <BarChart 
                                             ref={instance => { this.votesInstance1 = instance; }} 
@@ -217,7 +220,7 @@ class QuickResultsWidget extends Component {
                             }
                             {
                                 comp == 'race for seats' && 
-                                <div className={className("col-md-8")+" "+className("main-right-part")}>
+                                <div className={cn("col-md-8")+" "+className("main-right-part")}>
                                     <div className={className("barchart-container")}>
                                         <RaceForSeatBarChart 
                                             ref={instance => { this.seatsInstance1 = instance; }} 
@@ -232,7 +235,7 @@ class QuickResultsWidget extends Component {
                             }
                             {
                                 comp == 'turnout' && 
-                                <div className={className("col-md-8")+" "+className("main-right-part")}>
+                                <div className={cn("col-md-8")+" "+className("main-right-part")}>
                                     <div className={className("barchart-container")}>
                                         <TurnoutBarchart 
                                             ref={instance => { this.turnoutInstance1 = instance; }} 
@@ -248,7 +251,7 @@ class QuickResultsWidget extends Component {
                             }
                             {
                                 comp == 'counting progress' && 
-                                <div className={className("col-md-8")+" "+className("main-right-part")}>
+                                <div className={cn("col-md-8")+" "+className("main-right-part")}>
                                     <div className={className("barchart-container")}>
                                         <ProgressVotesPieChart 
                                             ref={instance => { this.progressInstance1 = instance; }} 
@@ -263,7 +266,7 @@ class QuickResultsWidget extends Component {
                             }
                             {
                                 comp == 'spoilt votes' &&
-                                <div className={className("col-md-8")+" "+className("main-right-part")}>
+                                <div className={cn("col-md-8")+" "+className("main-right-part")}>
                                     <div className={className("barchart-container")}>
                                         <SpoiltBarChart 
                                             ref={instance => { this.spoiltInstance1 = instance; }} 
