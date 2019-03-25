@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {createTooltip} from "../../utils";
+import {createTooltip, formatPartyName} from "../../utils";
 
 export function Chart(container, width, height, className, options) {
   if (!options) {
@@ -32,6 +32,8 @@ export function Chart(container, width, height, className, options) {
       .attr("text-anchor", "middle");
   
     this.draw = function(groupChartData, colorsData) {
+
+      console.log("groupChartData", groupChartData);
 
       svg.append("text")
         .attr("text-anchor", "middle")
@@ -72,9 +74,6 @@ export function Chart(container, width, height, className, options) {
         if (options.noXaxisByParty) {
           return d.name + " : " + options.yValueFormat(options.yValue(d));
         } else {
-          function formatPartyName(name) {
-            return name.split("/")[0].toLowerCase().replace(/\b\w/g, function(l){ return l.toUpperCase() })
-          }
           return formatPartyName(d.partyInfo.name) + " : " + options.yValueFormat(options.yValue(d));
         }	
       }
@@ -83,7 +82,7 @@ export function Chart(container, width, height, className, options) {
 
       var minMaxY = [0, 100];
       if (options.dynamicYAxisFromValues) {
-        minMaxY[1] = d3.max(groupChartData.map(item => d3.max(item.data, function(d) { return options.yValue(d); })))
+        minMaxY[1] = d3.max(groupChartData.map(item => d3.max(item.data, function(d) { return options.yValue(d); }))) + 1
       }
       y.domain(minMaxY);
 

@@ -1,24 +1,30 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
 import styles from "../BarChart/barchart.css";
-import {Chart} from "../TVVoteDeltaBarchart/d3deltabarchart";
+import {Chart} from "../TVVoteSwingBarchart/d3deltabarchart";
 import svgToPng from "save-svg-as-png";
 
 import events from "../../events";
 import config from "../../config";
 import {
-  getVotesDataForComparison,
   getPartyColors,
-  getProvincesData
+  getSeatsDataForComparison
 } from "../../api";
 import {
-  parseVotesComparisonDataMultipleParties,
-  getRegionName
+  parseSeatsComparisonDataMultipleParties,
+  getNationOrProvinceName
 } from "../../utils";
 
-var provincesData = getProvincesData();
 
 var dataRefreshTime = 30 * 1000;
+
+var chartOptions = {
+  topLabel: "NATIONAL ASSEMBLY: 2009, 2014",
+  usedValue: "SEATS COUNTED",
+  yValue: d => d.seats,
+  yValueFormat: seats => seats,
+  dynamicYAxisFromValues: true
+}
 
 function className(originName) {
   return styles[originName] || originName;
@@ -27,14 +33,6 @@ function className(originName) {
 var chart;
 var partyColorsData;
 var refreshIntervalID = 0;
-
-var chartOptions = {
-  topLabel: "NATIONAL ASSEMBLY: 2009, 2014, 2019",
-  usedValue: "% VDS COUNTED",
-  yValue: d => d.percOfVotes,
-  yValueFormat: value => (value > 0? '+': '') + (value.toFixed(2)) + '%',
-  dynamicYAxisFromValues: true
-}
 
 class BarChart extends Component {
 
@@ -86,7 +84,6 @@ class BarChart extends Component {
     }
   
     componentDidMount() {
-
       var self = this;
       this.draw(this.getContainer(), this.state);
       refreshIntervalID = setInterval(() => {
@@ -102,14 +99,16 @@ class BarChart extends Component {
     }
 
     componentWillUnmount() {
-      if (chart) {
-        chart.destroy();
-        chart = null;
-      }
+      chart = null;
       document.removeEventListener(events.EXPORT_PNG, this.exportAsPNG);
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
       document.removeEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
       clearInterval(refreshIntervalID);
+    }
+
+    handleRegionChange(event) {
+      var newState = event.detail;
+      this.setState(newState)
     }
 
     exportAsPNGUri() {
@@ -122,12 +121,7 @@ class BarChart extends Component {
     }
 
     exportAsPNG(event) {
-      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-votes-comparison-barchart(${getRegionName(this.state)}).png`);
-    }
-
-    handleRegionChange(event) {
-      var newState = event.detail;
-      this.setState(newState)
+      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-seats-swing-barchart(${getNationOrProvinceName(this.state)}).png`);
     }
 
     handlePreviewEvent(event) {
@@ -143,9 +137,10 @@ class BarChart extends Component {
     }
       
     render () {
+
       return (
-          <div className={className("barchart")}>
-            {/* <div className={className(config.CSS_PREFIX + "chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div> */}
+          <div className="barchart">
+            {/* <div className={className(config.CSS_PREFIX + "chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div> */}
             <div 
               ref="vizcontainer" 
               className={className("chart-body")} 
@@ -156,34 +151,33 @@ class BarChart extends Component {
 
     draw(container, props) {
       var self = this;
-      var votesDataLoader = getVotesDataForComparison(props);
-      var dataLoaders = [votesDataLoader];
-      chartOptions.topLabel = `${props.regionType.toUpperCase()} ASSEMBLY: `
-      
+      var seatsDataLoader = getSeatsDataForComparison(props);
+      var dataLoaders = [seatsDataLoader];
+
       var years = props.eventDescriptions.map(desc => /(19|20)\d{2}/g.exec(desc)[0]).join("/");
       if (props.regionType == "national") {
         chartOptions.topLabel = `National Assembly: Swing ${years}`;
       } else {
-        chartOptions.topLabel = `${getRegionName(props)}: Swing ${years}`;
+        chartOptions.topLabel = `${getNationOrProvinceName(props)}: Swing ${years}`;
       }
-      
+
       if (!partyColorsData) {
         var partyColorsLoader = getPartyColors();
         dataLoaders.push(partyColorsLoader);
       }
 
       Promise.all(dataLoaders).then(function(values){ 
-        var votesData = values[0];
-        partyColorsData = partyColorsData || values[1];          
-        self.drawGraph(container, props, votesData, partyColorsData);
+        var seatsData = values[0];
+        partyColorsData = partyColorsData || values[1];         
+        self.drawGraph(container, props, seatsData, partyColorsData);
       }).catch(error => console.error(error));
     }
 
     drawGraph(container, props, data, partyColorsData) {
-        var chartData = parseVotesComparisonDataMultipleParties(data, props);
-
+        var chartData = parseSeatsComparisonDataMultipleParties(data, props);
         if (!chart)
           chart = new Chart(container, null, null, className, chartOptions);
+        
         chart.draw(chartData, partyColorsData);
     }
 }

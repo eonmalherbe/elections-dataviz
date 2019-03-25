@@ -150,7 +150,6 @@ class Map extends Component {
 
     handlePreviewEvent(event) {
         var newState = event.detail;
-        console.log("handlePreviewEvent", newState);
         this.setState(newState)
     }
 

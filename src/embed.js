@@ -12,7 +12,11 @@ import {
     ProgVotesCountPiechart,
     RaceForSeatsComparisonBarChart,
     SeatHorseShoeChart,
-    VoteComparisonBarchart
+    VoteComparisonBarchart,
+    TVSeatCompBarchart,
+    TVSeatSwingBarchart,
+    TVVoteCompBarchart,
+    TVVoteSwingBarchart
 } from "./components";
 
 window.showBarChart = (element, options) => {
@@ -83,6 +87,30 @@ window.showTurnoutMap = (element, options) => {
 
 window.showVoteComparisonBarchart = (element, options) => {
     ReactDOM.render(<VoteComparisonBarchart 
+        {...options}
+        />, element);
+};
+
+window.showTVSeatCompBarchart = (element, options) => {
+    ReactDOM.render(<TVSeatCompBarchart 
+        {...options}
+        />, element);
+};
+
+window.showTVSeatSwingBarchart = (element, options) => {
+    ReactDOM.render(<TVSeatSwingBarchart 
+        {...options}
+        />, element);
+};
+
+window.showTVVoteCompBarchart = (element, options) => {
+    ReactDOM.render(<TVVoteCompBarchart 
+        {...options}
+        />, element);
+};
+
+window.showTVVoteSwingBarchart = (element, options) => {
+    ReactDOM.render(<TVVoteSwingBarchart 
         {...options}
         />, element);
 };

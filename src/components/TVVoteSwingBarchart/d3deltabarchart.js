@@ -1,6 +1,5 @@
 import * as d3 from "d3";
-import {createTooltip} from "../../utils";
-
+import {createTooltip, formatPartyName} from "../../utils";
 export function Chart(container, width, height, className, options) {
   if (!options) {
       options = {};
@@ -66,9 +65,6 @@ export function Chart(container, width, height, className, options) {
         if (options.noXaxisByParty) {
           return d.name + " : " + options.yValueFormat(d.delta);
         } else {
-          function formatPartyName(name) {
-            return name.split("/")[0].toLowerCase().replace(/\b\w/g, function(l){ return l.toUpperCase() })
-          }
           return formatPartyName(d.partyInfo.name) + " : " + options.yValueFormat(d.delta);
         }	
       }
@@ -88,10 +84,9 @@ export function Chart(container, width, height, className, options) {
 
       var minMaxY = [-100, 100];
       if (options.dynamicYAxisFromValues) {
-        minMaxY[1] = d3.max(newGroupChartData.map(item => item.data[0].delta))
-        minMaxY[0] = d3.min(newGroupChartData.map(item => item.data[0].delta))
+        minMaxY[1] = d3.max(newGroupChartData.map(item => item.data[0].delta)) + 1
+        minMaxY[0] = d3.min(newGroupChartData.map(item => item.data[0].delta)) - 1
       }
-      console.log("minMaxY", minMaxY);
       y.domain(minMaxY);
 
       var axisThick = 2;
@@ -180,11 +175,9 @@ export function Chart(container, width, height, className, options) {
             .transition()
             .duration(300)
             .attr("y", function (d) {
-              console.log("return y", Math.min(y(Number(d.delta)), y(0)), y(Number(d.delta)), y(0), d.delta, d);
               return Math.min(y(Number(d.delta)), y(0));
             })
             .attr("height", function (d) {
-              console.log("return height", Math.abs(y(Number(d.delta)) - y(0)), y(Number(d.delta)), y(0));
               return Math.abs(y(Number(d.delta)) - y(0));
             })
     

@@ -10,3 +10,8 @@ export {default as ProgVotesCountPiechartEmbed} from "./ProgVotesCountPiechart/p
 export {default as RaceForSeatsComparisonBarChartEmbed} from "./SeatCompBarchart/barchartEmbed";
 export {default as SeatHorseShoeChartEmbed} from "./SeatHorseShoeChart/horseshoeEmbed";
 export {default as VoteComparisonBarchartEmbed} from "./VoteCompBarchart/barchartEmbed";
+
+export {default as TVSeatCompBarchartEmbed} from "./TVSeatCompBarchart/barchartEmbed";
+export {default as TVSeatSwingBarchartEmbed} from "./TVSeatSwingBarchart/barchartEmbed";
+export {default as TVVoteCompBarchartEmbed} from "./TVVoteCompBarchart/barchartEmbed";
+export {default as TVVoteSwingBarchartEmbed} from "./TVVoteSwingBarchart/barchartEmbed";

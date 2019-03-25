@@ -499,3 +499,7 @@ export function triggerCustomEvent(eventName, eventParam) {
   var event = new CustomEvent(eventName, { detail: eventParam });
   document.dispatchEvent(event);
 }
+
+export function formatPartyName(name) {
+  return name.split("/")[0].toLowerCase().replace(/\b\w/g, function(l){ return l.toUpperCase() })
+}

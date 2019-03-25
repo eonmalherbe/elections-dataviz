@@ -1,30 +1,24 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
 import styles from "../BarChart/barchart.css";
-import {Chart} from "../TVVoteCompBarchart/d3groupbarchart";
+import {Chart} from "../TVVoteSwingBarchart/d3deltabarchart";
 import svgToPng from "save-svg-as-png";
 
 import events from "../../events";
 import config from "../../config";
 import {
+  getVotesDataForComparison,
   getPartyColors,
-  getSeatsDataForComparison
+  getProvincesData
 } from "../../api";
 import {
-  parseSeatsComparisonDataMultipleParties,
-  getNationOrProvinceName
+  parseVotesComparisonDataMultipleParties,
+  getRegionName
 } from "../../utils";
 
+var provincesData = getProvincesData();
 
 var dataRefreshTime = 30 * 1000;
-
-var chartOptions = {
-  topLabel: "NATIONAL ASSEMBLY: 2009, 2014, 2019",
-  usedValue: "SEATS COUNTED",
-  yValue: d => d.seats,
-  yValueFormat: seats => seats,
-  dynamicYAxisFromValues: true
-}
 
 function className(originName) {
   return styles[originName] || originName;
@@ -33,6 +27,14 @@ function className(originName) {
 var chart;
 var partyColorsData;
 var refreshIntervalID = 0;
+
+var chartOptions = {
+  topLabel: "NATIONAL ASSEMBLY: 2009, 2014, 2019",
+  usedValue: "% VDS COUNTED",
+  yValue: d => d.percOfVotes,
+  yValueFormat: value => (value > 0? '+': '') + (value.toFixed(2)) + '%',
+  dynamicYAxisFromValues: true
+}
 
 class BarChart extends Component {
 
@@ -43,13 +45,13 @@ class BarChart extends Component {
         eventDescriptions: [
             // "National Elections 1999",
             // "Provincial Elections 1999",
-            "14 Apr 2004 National Election",
+            // "14 Apr 2004 National Election",
             // "14 Apr 2004 Provincial Election",
             "22 Apr 2009 National Election",
             // "22 Apr 2009 Provincial Election",
             "2014 National Election",
             // "2014 Provincial Election",
-            "2019 NATIONAL ELECTION",
+            // "2019 NATIONAL ELECTION",
             // "2019 PROVINCIAL ELECTION",
         ],
         regionType: "national",
@@ -84,6 +86,7 @@ class BarChart extends Component {
     }
   
     componentDidMount() {
+
       var self = this;
       this.draw(this.getContainer(), this.state);
       refreshIntervalID = setInterval(() => {
@@ -99,16 +102,14 @@ class BarChart extends Component {
     }
 
     componentWillUnmount() {
-      chart = null;
+      if (chart) {
+        chart.destroy();
+        chart = null;
+      }
       document.removeEventListener(events.EXPORT_PNG, this.exportAsPNG);
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
       document.removeEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
       clearInterval(refreshIntervalID);
-    }
-
-    handleRegionChange(event) {
-      var newState = event.detail;
-      this.setState(newState)
     }
 
     exportAsPNGUri() {
@@ -121,7 +122,12 @@ class BarChart extends Component {
     }
 
     exportAsPNG(event) {
-      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-seats-comparison-barchart(${getNationOrProvinceName(this.state)}).png`);
+      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-votes-swing-barchart(${getRegionName(this.state)}).png`);
+    }
+
+    handleRegionChange(event) {
+      var newState = event.detail;
+      this.setState(newState)
     }
 
     handlePreviewEvent(event) {
@@ -137,10 +143,9 @@ class BarChart extends Component {
     }
       
     render () {
-
       return (
-          <div className="barchart">
-            {/* <div className={className(config.CSS_PREFIX + "chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div> */}
+          <div className={className("barchart")}>
+            {/* <div className={className(config.CSS_PREFIX + "chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div> */}
             <div 
               ref="vizcontainer" 
               className={className("chart-body")} 
@@ -151,34 +156,33 @@ class BarChart extends Component {
 
     draw(container, props) {
       var self = this;
-      var seatsDataLoader = getSeatsDataForComparison(props);
-      var dataLoaders = [seatsDataLoader];
+      var votesDataLoader = getVotesDataForComparison(props);
+      var dataLoaders = [votesDataLoader];
       
-      chartOptions.topLabel = `${props.regionType.toUpperCase()} ASSEMBLY: ${props.eventDescriptions.map(desc => /(19|20)\d{2}/g.exec(desc)[0]).join(", ")}`
-
+      var years = props.eventDescriptions.map(desc => /(19|20)\d{2}/g.exec(desc)[0]).join("/");
       if (props.regionType == "national") {
-        chartOptions.topLabel = "Race for Seats Comparison - National Assembly";
+        chartOptions.topLabel = `National Assembly: Swing ${years}`;
       } else {
-        chartOptions.topLabel = `Race for Seats Comparison - ${getNationOrProvinceName(props)}`;
+        chartOptions.topLabel = `${getRegionName(props)}: Swing ${years}`;
       }
-
+      
       if (!partyColorsData) {
         var partyColorsLoader = getPartyColors();
         dataLoaders.push(partyColorsLoader);
       }
 
       Promise.all(dataLoaders).then(function(values){ 
-        var seatsData = values[0];
-        partyColorsData = partyColorsData || values[1];         
-        self.drawGraph(container, props, seatsData, partyColorsData);
+        var votesData = values[0];
+        partyColorsData = partyColorsData || values[1];          
+        self.drawGraph(container, props, votesData, partyColorsData);
       }).catch(error => console.error(error));
     }
 
     drawGraph(container, props, data, partyColorsData) {
-        var chartData = parseSeatsComparisonDataMultipleParties(data, props);
+        var chartData = parseVotesComparisonDataMultipleParties(data, props);
+
         if (!chart)
           chart = new Chart(container, null, null, className, chartOptions);
-        
         chart.draw(chartData, partyColorsData);
     }
 }

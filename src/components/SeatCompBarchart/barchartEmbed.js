@@ -127,18 +127,6 @@ class BarChartEmbed extends Component {
                     />
             </div>
               <div className={className("form-group")}>
-                  <label>Event </label>
-                  <select multiple className={className("form-control")+" "+className("multievent-container")} 
-                     value={eventDescriptions}
-                     onChange={this.onEventDescriptionChange.bind(this)}>
-                        {
-                            electionEvents.map(item => {
-                                return (<option key={item} value={item}>{item}</option>)
-                            })
-                        }
-                  </select>
-              </div>
-              <div className={className("form-group")}>
                   <label>Region Type </label>
                   <select className={className("form-control")} 
                      value={regionType}
@@ -147,6 +135,20 @@ class BarChartEmbed extends Component {
                         <option value="province">province</option>
                         <option value="municipality">municipality</option>
                         <option value="municipality-vd">voting district</option>
+                  </select>
+              </div>
+              <div className={className("form-group")}>
+                  <label>Event </label>
+                  <select multiple className={className("form-control")+" "+className("multievent-container")} 
+                     value={eventDescriptions}
+                     onChange={this.onEventDescriptionChange.bind(this)}>
+                        {
+                            electionEvents
+                            .filter(item => item.toLowerCase().indexOf(regionType=="national"?"national":"provincial") != -1)
+                            .map(item => {
+                                return (<option key={item} value={item}>{item}</option>)
+                            })
+                        }
                   </select>
               </div>
               {

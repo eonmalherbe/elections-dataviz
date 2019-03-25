@@ -10,7 +10,8 @@ import {
 } from "../../api";
 
 import {
-    triggerCustomEvent
+    triggerCustomEvent,
+    formatPartyName
 } from "../../utils";
 
 
@@ -229,7 +230,7 @@ class BarChartEmbed extends Component {
                         onChange={this.onPartyAbbrsChange.bind(this)} >
                         {
                             allParties && allParties.map(party => {
-                                return <option key={party["abbreviation"]} value={party["abbreviation"]}>{party["name"]}</option>
+                                return <option key={party["abbreviation"]} value={party["abbreviation"]}>{formatPartyName(party["name"])}</option>
                             })
                         }
                   </select>
@@ -246,7 +247,7 @@ class BarChartEmbed extends Component {
                   <label>Embed Code</label>
                   <div className={className("embedcode")}>
                     <span>{`<script src="${DOMAIN}/embed/embed.js"></script>
-                    <script>showRaceForVotesCompBarChart(
+                    <script>showTVVoteCompBarchart(
                         document.getElementById("${elementId}"),
                         {
                             eventDescriptions: ${JSON.stringify(eventDescriptions)},
