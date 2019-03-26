@@ -46,7 +46,7 @@ class Map extends Component {
             muniName: "",
             muniCode: "",
             iecId: "",
-            stylesheetFor: "tv"
+            stylesheetFor: "web"
         }
 
         if (props.regionType) {
@@ -204,6 +204,8 @@ class Map extends Component {
                     return getProvinceFileName(self.state.provinceName);
                 case "municipality":
                     return self.state.muniCode + ".topojson";
+                case "municipality-vd":
+                    return "vd-data/" + self.state.muniCode + "-" + self.state.iecId + ".geojson"
                 default:
                     return null;
             }
@@ -260,6 +262,9 @@ class Map extends Component {
             }
 
             function getMainPartyName(d, i) {
+                function getMunicipalityiecId(properties) {
+                    return properties.PKLVDNUMBE;
+                }
                 var partyName;
                 var regionType = self.state.regionType;
                 if (regionType === "national") {
@@ -268,10 +273,11 @@ class Map extends Component {
                 } else if (regionType === "province") {
                     var muniCode = getMunicipalityCode(d.properties);
                     partyName = locationToMainParty[muniCode];
-                } else {// "municipality"
-                    function getMunicipalityiecId(properties) {
-                        return properties.PKLVDNUMBE;
-                    }
+                } else if (regionType === "municipality"){// "municipality"
+                    var iecId = getMunicipalityiecId(d.properties);
+                    partyName = locationToMainParty[iecId];
+                } else {// "municipality-vd"
+                    console.log("d", d)
                     var iecId = getMunicipalityiecId(d.properties);
                     partyName = locationToMainParty[iecId];
                 }
@@ -348,7 +354,7 @@ class Map extends Component {
                 .attr('y', 16)
                 .text(party => partyAbbrByName[party])
             
-            if (self.state.regionType !== "municipality") {
+            if (self.state.regionType.indexOf("municipality") == -1) {
                 svg.selectAll(".place-label")
                     .data(jsonDataFeatures)
                 .enter().append("text")
@@ -373,7 +379,7 @@ class Map extends Component {
                     .text(d => getSubRegionName(d.properties, self.state))
             }
 
-            if (self.state.regionType !== "municipality") {
+            if (self.state.regionType.indexOf("municipality") == -1) {
                 fixMapLabelIntersect();
             }
 
@@ -453,6 +459,8 @@ class Map extends Component {
                             iecId: getMunicipalityiecId(d.properties),
                         }
                         triggerCustomEvent(events.REGION_CHANGE, newState);
+
+                        self.setState(newState);
                     }
                 })
             if (!self.state.disableNavigation) {
@@ -484,6 +492,8 @@ class Map extends Component {
                             newState.regionType = "national";
                         } else if (regionType === "municipality") {
                             newState.regionType = "province";
+                        } else if (regionType === "municipality-vd") {
+                            newState.regionType = "municipality";
                         }
     
                         triggerCustomEvent(events.REGION_CHANGE, newState);

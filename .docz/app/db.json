@@ -62,23 +62,6 @@
         }
       ]
     },
-    "src/components/Map/map.mdx": {
-      "name": "Race for Votes - Map",
-      "id": "515338909073b9194af7316350dd5b44",
-      "filepath": "src/components/Map/map.mdx",
-      "link": null,
-      "slug": "src-components-map-map",
-      "route": "/src-components-map-map",
-      "order": 0,
-      "menu": null,
-      "headings": [
-        {
-          "depth": 1,
-          "slug": "race-for-votes---map",
-          "value": "Race for Votes - Map"
-        }
-      ]
-    },
     "src/components/BarchartWithNavMap/barchartMap.mdx": {
       "name": "Race for Votes - Bar Chart With Navigation Map",
       "id": "7489decb0675eaef26472624f68aabe6",
@@ -93,6 +76,23 @@
           "depth": 1,
           "slug": "race-for-votes---bar-chart-with-navigation-map",
           "value": "Race for Votes - Bar Chart With Navigation Map"
+        }
+      ]
+    },
+    "src/components/Map/map.mdx": {
+      "name": "Race for Votes - Map",
+      "id": "515338909073b9194af7316350dd5b44",
+      "filepath": "src/components/Map/map.mdx",
+      "link": null,
+      "slug": "src-components-map-map",
+      "route": "/src-components-map-map",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "race-for-votes---map",
+          "value": "Race for Votes - Map"
         }
       ]
     },
@@ -130,23 +130,6 @@
         }
       ]
     },
-    "src/components/SeatCompBarchart/barchart.mdx": {
-      "name": "Race for Seats Comparison - Bar Chart",
-      "id": "7ef72205b401ce3eebf6c60532e986f0",
-      "filepath": "src/components/SeatCompBarchart/barchart.mdx",
-      "link": null,
-      "slug": "src-components-seat-comp-barchart-barchart",
-      "route": "/src-components-seat-comp-barchart-barchart",
-      "order": 0,
-      "menu": null,
-      "headings": [
-        {
-          "depth": 1,
-          "slug": "race-for-seats-comparison---bar-chart",
-          "value": "Race for Seats Comparison - Bar Chart"
-        }
-      ]
-    },
     "src/components/RaceForSeatBarchart/barchart.mdx": {
       "name": "Race for Seats - Bar Chart",
       "id": "564ae6a7598bdbe935c66b31a7fcaca1",
@@ -161,6 +144,23 @@
           "depth": 1,
           "slug": "race-for-seats---bar-chart",
           "value": "Race for Seats - Bar Chart"
+        }
+      ]
+    },
+    "src/components/SeatCompBarchart/barchart.mdx": {
+      "name": "Race for Seats Comparison - Bar Chart",
+      "id": "7ef72205b401ce3eebf6c60532e986f0",
+      "filepath": "src/components/SeatCompBarchart/barchart.mdx",
+      "link": null,
+      "slug": "src-components-seat-comp-barchart-barchart",
+      "route": "/src-components-seat-comp-barchart-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "race-for-seats-comparison---bar-chart",
+          "value": "Race for Seats Comparison - Bar Chart"
         }
       ]
     },

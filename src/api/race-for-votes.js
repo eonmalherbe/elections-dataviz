@@ -443,7 +443,7 @@ export function getVotesDataM(options) {
         }
         `
       })
-    } else if (options.regionType == "municipality") {
+    } else { //if (options.regionType == "municipality") {
       var muniRegName = options.muniName.split(" - ")[1];
         return client.query({
           query: gql`
