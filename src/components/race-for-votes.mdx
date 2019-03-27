@@ -9,7 +9,8 @@ import {
     ProgVotesCountPiechart,
     VoteComparisonBarchart,
     TVVoteCompBarchart,
-    TVVoteSwingBarchart
+    TVVoteSwingBarchart,
+    BarchartWithNavMap
 } from "./index"
 
 import {
@@ -18,39 +19,49 @@ import {
     ProgVotesCountPiechartEmbed,
     VoteComparisonBarchartEmbed,
     TVVoteCompBarchartEmbed,
-    TVVoteSwingBarchartEmbed
+    TVVoteSwingBarchartEmbed,
+    BarchartWithNavMapEmbed
 } from "./embed"
 
-## Race for Votes - Bar Chart
+## Simple Bar Chart
 
-This chart displays the race for votes and is configurable to show different election events (historical). You can decide how many parties as well as whether you would like to restrict it to a specific geographical level or not.
+Race for votes simple bar chart. Select which election event, the number of parties and various geographies to display. To use a snapshot of this chart, download a static image.
 
 <Playground>
     <BarChart/>
     <BarChartEmbed />
 </Playground>
 
-## Race for Votes - Map
+## Bar Chart With Navigation Map
 
-This map shows the race for votes across different geographies in the country. It can be configured to have a national, provincial or municipal starting point.
+Displays results in a bar char with the ability to navigate to different geographies using a map. Select which election event, the number of parties and various geographies to display. To use a snapshot of this chart, download a static image.
+
+<Playground>
+    <BarchartWithNavMap/>
+    <BarchartWithNavMapEmbed />
+</Playground>
+
+## Map (shaded by majority party)
+
+Map showing results shaded by political party. Set the geography level and specific geography required. Note that this widget can also be set to not allow navigation - showing the user only the specified level and removing the ability for the user to navigate up or down. To use a snapshot of this chart, download a static image.
 
 <Playground>
     <Map/>
     <MapEmbed />
 </Playground>
 
-## Progress on Votes Count - Pie Chart
+## Vote Count Progress 
 
-This chart displays the progress on votes count as pie chart.
+Pie chart showing vote counts. 
 
 <Playground>
     <ProgVotesCountPiechart/>
     <ProgVotesCountPiechartEmbed />
 </Playground>
 
-## Race for Votes Comparison - Bar Chart
+## Single Party Comparison Bar Chart
 
-This chart displays the race for votes and is configurable to show different election events (historical). You can decide how many parties as well as whether you would like to restrict it to a specific geographical level or not.
+Compare results of a single party over various elections. Select which election, party and geographic area to display. To use a snapshot of this chart, download a static image.
 
 <Playground>
     <VoteComparisonBarchart/>
@@ -58,18 +69,18 @@ This chart displays the race for votes and is configurable to show different ele
 </Playground>
 
 
-## TV Race for Votes Comparison - Bar Chart
+## Time Series by Party Comparison
 
-This chart displays the race for votes and is configurable to show different election events (historical). You can decide how many parties as well as whether you would like to restrict it to a specific geographical level or not.
+Compare results over time by party. Configure the election type as well as the parties to display. To use a snapshot of this chart, download a static image.
 
 <Playground>
     <TVVoteCompBarchart/>
     <TVVoteCompBarchartEmbed />
 </Playground>
 
-## Race for Votes Swing - Bar Chart
+## Change from Previous (Swing)
 
-This chart displays the race for votes and is configurable to show different election events (historical). You can decide how many parties as well as whether you would like to restrict it to a specific geographical level or not.
+View the difference in results between different elections. Currently restricted to 4 parties at a time. To use a snapshot of this chart, download a static image.
 
 <Playground>
     <TVVoteSwingBarchart/>
