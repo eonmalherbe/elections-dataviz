@@ -340,7 +340,7 @@ export function parseTurnoutData(data, props) {
           var percVoterTurnout = node["percVoterTurnout"]; 
           locationToTurnout[muniCode] = percVoterTurnout;
       })
-  } else {// "municipality"
+  } else {// "municipality" or "municipality-vd"
       edges = data["data"]["allVotingDistrictBallots"].edges;
       edges.forEach(function(edge) {
           var node = edge.node;

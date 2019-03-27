@@ -164,6 +164,9 @@ class BarChart extends Component {
 
     drawGraph(container, props, data, partyColorsData) {
         var chartData = parseVotesData(data, props);
+
+        console.log("before parse chartData", data);
+        console.log("parsed chartData", chartData);
        
         if (!chart)
           chart = new Chart(container, null, null, className);

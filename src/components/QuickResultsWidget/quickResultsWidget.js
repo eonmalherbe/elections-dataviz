@@ -88,7 +88,7 @@ class QuickResultsWidget extends Component {
 
     handleRegionChange(event) {
       var newState = event.detail;
-      if (newState.regionType != "municipality-vd")
+    //   if (newState.regionType != "municipality-vd")
         this.setState(newState)
     }
 

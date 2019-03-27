@@ -47,7 +47,7 @@ import {client} from "./config"
         }
         `
       })
-    } else if (options.regionType == "municipality") {
+    } else { // municipality or municipality-vd
       var muniRegName = options.muniName.split(" - ")[1];
         return client.query({
           query: gql`

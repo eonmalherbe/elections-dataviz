@@ -61,6 +61,9 @@ class Map extends Component {
         if (props.muniCode) {
             this.state.muniCode = props.muniCode;
         }
+        if (props.iecId) {
+            this.state.iecId = props.iecId;
+        }
         if (props.disableNavigation) {
             this.state.disableNavigation = props.disableNavigation;
         }
@@ -277,7 +280,6 @@ class Map extends Component {
                     var iecId = getMunicipalityiecId(d.properties);
                     partyName = locationToMainParty[iecId];
                 } else {// "municipality-vd"
-                    console.log("d", d)
                     var iecId = getMunicipalityiecId(d.properties);
                     partyName = locationToMainParty[iecId];
                 }

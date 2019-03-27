@@ -45,23 +45,6 @@
         }
       ]
     },
-    "src/components/BarChart/barchart.mdx": {
-      "name": "Race for Votes - Bar Chart",
-      "id": "e7474739e1cabcd5efd72b3da01a6bfa",
-      "filepath": "src/components/BarChart/barchart.mdx",
-      "link": null,
-      "slug": "src-components-bar-chart-barchart",
-      "route": "/src-components-bar-chart-barchart",
-      "order": 0,
-      "menu": null,
-      "headings": [
-        {
-          "depth": 1,
-          "slug": "race-for-votes---bar-chart",
-          "value": "Race for Votes - Bar Chart"
-        }
-      ]
-    },
     "src/components/BarchartWithNavMap/barchartMap.mdx": {
       "name": "Race for Votes - Bar Chart With Navigation Map",
       "id": "7489decb0675eaef26472624f68aabe6",
@@ -93,6 +76,23 @@
           "depth": 1,
           "slug": "race-for-votes---map",
           "value": "Race for Votes - Map"
+        }
+      ]
+    },
+    "src/components/BarChart/barchart.mdx": {
+      "name": "Race for Votes - Bar Chart",
+      "id": "e7474739e1cabcd5efd72b3da01a6bfa",
+      "filepath": "src/components/BarChart/barchart.mdx",
+      "link": null,
+      "slug": "src-components-bar-chart-barchart",
+      "route": "/src-components-bar-chart-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "race-for-votes---bar-chart",
+          "value": "Race for Votes - Bar Chart"
         }
       ]
     },
@@ -198,23 +198,6 @@
         }
       ]
     },
-    "src/components/TVSeatCompBarchart/barchart.mdx": {
-      "name": "TV Race for Seats Comparison - Bar Chart",
-      "id": "a5dbc2d688d43cc1ebb0cc443c49d45d",
-      "filepath": "src/components/TVSeatCompBarchart/barchart.mdx",
-      "link": null,
-      "slug": "src-components-tv-seat-comp-barchart-barchart",
-      "route": "/src-components-tv-seat-comp-barchart-barchart",
-      "order": 0,
-      "menu": null,
-      "headings": [
-        {
-          "depth": 1,
-          "slug": "tv-race-for-seats-comparison---bar-chart",
-          "value": "TV Race for Seats Comparison - Bar Chart"
-        }
-      ]
-    },
     "src/components/TVSeatSwingBarchart/barchart.mdx": {
       "name": "Race for Seats Swing - Bar Chart",
       "id": "089d40e19b518cbb648fc313ce3161e5",
@@ -229,6 +212,23 @@
           "depth": 1,
           "slug": "race-for-seats-swing---bar-chart",
           "value": "Race for Seats Swing - Bar Chart"
+        }
+      ]
+    },
+    "src/components/TVSeatCompBarchart/barchart.mdx": {
+      "name": "TV Race for Seats Comparison - Bar Chart",
+      "id": "a5dbc2d688d43cc1ebb0cc443c49d45d",
+      "filepath": "src/components/TVSeatCompBarchart/barchart.mdx",
+      "link": null,
+      "slug": "src-components-tv-seat-comp-barchart-barchart",
+      "route": "/src-components-tv-seat-comp-barchart-barchart",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "tv-race-for-seats-comparison---bar-chart",
+          "value": "TV Race for Seats Comparison - Bar Chart"
         }
       ]
     },

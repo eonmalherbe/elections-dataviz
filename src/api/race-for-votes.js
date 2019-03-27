@@ -246,6 +246,7 @@ export function getVotesDataM(options) {
         `
       })
     } else if (options.regionType == "municipality-vd") {
+      console.log("fetch vd", eventDescription, options.iecId, options.muniCode);
       return client.query({
         query: gql`
         {
@@ -264,6 +265,7 @@ export function getVotesDataM(options) {
                     node{
                       party{
                         name
+                        abbreviation
                       }
                       percOfVotes
                     }

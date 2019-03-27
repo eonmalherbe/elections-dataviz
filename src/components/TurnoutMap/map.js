@@ -44,7 +44,7 @@ class Map extends Component {
             muniName: "",
             muniCode: "",
             iecId: "",
-            stylesheetFor: "tv"
+            stylesheetFor: "web"
         }
 
         if (props.regionType) {
@@ -58,6 +58,9 @@ class Map extends Component {
         }
         if (props.muniCode) {
             this.state.muniCode = props.muniCode;
+        }
+        if (props.iecId) {
+            this.state.iecId = props.iecId;
         }
         if (props.disableNavigation) {
             this.state.disableNavigation = props.disableNavigation;
@@ -87,6 +90,7 @@ class Map extends Component {
     }
 
     componentDidUpdate() {
+        console.log("componentDidUpdate", this.state);
         this.draw(this.getContainer(), this.state)
     }
 
@@ -172,7 +176,7 @@ class Map extends Component {
             </div>
         )
     }
-
+ 
     drawGraph(container, props) {
         var self = this;
         var nationalMapFile = "province_lo-res.geojson";
@@ -199,6 +203,8 @@ class Map extends Component {
                     return getProvinceFileName(self.state.provinceName);
                 case "municipality":
                     return self.state.muniCode + ".topojson";
+                case "municipality-vd":
+                    return "vd-data/" + self.state.muniCode + "-" + self.state.iecId + ".geojson"
                 default:
                     return null;
             }
@@ -265,6 +271,9 @@ class Map extends Component {
             }
 
             function getTurnout(d, i) {
+                function getMunicipalityiecId(properties) {
+                    return properties.PKLVDNUMBE;
+                }
                 var turnout;
                 var regionType = self.state.regionType;
                 if (regionType === "national") {
@@ -273,10 +282,10 @@ class Map extends Component {
                 } else if (regionType === "province") {
                     var muniCode = getMunicipalityCode(d.properties);
                     turnout = locationToTurnout[muniCode];
-                } else {// "municipality"
-                    function getMunicipalityiecId(properties) {
-                        return properties.PKLVDNUMBE;
-                    }
+                } else if (regionType === "municipality"){// "municipality"
+                    var iecId = getMunicipalityiecId(d.properties);
+                    turnout = locationToTurnout[iecId];
+                } else {// "municipality-vd"
                     var iecId = getMunicipalityiecId(d.properties);
                     turnout = locationToTurnout[iecId];
                 }
@@ -467,6 +476,8 @@ class Map extends Component {
                             iecId: getMunicipalityiecId(d.properties),
                         }
                         triggerCustomEvent(events.REGION_CHANGE, newState);
+
+                        self.setState(newState);
                     }
                 })
             if (!self.state.disableNavigation) {
@@ -498,6 +509,8 @@ class Map extends Component {
                             newState.regionType = "national";
                         } else if (regionType === "municipality") {
                             newState.regionType = "province";
+                        } else if (regionType === "municipality-vd") {
+                            newState.regionType = "municipality";
                         }
     
                         triggerCustomEvent(events.REGION_CHANGE, newState);
