@@ -20,7 +20,9 @@ import {
   createTooltip,
   getMunicipalityCode,
   fixMapLabelIntersect,
-  triggerCustomEvent
+  triggerCustomEvent,
+  getMunicipalityiecId,
+  getRegionFileName
 } from "../../utils";
 
 var regionColor = "#9c9c9c";
@@ -179,38 +181,8 @@ class Map extends Component {
  
     drawGraph(container, props) {
         var self = this;
-        var nationalMapFile = "province_lo-res.geojson";
 
-        function getRegionFileName() {
-            function getProvinceFileName(provinceName) {
-                var provinceNameToFileMap = {
-                    "Limpopo": "lim_lo-res.geojson",
-                    "Mpumalanga": "mp_lo-res.geojson",
-                    "Gauteng": "gt_lo-res.geojson",
-                    "KwaZulu-Natal": "kzn_lo-res.geojson",
-                    "North West": "nw_lo-res.geojson",
-                    "Free State": "fs_lo-res.geojson",
-                    "Eastern Cape": "ec_lo-res.geojson",
-                    "Northern Cape": "nc_lo-res.geojson",
-                    "Western Cape": "wc_lo-res.geojson",
-                }
-                return provinceNameToFileMap[provinceName];
-            }
-            switch(self.state.regionType) {
-                case "national":
-                    return nationalMapFile;
-                case "province":
-                    return getProvinceFileName(self.state.provinceName);
-                case "municipality":
-                    return self.state.muniCode + ".topojson";
-                case "municipality-vd":
-                    return "vd-data/" + self.state.muniCode + "-" + self.state.iecId + ".geojson"
-                default:
-                    return null;
-            }
-        }
-
-        var fullRouteGeoJsonFile = config.DOMAIN + "/mapdata/" + getRegionFileName();
+        var fullRouteGeoJsonFile = config.DOMAIN + "/mapdata/" + getRegionFileName(self.state);
 
         self.getLoadingSpinner()
             .style("display", "block")
@@ -271,9 +243,6 @@ class Map extends Component {
             }
 
             function getTurnout(d, i) {
-                function getMunicipalityiecId(properties) {
-                    return properties.PKLVDNUMBE;
-                }
                 var turnout;
                 var regionType = self.state.regionType;
                 if (regionType === "national") {
@@ -465,9 +434,6 @@ class Map extends Component {
                         triggerCustomEvent(events.REGION_CHANGE, newState);
                         self.setState(newState);
                     } else { // "municipality"
-                        function getMunicipalityiecId(properties) {
-                            return properties.PKLVDNUMBE;
-                        }
                         var newState = {
                             regionType: "municipality-vd", 
                             provinceName: self.state.provinceName,

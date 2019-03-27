@@ -431,16 +431,6 @@ export function getRegionName(state) {
   }
 }
 
-export function getSubRegionName(properties, state) {
-  if (state.regionType === "national") {
-      return properties.SPROVINCE;
-  } else if (state.regionType === "province") {
-      return properties.smunicipal && properties.smunicipal.split(" - ")[1].split("[")[0]; 
-  } else {//municipality
-      return properties.SMUNICIPAL && properties.SMUNICIPAL.split(" - ")[1].split("[")[0]; 
-  }
-}
-
 export function getNationOrProvinceName(state) {
   if (state.regionType == "national") {
     return "South Africa";
@@ -459,9 +449,7 @@ export function createTooltip(className) {
   }
 }
 
-export function getMunicipalityCode(properties) {
-  return properties.code || (properties.smunicipal && properties.smunicipal.split(" - ")[0].replace(/\s/g, ""));
-}
+
 
 export function fixMapLabelIntersect() {
   var labelElements = document.getElementsByClassName("place-label");
@@ -502,4 +490,55 @@ export function triggerCustomEvent(eventName, eventParam) {
 
 export function formatPartyName(name) {
   return name.split("/")[0].toLowerCase().replace(/\b\w/g, function(l){ return l.toUpperCase() })
+}
+
+export function getSubRegionName(properties, state) {
+  if (state.regionType === "national") {
+      return properties.SPROVINCE;
+  } else if (state.regionType === "province") {
+      return properties.smunicipal && properties.smunicipal.split(" - ")[1].split("[")[0]; 
+  } else {//municipality
+    if (properties.Municipali) {
+      return properties.Municipali.split(" - ")[1].split("[")[0];
+    }
+    return properties.SMUNICIPAL && properties.SMUNICIPAL.split(" - ")[1].split("[")[0]; 
+  }
+}
+
+export function getMunicipalityCode(properties) {
+  return properties.code || (properties.smunicipal && properties.smunicipal.split(" - ")[0].replace(/\s/g, ""));
+}
+
+export function getMunicipalityiecId(properties) {
+  return properties.VDNumber || properties.PKLVDNUMBE;
+}
+
+export function getRegionFileName(state) {
+  var nationalMapFile = "province_lo-res.geojson";
+  function getProvinceFileName(provinceName) {
+      var provinceNameToFileMap = {
+          "Limpopo": "lim_lo-res.geojson",
+          "Mpumalanga": "mp_lo-res.geojson",
+          "Gauteng": "gt_lo-res.geojson",
+          "KwaZulu-Natal": "kzn_lo-res.geojson",
+          "North West": "nw_lo-res.geojson",
+          "Free State": "fs_lo-res.geojson",
+          "Eastern Cape": "ec_lo-res.geojson",
+          "Northern Cape": "nc_lo-res.geojson",
+          "Western Cape": "wc_lo-res.geojson",
+      }
+      return provinceNameToFileMap[provinceName];
+  }
+  switch(state.regionType) {
+      case "national":
+          return nationalMapFile;
+      case "province":
+          return getProvinceFileName(state.provinceName);
+      case "municipality":
+          return state.muniCode + ".geojson";//".topojson";
+      case "municipality-vd":
+          return "vd-data/" + state.muniCode + "-" + state.iecId + ".geojson"
+      default:
+          return null;
+  }
 }
