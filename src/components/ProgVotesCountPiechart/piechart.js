@@ -24,8 +24,6 @@ function className(originName) {
   return styles[originName] || originName;
 }
 
-var chart;
-var refreshIntervalID = 0;
 
 class PieChart extends Component {
 
@@ -59,6 +57,8 @@ class PieChart extends Component {
         this.state.iecId = props.iecId;
       }
 
+      this.chart = null;
+      this.refreshIntervalID = 0;
       this.exportAsPNG = this.exportAsPNG.bind(this);
       this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
       this.handleRegionChange = this.handleRegionChange.bind(this);
@@ -68,7 +68,7 @@ class PieChart extends Component {
     componentDidMount() {
       var self = this;
       this.draw(this.getContainer(), this.state);
-      refreshIntervalID = setInterval(() => {
+      this.refreshIntervalID = setInterval(() => {
         self.draw(self.getContainer(), self.state)
       }, dataRefreshTime);
       document.addEventListener(events.EXPORT_PNG, this.exportAsPNG);
@@ -81,11 +81,11 @@ class PieChart extends Component {
     }
 
     componentWillUnmount() {
-      chart = null;
+      this.chart = null;
       document.removeEventListener(events.EXPORT_PNG, this.exportAsPNG);
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
       document.removeEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
-      clearInterval(refreshIntervalID);
+      clearInterval(this.refreshIntervalID);
     }
 
     handleRegionChange(event) {
@@ -108,9 +108,9 @@ class PieChart extends Component {
 
     handlePreviewEvent(event) {
       var newState = event.detail;
-      if (chart)
-        chart.destroy();
-      chart = new Chart(this.getContainer(), null, null, className, chartOptions);
+      if (this.chart)
+        this.chart.destroy();
+      this.chart = new Chart(this.getContainer(), null, null, className, chartOptions);
       this.setState(newState)
     }
 
@@ -143,10 +143,10 @@ class PieChart extends Component {
 
     drawGraph(container, props, data) {
         var chartData = parseProgressVotesCount(data, props);
-        if (!chart)
-          chart = new Chart(container, null, null, className, chartOptions);
+        if (!this.chart)
+          this.chart = new Chart(container, null, null, className, chartOptions);
         
-        chart.draw(chartData, {
+        this.chart.draw(chartData, {
           "Completed": "#15707C",
           "Not Completed": "#CCCCCC"
         });

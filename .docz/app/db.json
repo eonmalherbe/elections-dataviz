@@ -57,13 +57,8 @@
       "headings": [
         {
           "depth": 2,
-          "slug": "race-for-votes---bar-chart-with-navigation-map",
-          "value": "Race for Votes - Bar Chart With Navigation Map"
-        },
-        {
-          "depth": 2,
-          "slug": "quick-results-widget-v1",
-          "value": "Quick Results Widget V1"
+          "slug": "quick-results",
+          "value": "Quick Results"
         }
       ]
     },
@@ -79,28 +74,28 @@
       "headings": [
         {
           "depth": 2,
-          "slug": "race-for-seats---bar-chart",
-          "value": "Race for Seats - Bar Chart"
+          "slug": "simple-bar-chart",
+          "value": "Simple Bar Chart"
         },
         {
           "depth": 2,
-          "slug": "race-for-seats-comparison---bar-chart",
-          "value": "Race for Seats Comparison - Bar Chart"
+          "slug": "single-party-comparison-bar-chart",
+          "value": "Single Party Comparison Bar Chart"
         },
         {
           "depth": 2,
-          "slug": "race-for-seats---horseshoe-chart",
-          "value": "Race for Seats - HorseShoe Chart"
+          "slug": "parliamentary-chart",
+          "value": "Parliamentary Chart"
         },
         {
           "depth": 2,
-          "slug": "tv-race-for-seats-comparison---bar-chart",
-          "value": "TV Race for Seats Comparison - Bar Chart"
+          "slug": "time-series-by-party-comparison",
+          "value": "Time Series by Party Comparison"
         },
         {
           "depth": 2,
-          "slug": "race-for-seats-swing---bar-chart",
-          "value": "Race for Seats Swing - Bar Chart"
+          "slug": "change-from-previous-swing",
+          "value": "Change from Previous (Swing)"
         }
       ]
     },
@@ -116,33 +111,38 @@
       "headings": [
         {
           "depth": 2,
-          "slug": "race-for-votes---bar-chart",
-          "value": "Race for Votes - Bar Chart"
+          "slug": "simple-bar-chart",
+          "value": "Simple Bar Chart"
         },
         {
           "depth": 2,
-          "slug": "race-for-votes---map",
-          "value": "Race for Votes - Map"
+          "slug": "bar-chart-with-navigation-map",
+          "value": "Bar Chart With Navigation Map"
         },
         {
           "depth": 2,
-          "slug": "progress-on-votes-count---pie-chart",
-          "value": "Progress on Votes Count - Pie Chart"
+          "slug": "map-shaded-by-majority-party",
+          "value": "Map (shaded by majority party)"
         },
         {
           "depth": 2,
-          "slug": "race-for-votes-comparison---bar-chart",
-          "value": "Race for Votes Comparison - Bar Chart"
+          "slug": "vote-count-progress",
+          "value": "Vote Count Progress"
         },
         {
           "depth": 2,
-          "slug": "tv-race-for-votes-comparison---bar-chart",
-          "value": "TV Race for Votes Comparison - Bar Chart"
+          "slug": "single-party-comparison-bar-chart",
+          "value": "Single Party Comparison Bar Chart"
         },
         {
           "depth": 2,
-          "slug": "race-for-votes-swing---bar-chart",
-          "value": "Race for Votes Swing - Bar Chart"
+          "slug": "time-series-by-party-comparison",
+          "value": "Time Series by Party Comparison"
+        },
+        {
+          "depth": 2,
+          "slug": "change-from-previous-swing",
+          "value": "Change from Previous (Swing)"
         }
       ]
     },
@@ -158,8 +158,8 @@
       "headings": [
         {
           "depth": 1,
-          "slug": "spoilt-vs-valid-votes---bar-chart",
-          "value": "Spoilt vs Valid votes - Bar Chart"
+          "slug": "simple-bar-chart",
+          "value": "Simple Bar Chart"
         }
       ]
     },
@@ -175,13 +175,13 @@
       "headings": [
         {
           "depth": 2,
-          "slug": "turnout---bar-chart",
-          "value": "Turnout - Bar Chart"
+          "slug": "simple-bar-chart",
+          "value": "Simple Bar Chart"
         },
         {
           "depth": 2,
-          "slug": "turnout---map",
-          "value": "Turnout - Map"
+          "slug": "map",
+          "value": "Map"
         }
       ]
     }

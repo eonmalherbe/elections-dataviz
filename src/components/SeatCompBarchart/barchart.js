@@ -33,9 +33,7 @@ function className(originName) {
   return styles[originName] || originName;
 }
 
-var chart;
 var partyColorsData;
-var refreshIntervalID = 0;
 
 class BarChart extends Component {
 
@@ -79,7 +77,8 @@ class BarChart extends Component {
       if (props.iecId) {
         this.state.iecId = props.iecId;
       }
-
+      this.chart = null;
+      this.refreshIntervalID = 0;
       this.exportAsPNG = this.exportAsPNG.bind(this);
       this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
       this.handleRegionChange = this.handleRegionChange.bind(this);
@@ -89,7 +88,7 @@ class BarChart extends Component {
     componentDidMount() {
       var self = this;
       this.draw(this.getContainer(), this.state);
-      refreshIntervalID = setInterval(() => {
+      this.refreshIntervalID = setInterval(() => {
         self.draw(self.getContainer(), self.state)
       }, dataRefreshTime);
       document.addEventListener(events.EXPORT_PNG, this.exportAsPNG);
@@ -102,11 +101,11 @@ class BarChart extends Component {
     }
 
     componentWillUnmount() {
-      chart = null;
+      this.chart = null;
       document.removeEventListener(events.EXPORT_PNG, this.exportAsPNG);
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
       document.removeEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
-      clearInterval(refreshIntervalID);
+      clearInterval(this.refreshIntervalID);
     }
 
     handleRegionChange(event) {
@@ -129,9 +128,9 @@ class BarChart extends Component {
 
     handlePreviewEvent(event) {
       var newState = event.detail;
-      if (chart)
-        chart.destroy();
-      chart = new Chart(this.getContainer(), null, null, className, chartOptions);
+      if (this.chart)
+        this.chart.destroy();
+      this.chart = new Chart(this.getContainer(), null, null, className, chartOptions);
       this.setState(newState)
     }
 
@@ -171,10 +170,10 @@ class BarChart extends Component {
 
     drawGraph(container, props, data, partyColorsData) {
         var chartData = parseSeatsComparisonData(data, props);
-        if (!chart)
-          chart = new Chart(container, null, null, className, chartOptions);
+        if (!this.chart)
+          this.chart = new Chart(container, null, null, className, chartOptions);
         
-        chart.draw(chartData, partyColorsData);
+        this.chart.draw(chartData, partyColorsData);
     }
 }
 
