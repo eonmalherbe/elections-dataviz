@@ -489,8 +489,7 @@ class Map extends Component {
                             });
                     }
                     
-                    var foDiv = fo.append("xhtml:div")
-                            .style("float", "right");
+                    var foDiv = fo.append("xhtml:div");
                     var regionType = self.state.regionType;
                     if (regionType == "national") {
                         appendSpan(foDiv, "South Africa", false);
