@@ -433,7 +433,7 @@ class Map extends Component {
                 })
             if (!self.state.disableNavigation) {
                 var fo = svg.append("foreignObject")
-                    .attr("x", w - 500)
+                    .attr("x", 0)
                     .attr("y", 10)
                     .attr("width", 500)
                     .attr("height", 30)
@@ -454,7 +454,7 @@ class Map extends Component {
                 }
 
                 function appendSpan(foDiv, regionName, addSub) {
-                    if (addSub) foDiv.append("span").html(">");
+                    if (addSub) foDiv.append("span").html(" > ");
                     foDiv.append("span")
                         .style("height", "30px")
                         .style("color", "black")
@@ -463,7 +463,7 @@ class Map extends Component {
                 }
 
                 function appendLink(foDiv, regionName, regionType, addSub) {
-                    if (addSub) foDiv.append("span").html(">");
+                    if (addSub) foDiv.append("span").html(" > ");
                     foDiv.append("a")
                         .style("height", "30px")
                         .style("color", "black")
