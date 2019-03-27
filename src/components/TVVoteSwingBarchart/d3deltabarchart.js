@@ -32,8 +32,10 @@ export function Chart(container, width, height, className, options) {
   
     this.draw = function(groupChartData, colorsData) {
 
+      svg.selectAll(".topLabel").remove();
       svg.append("text")
         .attr("text-anchor", "middle")
+        .attr("class", "topLabel")
         .attr("x", width/2)
         .attr("y", 20)
         .text(options.topLabel);
@@ -89,6 +91,7 @@ export function Chart(container, width, height, className, options) {
       }
       y.domain(minMaxY);
 
+      svg.selectAll(".xAxisLine").remove();
       var axisThick = 2;
       svg.append('line')
         .attr('class', 'xAxisLine')

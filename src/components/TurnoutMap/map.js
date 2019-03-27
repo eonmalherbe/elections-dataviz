@@ -485,6 +485,32 @@ class Map extends Component {
             }
             self.getLoadingSpinner()
                 .style("display", "none");
+        }).catch(error => {
+            console.error(error);
+            alert("This region has been disestablished");            
+            self.getLoadingSpinner()
+                .style("display", "none");
+            var regionType = self.state.regionType;
+            var newState, event;
+
+            var newState = {
+                regionType: self.state.regionType, 
+                provinceName: self.state.provinceName,
+                muniName: self.state.muniName,
+                muniImuniCodeD: self.state.muniCode,
+                iecId: self.state.iecId,
+            }
+            
+            if (regionType === "province") {
+                newState.regionType = "national";
+            } else if (regionType === "municipality") {
+                newState.regionType = "province";
+            } else if (regionType === "municipality-vd") {
+                newState.regionType = "municipality";
+            }
+
+            triggerCustomEvent(events.REGION_CHANGE, newState);
+            self.setState(newState);
         })
     }
 }

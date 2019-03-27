@@ -35,7 +35,9 @@ export function Chart(container, width, height, className, options) {
 
       console.log("groupChartData", groupChartData);
 
+      svg.selectAll(".topLabel").remove();
       svg.append("text")
+        .attr("class", "topLabel")
         .attr("text-anchor", "middle")
         .attr("x", width/2)
         .attr("y", 20)
