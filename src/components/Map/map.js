@@ -433,46 +433,100 @@ class Map extends Component {
                 })
             if (!self.state.disableNavigation) {
                 var fo = svg.append("foreignObject")
-                    .attr("x", w - 100)
+                    .attr("x", w - 500)
                     .attr("y", 10)
-                    .attr("width", 100)
+                    .attr("width", 500)
                     .attr("height", 30)
                     .attr("class", "map-controls")
-                fo.append("xhtml:div")
-                    .append("button")
-                    .attr("class", "go-back")
-                    .style("height", "30px")
-                    .style("color", "black")
-                    .html("go back")
-                    .on("click", function() {
-                        var regionType = self.state.regionType;
-                        var newState, event;
-    
-                        var newState = {
-                            regionType: self.state.regionType, 
-                            provinceName: self.state.provinceName,
-                            muniName: self.state.muniName,
-                            muniImuniCodeD: self.state.muniCode,
-                            iecId: self.state.iecId,
+                
+                function setRegionType(regionType) {
+                    var newState;
+                    var newState = {
+                        regionType: self.state.regionType, 
+                        provinceName: self.state.provinceName,
+                        muniName: self.state.muniName,
+                        muniImuniCodeD: self.state.muniCode,
+                        iecId: self.state.iecId,
+                    }
+                    newState.regionType = regionType;
+                    triggerCustomEvent(events.REGION_CHANGE, newState);
+                    self.setState(newState);
+                }
+
+                function appendSpan(foDiv, regionName, addSub) {
+                    if (addSub) foDiv.append("span").html(">");
+                    foDiv.append("span")
+                        .style("height", "30px")
+                        .style("color", "black")
+                        .style("cursor", "default")
+                        .html(regionName);
+                }
+
+                function appendLink(foDiv, regionName, regionType, addSub) {
+                    if (addSub) foDiv.append("span").html(">");
+                    foDiv.append("a")
+                        .style("height", "30px")
+                        .style("color", "black")
+                        .style("cursor", "pointer")
+                        .html(regionName)
+                        .on("click", function() {
+                            setRegionType(regionType);
+                        });
+                }
+                
+                var foDiv = fo.append("xhtml:div")
+                        .style("float", "right");
+                var regionType = self.state.regionType;
+                if (regionType == "national") {
+                    appendSpan(foDiv, "South Africa", false);
+                } else {
+                    appendLink(foDiv, "South Africa", "national", false);
+                    if (regionType == "province") {
+                        appendSpan(foDiv, self.state.provinceName, true);
+                    } else {
+                        appendLink(foDiv, self.state.provinceName, "province", true);
+                        if (regionType == "municipality") {
+                            appendSpan(foDiv, self.state.muniCode, true);
+                        } else {
+                            appendLink(foDiv, self.state.muniCode, "municipality", true);
+                            appendSpan(foDiv, self.state.iecId, true);
                         }
+                    }
+                }
+                // foDiv
+                //     .append("button")
+                //     .attr("class", "go-back")
+                //     .style("height", "30px")
+                //     .style("color", "black")
+                //     .html("go back")
+                //     .on("click", function() {
+                //         var regionType = self.state.regionType;
+                //         var newState, event;
+    
+                //         var newState = {
+                //             regionType: self.state.regionType, 
+                //             provinceName: self.state.provinceName,
+                //             muniName: self.state.muniName,
+                //             muniImuniCodeD: self.state.muniCode,
+                //             iecId: self.state.iecId,
+                //         }
                         
-                        if (regionType === "province") {
-                            newState.regionType = "national";
-                        } else if (regionType === "municipality") {
-                            newState.regionType = "province";
-                        } else if (regionType === "municipality-vd") {
-                            newState.regionType = "municipality";
-                        }
+                //         if (regionType === "province") {
+                //             newState.regionType = "national";
+                //         } else if (regionType === "municipality") {
+                //             newState.regionType = "province";
+                //         } else if (regionType === "municipality-vd") {
+                //             newState.regionType = "municipality";
+                //         }
     
-                        triggerCustomEvent(events.REGION_CHANGE, newState);
-                        self.setState(newState);
-                    });
+                //         triggerCustomEvent(events.REGION_CHANGE, newState);
+                //         self.setState(newState);
+                //     });
             }
             self.getLoadingSpinner()
                 .style("display", "none");
         }).catch(error => {
             console.error(error);
-            alert("This region has been disestablished");
             self.getLoadingSpinner()
                 .style("display", "none");
             var regionType = self.state.regionType;
@@ -496,6 +550,9 @@ class Map extends Component {
 
             triggerCustomEvent(events.REGION_CHANGE, newState);
             self.setState(newState);
+            setTimeout(() => {
+                alert("This region has been disestablished"); 
+            }, 300);    
         })
     }
 }
