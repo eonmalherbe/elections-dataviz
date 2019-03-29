@@ -61,7 +61,8 @@ class BarChart extends Component {
         muniName: "",
         muniCode: "",
         iecId: "",
-        stylesheetFor: "web"
+        stylesheetFor: "web",
+        componentID: 14
       }
       if (props.partyAbbrs) {
         this.state.partyAbbrs = props.partyAbbrs;
@@ -80,6 +81,9 @@ class BarChart extends Component {
       }
       if (props.iecId) {
         this.state.iecId = props.iecId;
+      }
+      if (props.componentID) {
+        this.state.componentID = props.componentID;
       }
 
       this.chart = null;
@@ -127,6 +131,9 @@ class BarChart extends Component {
     }
 
     exportAsPNG(event) {
+      var targetState = event.detail;
+      if (targetState.componentID != this.state.componentID)
+        return;
       svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-votes-comparison-barchart(${getRegionName(this.state)}).png`);
     }
 

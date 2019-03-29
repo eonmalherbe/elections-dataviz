@@ -32,7 +32,8 @@ class BarChartEmbed extends Component {
             iecId: "",
 
             electionEvents: [],
-            stylesheetFor: "web"
+            stylesheetFor: "web",
+            componentID: 9
         }
     }
 

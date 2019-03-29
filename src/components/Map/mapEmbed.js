@@ -27,7 +27,8 @@ class MapEmbed extends Component {
             regionType: "province",
             provinceName: "Western Cape",
             muniName: "",
-            stylesheetFor: "web"
+            stylesheetFor: "web",
+            componentID: 3
         }
     }
 

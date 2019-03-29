@@ -48,7 +48,8 @@ class BarChartEmbed extends Component {
 
             electionEvents: [],
             allParties: [],
-            stylesheetFor: "web"
+            stylesheetFor: "web",
+            componentID: 12
         }
     }
 

@@ -35,13 +35,18 @@ export function Chart(container, width, height, className, options) {
         .cornerRadius(cornerRadius)
         .padAngle(padAngle);
 
-    var svg = container.append("svg")
+    var totalSvg = container.append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet")
         .attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom))
-        .classed("svg-content", true)
+        .classed("svg-content", true);
+    
+    var svg = totalSvg
         .append('g')
-        .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
-
+        .attr('transform', 'translate(' + height / 2 + ',' + height / 2 + ')');
+    
+    var labelSvg = totalSvg
+        .append('g')
+        .attr('transform', 'translate(' + height * 6 / 5 + ',' + height / 2 + ')');
 
     svg.append('g').attr('class', 'slices');
     svg.append('g').attr('class', 'lines');
@@ -69,6 +74,27 @@ export function Chart(container, width, height, className, options) {
         }
         colorsData = colorsDataP;
         data = value;
+
+        console.log("data", data);
+
+        labelSvg.append('text')
+            .attr('x', 0)
+            .attr('y', -15)
+            .style('font-size', '.7em')
+            .style('text-anchor', 'middle')
+            .text('Completed' + ': ' + data[0]["percent"] + '%');
+        labelSvg.append('text')
+            .attr('x', 0)
+            .attr('y', 0)
+            .text('Captured Votes' + ': ' + data[0]["count"])
+            .style('font-size', '.7em')
+            .style('text-anchor', 'middle');
+        labelSvg.append('text')
+            .attr('x', 0)
+            .attr('y', 15)
+            .text('Total' + ': ' + data[0]["totalCount"])
+            .style('font-size', '.7em')
+            .style('text-anchor', 'middle');
 
         var updatePath = d3.select('.slices').selectAll('path');
 

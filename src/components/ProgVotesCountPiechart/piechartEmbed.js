@@ -32,7 +32,8 @@ class PieChartEmbed extends Component {
             iecId: "",
 
             electionEvents: [],
-            stylesheetFor: "web"
+            stylesheetFor: "web",
+            componentID: 4
         }
     }
 

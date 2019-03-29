@@ -31,7 +31,8 @@ class BarchartWithNavMap extends Component {
             muniName: "",
             muniCode: "",
             iecId: "",
-            stylesheetFor: "web"
+            stylesheetFor: "web",
+            componentID: 2
         }
         if (props.numParties) {
             this.state.numParties = props.numParties;
@@ -51,11 +52,17 @@ class BarchartWithNavMap extends Component {
         if (props.iecId) {
             this.state.iecId = props.iecId;
         }
+        if (props.componentID) {
+          this.state.componentID = props.componentID;
+        }
 
         this.exportAsPNG = this.exportAsPNG.bind(this);
     }
 
     exportAsPNG(event) {
+        var targetState = event.detail;
+        if (targetState.componentID != this.state.componentID)
+          return;
         var self = this;
         Promise.all([
             self.barchartInstance.exportAsPNGUri(),
@@ -96,12 +103,14 @@ class BarchartWithNavMap extends Component {
             <div className={className("barchart-container")} ref="barchart">
                 <BarChart 
                     ref={instance => { this.barchartInstance = instance; }} 
-                    {...this.state} />
+                    {...this.state}
+                    componentID={-1000} />
             </div>
             <div className={className("map-container")}>
                 <Map 
                     ref={instance => { this.mapInstance = instance; }} 
-                    {...this.state}/>
+                    {...this.state}
+                    componentID={-1000} />
             </div>
         </div>
         );

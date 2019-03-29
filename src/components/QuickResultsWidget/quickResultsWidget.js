@@ -46,7 +46,8 @@ class QuickResultsWidget extends Component {
             muniCode: "",
             iecId: "",
             comp: "race for votes",
-            stylesheetFor: "web"
+            stylesheetFor: "web",
+            componentID: 5
         }
         if (props.numParties) {
             this.state.numParties = props.numParties;
@@ -68,6 +69,9 @@ class QuickResultsWidget extends Component {
         }
         if (props.stylesheetFor) {
             this.state.stylesheetFor = props.stylesheetFor;
+        }
+        if (props.componentID) {
+          this.state.componentID = props.componentID;
         }
         this.exportAsPNG = this.exportAsPNG.bind(this);
         this.handleRegionChange = this.handleRegionChange.bind(this);
@@ -93,6 +97,9 @@ class QuickResultsWidget extends Component {
     }
 
     exportAsPNG(event) {
+        var targetState = event.detail;
+        if (targetState.componentID != this.state.componentID)
+          return;
         var {
             comp
         } = this.state;
@@ -209,12 +216,14 @@ class QuickResultsWidget extends Component {
                                     <div className={className("barchart-container")}>
                                         <BarChart 
                                             ref={instance => { this.votesInstance1 = instance; }} 
-                                            {...this.state} />
+                                            {...this.state} 
+                                            componentID={-1000}/>
                                     </div>
                                     <div className={className("map-container")}>
                                         <Map 
                                             ref={instance => { this.votesInstance2 = instance; }} 
-                                            {...this.state} />
+                                            {...this.state} 
+                                            componentID={-1000}/>
                                     </div>
                                 </div>
                             }
@@ -224,12 +233,14 @@ class QuickResultsWidget extends Component {
                                     <div className={className("barchart-container")}>
                                         <RaceForSeatBarChart 
                                             ref={instance => { this.seatsInstance1 = instance; }} 
-                                            {...this.state} />
+                                            {...this.state}
+                                            componentID={-1000} />
                                     </div>
                                     <div className={className("map-container")}>
                                         <Map 
                                             ref={instance => { this.seatsInstance2 = instance; }} 
-                                            {...this.state} />
+                                            {...this.state}
+                                            componentID={-1000} />
                                     </div>
                                 </div>
                             }
@@ -239,12 +250,14 @@ class QuickResultsWidget extends Component {
                                     <div className={className("barchart-container")}>
                                         <TurnoutBarchart 
                                             ref={instance => { this.turnoutInstance1 = instance; }} 
-                                            {...this.state} />
+                                            {...this.state}
+                                            componentID={-1000} />
                                     </div>
                                     <div className={className("map-container")}>
                                         <TurnoutMap 
                                             ref={instance => { this.turnoutInstance2 = instance; }} 
-                                            {...this.state} />
+                                            {...this.state}
+                                            componentID={-1000} />
                                     </div>
                                 </div>
                                 
@@ -255,12 +268,14 @@ class QuickResultsWidget extends Component {
                                     <div className={className("barchart-container")}>
                                         <ProgressVotesPieChart 
                                             ref={instance => { this.progressInstance1 = instance; }} 
-                                            {...this.state} />
+                                            {...this.state}
+                                            componentID={-1000} />
                                     </div>
                                     <div className={className("map-container")}>
                                         <Map 
                                             ref={instance => { this.progressInstance2 = instance; }} 
-                                            {...this.state} />
+                                            {...this.state}
+                                            componentID={-1000} />
                                     </div>
                                 </div>
                             }
@@ -270,12 +285,14 @@ class QuickResultsWidget extends Component {
                                     <div className={className("barchart-container")}>
                                         <SpoiltBarChart 
                                             ref={instance => { this.spoiltInstance1 = instance; }} 
-                                            {...this.state} />
+                                            {...this.state}
+                                            componentID={-1000} />
                                     </div>
                                     <div className={className("map-container")}>
                                         <Map 
                                             ref={instance => { this.spoiltInstance2 = instance; }} 
-                                            {...this.state} />
+                                            {...this.state}
+                                            componentID={-1000} />
                                     </div>
                                 </div> 
                             }

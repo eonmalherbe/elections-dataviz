@@ -30,7 +30,8 @@ class MapEmbed extends Component {
             provinceName: "Western Cape",
             muniName: "",
             electionEvents: [],
-            stylesheetFor: "web"
+            stylesheetFor: "web",
+            componentID: 11
         }
     }
 

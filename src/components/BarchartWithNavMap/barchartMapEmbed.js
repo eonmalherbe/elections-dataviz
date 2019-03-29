@@ -34,7 +34,8 @@ class BarChartWithNavMapEmbed extends Component {
             numParties: 5,
 
             electionEvents: [],
-            stylesheetFor: "web"
+            stylesheetFor: "web",
+            componentID: 2
         }
         getElectionEvents()
             .then(function(data) {

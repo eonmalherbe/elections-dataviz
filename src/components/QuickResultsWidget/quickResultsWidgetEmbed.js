@@ -33,7 +33,8 @@ class QuickResultsWidgetEmbed extends Component {
             stylesheetFor: "none",
             numParties: 5,
 
-            electionEvents: []
+            electionEvents: [],
+            componentID: 5
         }
     }
 

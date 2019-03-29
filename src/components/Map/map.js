@@ -52,7 +52,8 @@ class Map extends Component {
             muniName: "",
             muniCode: "",
             iecId: "",
-            stylesheetFor: "web"
+            stylesheetFor: "web",
+            componentID: 3
         }
 
         if (props.regionType) {
@@ -69,6 +70,9 @@ class Map extends Component {
         }
         if (props.iecId) {
             this.state.iecId = props.iecId;
+        }
+        if (props.componentID) {
+          this.state.componentID = props.componentID;
         }
         if (props.disableNavigation) {
             this.state.disableNavigation = props.disableNavigation;
@@ -124,6 +128,9 @@ class Map extends Component {
     }
 
     exportAsPNG(event) {
+        var targetState = event.detail;
+        if (targetState.componentID != this.state.componentID)
+          return;
         var rect = {width: 950, height: 890};
         var rendercanvas = document.createElement('canvas');
         rendercanvas.setAttribute("width", rect.width);

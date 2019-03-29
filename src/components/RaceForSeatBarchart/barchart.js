@@ -51,7 +51,8 @@ class BarChart extends Component {
         muniName: "",
         muniCode: "",
         iecId: "",
-        stylesheetFor: "web"
+        stylesheetFor: "web",
+        componentID: 6
       }
       if (props.numParties) {
         this.state.numParties = props.numParties;
@@ -70,6 +71,9 @@ class BarChart extends Component {
       }
       if (props.iecId) {
         this.state.iecId = props.iecId;
+      }
+      if (props.componentID) {
+        this.state.componentID = props.componentID;
       }
       this.chart = null;
       this.refreshIntervalID = 0;
@@ -117,6 +121,9 @@ class BarChart extends Component {
     }
 
     exportAsPNG(event) {
+      var targetState = event.detail;
+      if (targetState.componentID != this.state.componentID)
+        return;
       svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-seats-barchart(${getNationOrProvinceName(this.state)}).png`);
     }
 

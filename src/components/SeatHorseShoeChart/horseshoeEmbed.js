@@ -31,7 +31,8 @@ class HorseShoeEmbed extends Component {
             iecId: "",
 
             electionEvents: [],
-            stylesheetFor: "web"
+            stylesheetFor: "web",
+            componentID: 8
         }
     }
 
