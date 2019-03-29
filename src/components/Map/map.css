@@ -26,7 +26,16 @@ text {
 }
 
 .ELVIZ_stylesheet-tv {
-    
+  background: rgb(0, 53, 97);
+  color: white;
+  overflow: hidden;
+}
+
+.ELVIZ_stylesheet-tv a{
+  color: white;
+}
+.ELVIZ_stylesheet-tv a:hover{
+  color: white;
 }
 
 .ELVIZ_stylesheet-tv .legend {
@@ -35,4 +44,20 @@ text {
 
 .ELVIZ_stylesheet-tv .legend text{
     fill: white;
+}
+
+.ELVIZ_stylesheet-web a{
+  color: black;
+}
+
+.ELVIZ_stylesheet-none a{
+  color: black;
+}
+
+.ELVIZ_stylesheet-web a:hover{
+  color: purple;
+}
+
+.ELVIZ_stylesheet-none a:hover{
+  color: purple;
 }

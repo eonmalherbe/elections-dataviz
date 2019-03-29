@@ -15,3 +15,17 @@
   border-radius: 3px;			
   pointer-events: none;			
 }
+
+.ELVIZ_stylesheet-tv {
+  background: rgb(0, 53, 97);
+  color: white;
+  overflow: hidden;
+}
+
+.ELVIZ_stylesheet-tv svg {
+  color: white;
+}
+.ELVIZ_stylesheet-tv text {
+  fill: white;
+  color: white;
+}

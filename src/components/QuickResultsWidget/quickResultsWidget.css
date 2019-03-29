@@ -41,14 +41,6 @@
 .ELVIZ_stylesheet-tv .main-right-part {
 }
 
-.ELVIZ_stylesheet-tv .barchart-container svg {
-  color: white;
-}
-.ELVIZ_stylesheet-tv .barchart-container text {
-  fill: white;
-  color: white;
-}
-
 
 .ELVIZ_row {
   margin-right: -15px;

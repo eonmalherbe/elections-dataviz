@@ -31,7 +31,8 @@ class BarChartEmbed extends Component {
             iecId: "",
             numParties: 5,
 
-            electionEvents: []
+            electionEvents: [],
+            stylesheetFor: "web"
         }
     }
 
@@ -73,6 +74,7 @@ class BarChartEmbed extends Component {
         var DOMAIN = config.DOMAIN;
         var {
             elementId,
+            stylesheetFor,
             eventDescription,
             regionType,            
             provinceName,
@@ -95,6 +97,16 @@ class BarChartEmbed extends Component {
                     placeholder="chart-container"
                     onChange={e => this.setState({elementId: e.target.value})}
                     />
+            </div>
+            <div className={className("form-group")}>
+                  <label>Stylesheet</label>
+                  <select className={className("form-control")} 
+                     value={stylesheetFor}
+                     onChange={e => this.setState({stylesheetFor: e.target.value})}>
+                        <option value="tv">TV</option>
+                        <option value="web">Web</option>
+                        <option value="none">None</option>
+                  </select>
             </div>
               <div className={className("form-group")}>
                   <label>Event </label>
@@ -202,6 +214,7 @@ class BarChartEmbed extends Component {
                     <script>showBarChart(
                         document.getElementById("${elementId}"),
                         {
+                            stylesheetFor: "${stylesheetFor}",
                             eventDescription: "${eventDescription}",
                             regionType: "${regionType}",
                             provinceName: "${provinceName}",

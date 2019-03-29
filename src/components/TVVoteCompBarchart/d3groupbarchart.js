@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import {createTooltip, formatPartyName} from "../../utils";
+import config from "../../config"
 
 export function Chart(container, width, height, className, options) {
   if (!options) {
@@ -101,7 +102,7 @@ export function Chart(container, width, height, className, options) {
         .attr("transform", (d) => `translate(${x(d.partyAbbr)}, 0)`);
 
       groupSvg.append('rect')
-        .attr('fill', "#DEDEDE")
+        .attr('class', className(config.CSS_PREFIX + "grouprect"))
         .attr('x', -x.bandwidth()*1/12)
         .attr('y', YaxisOffset - 85)
         .attr('width', x.bandwidth()*5/6)

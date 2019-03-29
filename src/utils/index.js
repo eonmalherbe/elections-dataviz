@@ -535,9 +535,9 @@ export function getRegionFileName(state) {
       case "province":
           return getProvinceFileName(state.provinceName);
       case "municipality":
-          return state.muniCode + ".geojson";//".topojson";
+          return state.muniCode + ".topojson";//".geojson";
       case "municipality-vd":
-          return "vd-data/" + state.muniCode + "-" + state.iecId + ".geojson"
+          return "vd-data/" + state.muniCode + "-" + state.iecId + ".topojson"; //".geojson";
       default:
           return null;
   }

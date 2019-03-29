@@ -91,17 +91,6 @@ export function Chart(container, width, height, className, options) {
       }
       y.domain(minMaxY);
 
-      svg.selectAll(".xAxisLine").remove();
-      var axisThick = 2;
-      svg.append('line')
-        .attr('class', 'xAxisLine')
-        .attr('stroke-width', axisThick)
-        .attr('stroke', "black")
-        .attr('x1', XaxisOffset)
-        .attr('y1', y(0)-axisThick/2)
-        .attr('x2', width)
-        .attr('y2', y(0)-axisThick/2)
-
       var groupSvgs = svg.selectAll(`.bar-group`).data(newGroupChartData);
       groupSvgs.exit()
         .transition()
@@ -219,6 +208,17 @@ export function Chart(container, width, height, className, options) {
               return y(Number(d.delta)) + barTextYDelta;
             })
       }
+
+      svg.selectAll(".xAxisLine").remove();
+      var axisThick = 2;
+      svg.append('line')
+        .attr('class', 'xAxisLine')
+        .attr('stroke-width', axisThick)
+        .attr('stroke', "currentColor")
+        .attr('x1', XaxisOffset)
+        .attr('y1', y(0)-axisThick/2)
+        .attr('x2', width)
+        .attr('y2', y(0)-axisThick/2)
     }
     this.destroy = function() {
       svg.remove();

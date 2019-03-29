@@ -30,6 +30,10 @@ function className(originName) {
   return styles[originName] || originName;
 }
 
+function cn(originName) {
+  return className(config.CSS_PREFIX + originName);
+}
+
 var partyColorsData;
 
 class BarChart extends Component {
@@ -54,7 +58,8 @@ class BarChart extends Component {
         provinceName: "",
         muniName: "",
         muniCode: "",
-        iecId: ""
+        iecId: "",
+        stylesheetFor: "web"
       }
       if (props.partyAbbrs) {
         this.state.partyAbbrs = props.partyAbbrs;
@@ -138,9 +143,12 @@ class BarChart extends Component {
       
     render () {
 
+      const {
+        stylesheetFor
+      } = this.state;
       return (
-          <div className="barchart">
-            {/* <div className={className(config.CSS_PREFIX + "chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div> */}
+          <div className={className("barchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
+            {/* <div className={cn("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div> */}
             <div 
               ref="vizcontainer" 
               className={className("chart-body")} 

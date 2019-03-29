@@ -19,3 +19,25 @@
   border-radius: 3px;			
   pointer-events: none;			
 }
+
+.ELVIZ_grouprect {	
+  fill: #DEDEDE;
+}
+
+.ELVIZ_stylesheet-tv {
+  background: rgb(0, 53, 97);
+  color: white;
+  overflow: hidden;
+}
+
+.ELVIZ_stylesheet-tv .ELVIZ_grouprect{
+  fill: rgb(21, 73, 117);
+}
+
+.ELVIZ_stylesheet-tv svg {
+  color: white;
+}
+.ELVIZ_stylesheet-tv text {
+  fill: white;
+  color: white;
+}

@@ -24,6 +24,10 @@ function className(originName) {
   return styles[originName] || originName;
 }
 
+function cn(originName) {
+  return className(config.CSS_PREFIX + originName);
+}
+
 
 class PieChart extends Component {
 
@@ -37,6 +41,7 @@ class PieChart extends Component {
         muniName: "",
         muniCode: "",
         iecId: "",
+        stylesheetFor: "web"
       }
       if (props.numParties) {
         this.state.numParties = props.numParties;
@@ -119,9 +124,12 @@ class PieChart extends Component {
     }
    
     render () {
+      const {
+        stylesheetFor
+      } = this.state;
       return (
-          <div className="piechart">
-            <div className={className(config.CSS_PREFIX + "chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
+          <div className={className("piechart")+" "+cn(`stylesheet-${stylesheetFor}`)}>
+            <div className={cn("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
             <div 
               ref="vizcontainer" 
               className={className("chart-body")} 

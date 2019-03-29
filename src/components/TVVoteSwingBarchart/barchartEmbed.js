@@ -47,7 +47,8 @@ class BarChartEmbed extends Component {
             partyAbbrs: ["ANC", "DA", "EFF"],
 
             electionEvents: [],
-            allParties: []
+            allParties: [],
+            stylesheetFor: "web"
         }
     }
 
@@ -118,6 +119,7 @@ class BarChartEmbed extends Component {
         var DOMAIN = config.DOMAIN;
         var {
             elementId,
+            stylesheetFor,
             eventDescriptions,
             regionType,            
             provinceName,
@@ -142,6 +144,16 @@ class BarChartEmbed extends Component {
                     onChange={e => this.setState({elementId: e.target.value})}
                     />
             </div>
+            <div className={className("form-group")}>
+                  <label>Stylesheet</label>
+                  <select className={className("form-control")} 
+                     value={stylesheetFor}
+                     onChange={e => this.setState({stylesheetFor: e.target.value})}>
+                        <option value="tv">TV</option>
+                        <option value="web">Web</option>
+                        <option value="none">None</option>
+                  </select>
+            </div>
               <div className={className("form-group")}>
                   <label>Region Type </label>
                   <select className={className("form-control")} 
@@ -154,10 +166,26 @@ class BarChartEmbed extends Component {
                   </select>
               </div>
               <div className={className("form-group")}>
-                  <label>Events </label>
-                  <select multiple className={className("form-control")+" "+className("multievent-container")} 
-                     value={eventDescriptions}
-                     onChange={this.onEventDescriptionChange.bind(this)}>
+                  <label>First Event </label>
+                  <select className={className("form-control")} 
+                     value={eventDescriptions[0]}
+                     onChange={(event) => {
+                        this.setState({eventDescriptions: [event.target.value, eventDescriptions[1]]})
+                    }}>
+                        {
+                            electionEvents.map(item => {
+                                return (<option key={item} value={item}>{item}</option>)
+                            })
+                        }
+                  </select>
+              </div>
+              <div className={className("form-group")}>
+                  <label>Second Event </label>
+                  <select className={className("form-control")} 
+                     value={eventDescriptions[1]}
+                     onChange={(event) => {
+                         this.setState({eventDescriptions: [eventDescriptions[0], event.target.value]})
+                     }}>
                         {
                             electionEvents.map(item => {
                                 return (<option key={item} value={item}>{item}</option>)
@@ -250,6 +278,7 @@ class BarChartEmbed extends Component {
                     <script>showTVVoteSwingBarchart(
                         document.getElementById("${elementId}"),
                         {
+                            stylesheetFor: "${stylesheetFor}",
                             eventDescriptions: ${JSON.stringify(eventDescriptions)},
                             regionType: "${regionType}",
                             provinceName: "${provinceName}",

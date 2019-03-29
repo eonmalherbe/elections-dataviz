@@ -29,7 +29,8 @@ class MapEmbed extends Component {
             regionType: "province",
             provinceName: "Western Cape",
             muniName: "",
-            electionEvents: []
+            electionEvents: [],
+            stylesheetFor: "web"
         }
     }
 
@@ -70,7 +71,8 @@ class MapEmbed extends Component {
     render () {
         var DOMAIN = config.DOMAIN;
         var {
-            elementId,            
+            elementId,       
+            stylesheetFor,     
             disableNavigation,
             eventDescription,
             regionType,
@@ -90,6 +92,16 @@ class MapEmbed extends Component {
                     placeholder="chart-container"
                     onChange={e => this.setState({elementId: e.target.value})}
                     />
+            </div>
+            <div className={className("form-group")}>
+                  <label>Stylesheet</label>
+                  <select className={className("form-control")} 
+                     value={stylesheetFor}
+                     onChange={e => this.setState({stylesheetFor: e.target.value})}>
+                        <option value="tv">TV</option>
+                        <option value="web">Web</option>
+                        <option value="none">None</option>
+                  </select>
             </div>
               <div className={className("form-group")}>
                   <label>Event </label>
@@ -175,6 +187,7 @@ class MapEmbed extends Component {
                     <span>{`<script src="${DOMAIN}/embed/embed.js"></script>
                     <script>
                         showTurnoutMap(document.getElementById("${elementId}"),{
+                            stylesheetFor: "${stylesheetFor}",
                             disableNavigation: ${disableNavigation},
                             regionType: "${regionType}",
                             provinceName: "${provinceName}",

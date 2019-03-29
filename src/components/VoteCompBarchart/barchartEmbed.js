@@ -46,7 +46,8 @@ class BarChartEmbed extends Component {
             partyAbbr: "ANC",
 
             electionEvents: [],
-            allParties: []
+            allParties: [],
+            stylesheetFor: "web"
         }
     }
 
@@ -102,6 +103,7 @@ class BarChartEmbed extends Component {
         var DOMAIN = config.DOMAIN;
         var {
             elementId,
+            stylesheetFor,
             eventDescriptions,
             regionType,            
             provinceName,
@@ -125,6 +127,17 @@ class BarChartEmbed extends Component {
                     placeholder="chart-container"
                     onChange={e => this.setState({elementId: e.target.value})}
                     />
+            </div>
+
+            <div className={className("form-group")}>
+                  <label>Stylesheet</label>
+                  <select className={className("form-control")} 
+                     value={stylesheetFor}
+                     onChange={e => this.setState({stylesheetFor: e.target.value})}>
+                        <option value="tv">TV</option>
+                        <option value="web">Web</option>
+                        <option value="none">None</option>
+                  </select>
             </div>
               <div className={className("form-group")}>
                   <label>Event </label>
@@ -236,6 +249,7 @@ class BarChartEmbed extends Component {
                     <script>showRaceForVotesCompBarChart(
                         document.getElementById("${elementId}"),
                         {
+                            stylesheetFor: "${stylesheetFor}",
                             eventDescriptions: ${JSON.stringify(eventDescriptions)},
                             regionType: "${regionType}",
                             provinceName: "${provinceName}",

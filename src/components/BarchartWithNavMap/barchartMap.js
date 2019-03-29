@@ -3,6 +3,7 @@ import styles from "./barchartMap.css";
 import BarChart from '../BarChart/barchart';
 import Map from '../Map/map';
 import events from "../../events";
+import config from "../../config";
 import JSZip from "jszip";
 import {saveAs} from "file-saver";
 
@@ -12,6 +13,10 @@ import {
 
 function className(originName) {
     return styles[originName] || originName;
+}
+
+function cn(originName) {
+  return className(config.CSS_PREFIX + originName);
 }
 
 class BarchartWithNavMap extends Component {    
@@ -26,6 +31,7 @@ class BarchartWithNavMap extends Component {
             muniName: "",
             muniCode: "",
             iecId: "",
+            stylesheetFor: "web"
         }
         if (props.numParties) {
             this.state.numParties = props.numParties;
@@ -81,8 +87,12 @@ class BarchartWithNavMap extends Component {
     }
 
     render() {
+      const {
+        stylesheetFor
+      } = this.state;
+
         return (
-        <div ref="superwidget" >
+        <div ref="superwidget" className={cn(`stylesheet-${stylesheetFor}`)}>
             <div className={className("barchart-container")} ref="barchart">
                 <BarChart 
                     ref={instance => { this.barchartInstance = instance; }} 

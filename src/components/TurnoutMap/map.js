@@ -32,6 +32,10 @@ function className(originName) {
   return styles[originName] || originName;
 }
 
+function cn(originName) {
+  return className(config.CSS_PREFIX + originName);
+}
+
 var provincesData = getProvincesData();
 
 class Map extends Component {
@@ -167,12 +171,12 @@ class Map extends Component {
             stylesheetFor
         } = this.state;
         return (
-            <div className={className("map-container")+" "+className(`${config.CSS_PREFIX}stylesheet-${stylesheetFor}`)}>
-                <div className={className(config.CSS_PREFIX + "map-title")}>{getRegionName(this.state)}</div>
+            <div className={className("map-container")+" "+cn(`stylesheet-${stylesheetFor}`)}>
+                <div className={cn("map-title")}>{getRegionName(this.state)}</div>
 
                 <div ref="vizcontainer" className={className("map")}></div>
 
-                <div className={className(config.CSS_PREFIX + "loading-spinner")} ref="loading">
+                <div className={cn("loading-spinner")} ref="loading">
                     <ReactLoading type={"spin"} color={"#777"} height={100} width={100} />
                 </div>
             </div>
@@ -266,10 +270,17 @@ class Map extends Component {
                 return fillColor;
             }
             var jsonDataFeatures;
-            if (fullRouteGeoJsonFile.indexOf(".topojson") !== -1) {//topojson is used for only munis
-                if (!geoJsonData.objects[self.state.muniCode])
-                    return;
-                geoJsonData = topojson.feature(geoJsonData, geoJsonData.objects[self.state.muniCode]);
+            if (fullRouteGeoJsonFile.indexOf(".topojson") !== -1) {//topojson is used for munis and muni-vds
+                var regionType = self.state.regionType
+                if (regionType == "municipality") {
+                    if (!geoJsonData.objects[self.state.muniCode])
+                        return;
+                    geoJsonData = topojson.feature(geoJsonData, geoJsonData.objects[self.state.muniCode]);
+                } else { // "municipality-vd"
+                    if (!geoJsonData.objects[self.state.iecId])
+                        return;
+                    geoJsonData = topojson.feature(geoJsonData, geoJsonData.objects[self.state.iecId]);
+                }
             }
 
             jsonDataFeatures = geoJsonData.features;
@@ -472,7 +483,6 @@ class Map extends Component {
                         if (addSub) foDiv.append("span").html(" > ");
                         foDiv.append("span")
                             .style("height", "30px")
-                            .style("color", "black")
                             .style("cursor", "default")
                             .html(regionName);
                     }
@@ -481,7 +491,6 @@ class Map extends Component {
                         if (addSub) foDiv.append("span").html(" > ");
                         foDiv.append("a")
                             .style("height", "30px")
-                            .style("color", "black")
                             .style("cursor", "pointer")
                             .html(regionName)
                             .on("click", function() {
@@ -543,6 +552,7 @@ class Map extends Component {
             console.error(error);       
             self.getLoadingSpinner()
                 .style("display", "none");
+            var currentRegionName = getRegionName(this.state);
             var regionType = self.state.regionType;
             var newState, event;
 
@@ -565,7 +575,7 @@ class Map extends Component {
             triggerCustomEvent(events.REGION_CHANGE, newState);
             self.setState(newState);
             setTimeout(() => {
-                alert("This region has been disestablished"); 
+                alert(`${currentRegionName} has been disestablished`); 
             }, 300);    
         })
     }
