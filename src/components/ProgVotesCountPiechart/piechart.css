@@ -3,16 +3,16 @@
     text-align: center;
 }
 
-.ELVIZ_stylesheet-tv {
+.piechart.ELVIZ_stylesheet-tv {
   background: rgb(0, 53, 97);
   color: white;
   overflow: hidden;
 }
 
-.ELVIZ_stylesheet-tv svg {
+.piechart.ELVIZ_stylesheet-tv svg {
   color: white;
 }
-.ELVIZ_stylesheet-tv text {
+.piechart.ELVIZ_stylesheet-tv text {
   fill: white;
   color: white;
 }

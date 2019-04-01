@@ -67,6 +67,9 @@ class BarChart extends Component {
       if (props.iecId) {
         this.state.iecId = props.iecId;
       }
+      if (props.stylesheetFor) {
+        this.state.stylesheetFor = props.stylesheetFor;
+      }
       if (props.componentID) {
         this.state.componentID = props.componentID;
       }

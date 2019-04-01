@@ -542,3 +542,35 @@ export function getRegionFileName(state) {
           return null;
   }
 }
+
+export function loadScript(id, scriptURL, callback) {
+  if (document.getElementById(id))
+    return;
+  var script = document.createElement('script');
+  script.onload = function () {
+    if(callback) {
+      callback();
+    }
+  };
+  script.id = id;
+  script.src = scriptURL;
+
+  document.head.appendChild(script);
+}
+
+export function loadCanvg() {
+  loadScript("canvgScript", "https://cdn.jsdelivr.net/npm/canvg/dist/browser/canvg.min.js", function() {
+    console.log("canvgScript load finished");
+  });
+}
+
+export function loadJSZip() {
+  loadScript("jsZipScript", "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.0/jszip.min.js", function() {
+    console.log("loadJSZip load finished");
+  });
+}
+
+export function loadScriptsForEmbedMode() {
+  loadCanvg();
+  loadJSZip();
+}

@@ -8,15 +8,12 @@ import events from "../../events";
 import config from "../../config";
 import {
   getVotesDataM,
-  getPartyColors,
-  getProvincesData
+  getPartyColors
 } from "../../api";
 import {
   parseVotesData,
   getRegionName
 } from "../../utils";
-
-var provincesData = getProvincesData();
 
 var dataRefreshTime = 30 * 1000;
 
@@ -74,6 +71,9 @@ class BarChart extends Component {
       }
       if (props.componentID) {
         this.state.componentID = props.componentID;
+      } 
+      if (props.stylesheetFor) {
+        this.state.stylesheetFor = props.stylesheetFor;
       }
       this.chart = null;
       this.refreshIntervalID = 0;

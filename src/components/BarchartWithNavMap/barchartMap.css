@@ -11,7 +11,7 @@
     pointer-events: none;			
   }
 
-  .ELVIZ_stylesheet-tv {
+  .barchart-map.ELVIZ_stylesheet-tv {
     background: rgb(0, 53, 97);
     color: white;
     overflow: hidden;

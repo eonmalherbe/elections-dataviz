@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
+import EmbedBase from "../embedBase";
 import bootstrapStyles from "bootstrap/dist/css/bootstrap.min.css";
 import styles from "./mapEmbed.css";
 import config from "../../config";
@@ -9,7 +10,8 @@ import {
 } from "../../api";
 
 import {
-    triggerCustomEvent
+    triggerCustomEvent,
+    loadCanvg
 } from "../../utils";
 
 var provincesData = getProvincesData();
@@ -17,7 +19,7 @@ function className(originClassName) {
     return bootstrapStyles[originClassName] || styles[originClassName] || originClassName;
 }
 
-class MapEmbed extends Component {
+class MapEmbed extends EmbedBase {
     
     constructor(props) {
         super(props);
@@ -33,6 +35,7 @@ class MapEmbed extends Component {
     }
 
     componentDidMount() {
+        loadCanvg();
     }
 
     componentDidUpdate() {

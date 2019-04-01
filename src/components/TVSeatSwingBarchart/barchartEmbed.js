@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
+import EmbedBase from "../embedBase";
 import config from "../../config";
 import bootstrapStyles from "bootstrap/dist/css/bootstrap.min.css";
 import styles from "./barchartEmbed.css";
@@ -21,7 +22,7 @@ function className(originClassName) {
     return bootstrapStyles[originClassName] || styles[originClassName] || originClassName;
 }
 
-class BarChartEmbed extends Component {
+class BarChartEmbed extends EmbedBase {
     
     constructor(props) {
         super(props);

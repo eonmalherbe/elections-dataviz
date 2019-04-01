@@ -9,8 +9,33 @@
         </div>
 
         <!-- <script src="https://sabc-eds.github.io/elections-dataviz/embed/embed.js"></script>  -->
-        <script src="./embed.js"></script> 
-        <script>showQuickResultsWidget( document.getElementById("root"), 
+        <!-- <script src="./embed.js"></script>  -->
+        <script src="http://localhost:8080/embed.js"></script>
+        <!-- <script src="http://localhost:8080/embedruntime.js"></script>
+        <script src="http://localhost:8080/embed1.js"></script>
+        <script src="http://localhost:8080/embed2.js"></script>
+        <script src="http://localhost:8080/embed3.js"></script>
+        <script src="http://localhost:8080/embed4.js"></script>
+        <script src="http://localhost:8080/embed5.js"></script>
+        <script src="http://localhost:8080/embed0.js"></script>  -->
+        <script>
+
+            // drawElectionChart(
+            // 'showQuickResultsWidget', 
+            // document.getElementById("root"), 
+            // { 
+            //     stylesheetFor: "tv", 
+            //     eventDescription: "2014 National Election", 
+            //     regionType: "national", 
+            //     provinceName: "", 
+            //     muniName: "", 
+            //     muniCode: "", 
+            //     iecId: "", 
+            //     numParties: "5"
+            // });
+
+            showQuickResultsWidget(
+            document.getElementById("root"), 
             { 
                 stylesheetFor: "tv", 
                 eventDescription: "2014 National Election", 
@@ -20,7 +45,9 @@
                 muniCode: "", 
                 iecId: "", 
                 numParties: "5"
-            });</script>
+            });
+            
+            </script>
 
         <!-- <script src="./embed.js"></script>
         <script>

@@ -75,8 +75,6 @@ export function Chart(container, width, height, className, options) {
         colorsData = colorsDataP;
         data = value;
 
-        console.log("data", data);
-
         labelSvg.append('text')
             .attr('x', 0)
             .attr('y', -15)

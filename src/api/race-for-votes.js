@@ -246,7 +246,6 @@ export function getVotesDataM(options) {
         `
       })
     } else if (options.regionType == "municipality-vd") {
-      console.log("fetch vd", eventDescription, options.iecId, options.muniCode);
       return client.query({
         query: gql`
         {
@@ -279,110 +278,6 @@ export function getVotesDataM(options) {
       })
     }
   }
-  
-  // export function getMainParties(options) {
-  //   var eventDescription = options.eventDescription;
-  //   if (!eventDescription)
-  //     return;
-  //   if (options.regionType == "national") {
-  //     return client.query({
-  //       query: gql`
-  //       {
-  //         allProvincialBallots(
-  //           event_Description:"${eventDescription}"
-  //         ){
-  //           edges{
-  //             node{
-  //               partyResults {
-  //                 edges{
-  //                   node{
-  //                     validVotes
-  //                     percOfVotes
-  //                     party {
-  //                       id
-  //                       name
-  //                       abbreviation
-  //                     }
-  //                   }
-  //                 }
-  //               }
-  //               location {
-  //                 id
-  //                 name
-  //               }
-  //             }
-  //           }
-  //         }
-  //       }
-  //       `
-  //     })
-  //   } else if (options.regionType == "province") {
-  //     return client.query({
-  //       query: gql`
-  //       {
-  //         allMunicipalBallots(
-  //           event_Description:"${eventDescription}",
-  //           location_Province_Name:"${options.provinceName}"
-  //         ) {
-  //           edges{
-  //             node {
-  //               partyResults {
-  //                 edges{
-  //                   node{
-  //                     party {               
-  //                       name
-  //                       abbreviation
-  //                     }
-  //                     validVotes
-  //                     percOfVotes
-  //                   }
-  //                 }
-                  
-  //               }
-  //               location {
-  //                 code
-  //                 name
-  //                 longName
-  //               }
-  //             }
-  //           }
-  //         }
-  //       }
-  //       `
-  //     })
-  //   } else if (options.regionType == "municipality") {
-  //     var muniRegName = options.muniName.split(" - ")[1];
-  //     console.log(options.regionType, options.muniName, muniRegName);
-  //       return client.query({
-  //         query: gql`
-  //         {
-  //           allVotingDistrictBallots( 
-  //           event_Description:"${eventDescription}",
-  //           location_Ward_Municipality_Code:"${options.muniCode}") {
-  //             edges{
-  //               node{
-  //                 location {
-  //                   iecId
-  //                 }
-  //                 partyResults {
-  //                   edges{
-  //                     node{
-  //                       party{
-  //                         name
-  //                         abbreviation
-  //                       }
-  //                     }
-  //                   }  
-  //                 }
-  //               }
-  //             }
-  //           }
-  //         }
-  //         `
-  //       })
-  //   }
-  // }
-
 
   export function getMainParties(options) {
     var eventDescription = options.eventDescription;

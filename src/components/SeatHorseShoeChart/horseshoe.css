@@ -16,16 +16,16 @@
   pointer-events: none;			
 }
 
-.ELVIZ_stylesheet-tv {
+.horseshoechart.ELVIZ_stylesheet-tv {
   background: rgb(0, 53, 97);
   color: white;
   overflow: hidden;
 }
 
-.ELVIZ_stylesheet-tv svg {
+.horseshoechart.ELVIZ_stylesheet-tv svg {
   color: white;
 }
-.ELVIZ_stylesheet-tv text {
+.horseshoechart.ELVIZ_stylesheet-tv text {
   fill: white;
   color: white;
 }

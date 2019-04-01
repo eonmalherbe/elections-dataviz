@@ -31,16 +31,11 @@
   border: solid green 1px;
 }
 
-.ELVIZ_stylesheet-tv {
+.quickresultswidget.ELVIZ_stylesheet-tv {
   background: rgb(0, 53, 97);
   color: white;
   overflow: hidden;
 }
-.ELVIZ_stylesheet-tv .main-left-part {
-}
-.ELVIZ_stylesheet-tv .main-right-part {
-}
-
 
 .ELVIZ_row {
   margin-right: -15px;

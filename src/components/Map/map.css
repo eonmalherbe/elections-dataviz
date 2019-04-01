@@ -25,39 +25,39 @@ text {
     pointer-events: none;			
 }
 
-.ELVIZ_stylesheet-tv {
+.map-widget.ELVIZ_stylesheet-tv {
   background: rgb(0, 53, 97);
   color: white;
   overflow: hidden;
 }
 
-.ELVIZ_stylesheet-tv a{
+.map-widget.ELVIZ_stylesheet-tv a{
   color: white;
 }
-.ELVIZ_stylesheet-tv a:hover{
+.map-widget.ELVIZ_stylesheet-tv a:hover{
   color: white;
 }
 
-.ELVIZ_stylesheet-tv .legend {
+.map-widget.ELVIZ_stylesheet-tv .legend {
     fill: white;
 }
 
-.ELVIZ_stylesheet-tv .legend text{
+.map-widget.ELVIZ_stylesheet-tv .legend text{
     fill: white;
 }
 
-.ELVIZ_stylesheet-web a{
+.map-widget.ELVIZ_stylesheet-web a{
   color: black;
 }
 
-.ELVIZ_stylesheet-none a{
+.map-widget.ELVIZ_stylesheet-none a{
   color: black;
 }
 
-.ELVIZ_stylesheet-web a:hover{
+.map-widget.ELVIZ_stylesheet-web a:hover{
   color: purple;
 }
 
-.ELVIZ_stylesheet-none a:hover{
+.map-widget.ELVIZ_stylesheet-none a:hover{
   color: purple;
 }

@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
+import EmbedBase from "../embedBase";
 import config from "../../config";
 import bootstrapStyles from "bootstrap/dist/css/bootstrap.min.css";
 import styles from "./piechartEmbed.css";
@@ -18,7 +19,7 @@ function className(originClassName) {
     return bootstrapStyles[originClassName] || styles[originClassName] || originClassName;
 }
 
-class PieChartEmbed extends Component {
+class PieChartEmbed extends EmbedBase {
     
     constructor(props) {
         super(props);

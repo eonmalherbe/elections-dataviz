@@ -4,7 +4,6 @@ import BarChart from '../BarChart/barchart';
 import Map from '../Map/map';
 import events from "../../events";
 import config from "../../config";
-import JSZip from "jszip";
 import {saveAs} from "file-saver";
 
 import {
@@ -22,7 +21,6 @@ function cn(originName) {
 class BarchartWithNavMap extends Component {    
     constructor(props) {
         super(props);
-        var self = this;
         this.state = {
             numParties: 5,
             eventDescription: "2014 National Election",
@@ -52,6 +50,9 @@ class BarchartWithNavMap extends Component {
         if (props.iecId) {
             this.state.iecId = props.iecId;
         }
+        if (props.stylesheetFor) {
+          this.state.stylesheetFor = props.stylesheetFor;
+        }
         if (props.componentID) {
           this.state.componentID = props.componentID;
         }
@@ -68,8 +69,7 @@ class BarchartWithNavMap extends Component {
             self.barchartInstance.exportAsPNGUri(),
             self.mapInstance.exportAsPNGUri()
         ]).then(values => {
-            console.log("exporting ...");
-            var zip = new JSZip();
+            var zip = new window.JSZip();
 
             var imgs = zip.folder("export-images");
             imgs.file("barchart.png", values[0], {base64: true});
@@ -78,7 +78,6 @@ class BarchartWithNavMap extends Component {
             zip.generateAsync({type:"blob"})
             .then(function(content) {
                 saveAs(content, `race-for-votes-barchart-map(${getRegionName(self.state)}).zip`);
-                console.log("exporting ended successfully");
             });
         }).catch(error => {
             console.error("export error", error);
@@ -99,7 +98,7 @@ class BarchartWithNavMap extends Component {
       } = this.state;
 
         return (
-        <div ref="superwidget" className={cn(`stylesheet-${stylesheetFor}`)}>
+        <div ref="superwidget" className={className("barchart-map") + " " + cn(`stylesheet-${stylesheetFor}`)}>
             <div className={className("barchart-container")} ref="barchart">
                 <BarChart 
                     ref={instance => { this.barchartInstance = instance; }} 

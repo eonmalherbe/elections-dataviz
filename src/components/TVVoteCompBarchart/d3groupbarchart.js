@@ -34,8 +34,6 @@ export function Chart(container, width, height, className, options) {
   
     this.draw = function(groupChartData, colorsData) {
 
-      console.log("groupChartData", groupChartData);
-
       svg.selectAll(".topLabel").remove();
       svg.append("text")
         .attr("class", "topLabel")

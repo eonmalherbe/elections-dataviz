@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
-import svgToPng from "save-svg-as-png";
-import canvg from "canvg";
 
 import config from "../../config";
 import polylabel from "polylabel";
@@ -69,6 +67,9 @@ class Map extends Component {
         if (props.iecId) {
             this.state.iecId = props.iecId;
         }
+        if (props.stylesheetFor) {
+          this.state.stylesheetFor = props.stylesheetFor;
+        }
         if (props.componentID) {
           this.state.componentID = props.componentID;
         }
@@ -100,7 +101,6 @@ class Map extends Component {
     }
 
     componentDidUpdate() {
-        console.log("componentDidUpdate", this.state);
         this.draw(this.getContainer(), this.state)
     }
 
@@ -112,13 +112,12 @@ class Map extends Component {
             var rendercanvas = document.createElement('canvas');
             rendercanvas.setAttribute("width", rect.width);
             rendercanvas.setAttribute("height", rect.height);
-    
-            // var ctx = rendercanvas.getContext("2d");
-            // ctx.globalCompositeOperation = "source-out";
-            // ctx.fillStyle = "#ffffff";
-            // ctx.fillRect(0, 0, rect.width, rect.height);
 
-            canvg(rendercanvas, self.refs.vizcontainer.innerHTML, {
+            if (!window.canvg) {
+                return reject("canvg module not available");
+            }
+
+            window.canvg(rendercanvas, self.refs.vizcontainer.innerHTML, {
                 ignoreDimensions: true,
                 scaleWidth: rect.width,
                 scaleHeight: rect.height
@@ -136,7 +135,11 @@ class Map extends Component {
         rendercanvas.setAttribute("width", rect.width);
         rendercanvas.setAttribute("height", rect.height);
 
-        canvg(rendercanvas, this.refs.vizcontainer.innerHTML, {
+        if (!window.canvg) {
+            return console.error("canvg module not available");
+        }
+
+        window.canvg(rendercanvas, this.refs.vizcontainer.innerHTML, {
             ignoreDimensions: true,
             scaleWidth: rect.width,
             scaleHeight: rect.height
@@ -178,7 +181,7 @@ class Map extends Component {
             stylesheetFor
         } = this.state;
         return (
-            <div className={className("map-container")+" "+cn(`stylesheet-${stylesheetFor}`)}>
+            <div className={className("map-widget") + " " + cn(`stylesheet-${stylesheetFor}`)}>
                 <div className={cn("map-title")}>{getRegionName(this.state)}</div>
 
                 <div ref="vizcontainer" className={className("map")}></div>

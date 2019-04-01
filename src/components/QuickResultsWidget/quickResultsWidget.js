@@ -18,7 +18,6 @@ import TurnoutMap from '../TurnoutMap/map';
 import NavBar from '../NavBar/navbar';
 import Map from '../Map/map';
 
-import JSZip from "jszip";
 import {saveAs} from "file-saver";
 import {
     getRegionName,
@@ -133,8 +132,7 @@ class QuickResultsWidget extends Component {
             ];
         }
         Promise.all(imageLoadPromises).then(values => {
-            console.log("exporting ...");
-            var zip = new JSZip();
+            var zip = new window.JSZip();
 
             var imgs = zip.folder(zipfileName);
             imgs.file("image1.png", values[0], {base64: true});
@@ -143,7 +141,6 @@ class QuickResultsWidget extends Component {
             zip.generateAsync({type:"blob"})
             .then(function(content) {
                 saveAs(content, `${zipfileName}.zip`);
-                console.log("exporting ended successfully");
             });
         }).catch(error => {
             console.error("export error", error);
@@ -172,7 +169,7 @@ class QuickResultsWidget extends Component {
             comp
         } = this.state;
         return (
-            <div className={cn(`stylesheet-${stylesheetFor}`)}>
+            <div className={className("quickresultswidget") + " " + cn(`stylesheet-${stylesheetFor}`)}>
                 <div className={cn("row") + " " + cn("component-transition-menu")}>
                     <div className={cn("col-md-2") + " " + className("label")}>
                         Show Results 
