@@ -438,6 +438,13 @@ export function getNationOrProvinceName(state) {
   return state.provinceName;
 }
 
+export function getNationOrProvinceName2(state) {
+  if (state.regionType == "national") {
+    return "National Assembly";
+  }
+  return state.provinceName;
+}
+
 export function createTooltip(className) {
   var tooltipClassName = className(config.CSS_PREFIX + "tooltip")
   if (document.getElementsByClassName(tooltipClassName)[0]) {
@@ -498,10 +505,11 @@ export function getSubRegionName(properties, state) {
   } else if (state.regionType === "province") {
       return properties.smunicipal && properties.smunicipal.split(" - ")[1].split("[")[0]; 
   } else {//municipality
-    if (properties.Municipali) {
-      return properties.Municipali.split(" - ")[1].split("[")[0];
-    }
-    return properties.SMUNICIPAL && properties.SMUNICIPAL.split(" - ")[1].split("[")[0]; 
+    return getMunicipalityiecId(properties);
+    // if (properties.Municipali) {
+    //   return properties.Municipali.split(" - ")[1].split("[")[0];
+    // }
+    // return properties.SMUNICIPAL && properties.SMUNICIPAL.split(" - ")[1].split("[")[0]; 
   }
 }
 

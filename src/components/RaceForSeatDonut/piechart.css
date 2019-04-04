@@ -1,0 +1,31 @@
+.ELVIZ_chart-title {
+  font-weight: bold;
+  text-align: center;
+}
+
+.ELVIZ_tooltip {	
+  position: absolute;			
+  text-align: center;				
+  display: inline-block;		
+  padding: 4px;				
+  font: 12px sans-serif;		
+  background: white;	
+  display: inline-block;
+  border: 0px;		
+  border-radius: 3px;			
+  pointer-events: none;			
+}
+
+.horseshoechart.ELVIZ_stylesheet-tv {
+  background: rgb(0, 53, 97);
+  color: white;
+  overflow: hidden;
+}
+
+.horseshoechart.ELVIZ_stylesheet-tv svg {
+  color: white;
+}
+.horseshoechart.ELVIZ_stylesheet-tv text {
+  fill: white;
+  color: white;
+}

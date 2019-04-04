@@ -40,7 +40,7 @@ class BarChartEmbed extends EmbedBase {
                 // "2019 NATIONAL ELECTION",
                 // "2019 PROVINCIAL ELECTION",
             ],
-            regionType: "province",
+            regionType: "national",
             provinceName: "Western Cape",
             muniName: "",
             muniCode: "",
@@ -261,7 +261,9 @@ class BarChartEmbed extends EmbedBase {
               <div className={className("form-group")}>
                   <label>Embed Code</label>
                   <div className={className("embedcode")}>
-                    <span>{`<script src="${DOMAIN}/embed/embed.js"></script>
+                    <span>{`
+                    <div id="${elementId}"></div>
+                    <script src="${DOMAIN}/embed/embed.js"></script>
                     <script>showTVSeatSwingBarchart(
                         document.getElementById("${elementId}"),
                         {
@@ -272,7 +274,7 @@ class BarChartEmbed extends EmbedBase {
                             muniName: "${muniName}",
                             muniCode: "${muniCode}",
                             iecId: "${iecId}",
-                            partyAbbrs: "${partyAbbrs}"
+                            partyAbbrs: ${JSON.stringify(partyAbbrs)}
                         });</script>`.replace(/(\r\n|\n|\r)/gm, "")}</span>
                   </div>
               </div> 

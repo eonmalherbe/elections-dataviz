@@ -6,15 +6,19 @@ export function Chart(container, width, height, className, options) {
         width = 700,
         height = 300,
         margin = {top: 10, right: 10, bottom: 10, left: 10},
-        variable = 'percent',
-        category = 'name',
+        variable = options.variable,
+        category = options.category,
         padAngle = 0.015,
         transTime = 750,
         floatFormat = d3.format('.4r'),
         cornerRadius = 3,
         colorsData = null;
 
+
+        
+
     function colour(key) {
+        // console.log("colorsData", colorsData);
         if (colorsData && colorsData[key]) {
             return colorsData[key];
         }
@@ -72,27 +76,43 @@ export function Chart(container, width, height, className, options) {
         } else {
             errorText.text("");
         }
-        colorsData = colorsDataP;
+
+        if (options.chartType === 'Progress on Votes Count') {
+            colorsData = colorsDataP;
+        } else {
+            var partyColorByName = {};
+
+            var partyColorsData = colorsDataP;
+            if (partyColorsData && partyColorsData["data"]["allParties"]["edges"]) {
+                partyColorsData["data"]["allParties"]["edges"].forEach(edge => {
+                    partyColorByName[edge.node.abbreviation] = edge.node.colour;
+                })
+            }
+            colorsData = partyColorByName;
+        }
+        
         data = value;
 
-        labelSvg.append('text')
-            .attr('x', 0)
-            .attr('y', -15)
-            .style('font-size', '.7em')
-            .style('text-anchor', 'middle')
-            .text('Completed' + ': ' + data[0]["percent"] + '%');
-        labelSvg.append('text')
-            .attr('x', 0)
-            .attr('y', 0)
-            .text('Captured Votes' + ': ' + data[0]["count"])
-            .style('font-size', '.7em')
-            .style('text-anchor', 'middle');
-        labelSvg.append('text')
-            .attr('x', 0)
-            .attr('y', 15)
-            .text('Total' + ': ' + data[0]["totalCount"])
-            .style('font-size', '.7em')
-            .style('text-anchor', 'middle');
+        if (options.chartType === 'Progress on Votes Count') {
+            labelSvg.append('text')
+                .attr('x', 0)
+                .attr('y', -15)
+                .style('font-size', '.7em')
+                .style('text-anchor', 'middle')
+                .text('Completed' + ': ' + data[0]["percent"] + '%');
+            labelSvg.append('text')
+                .attr('x', 0)
+                .attr('y', 0)
+                .text('Captured Votes' + ': ' + data[0]["count"])
+                .style('font-size', '.7em')
+                .style('text-anchor', 'middle');
+            labelSvg.append('text')
+                .attr('x', 0)
+                .attr('y', 15)
+                .text('Total' + ': ' + data[0]["totalCount"])
+                .style('font-size', '.7em')
+                .style('text-anchor', 'middle');
+        }
 
         var updatePath = d3.select('.slices').selectAll('path');
 
@@ -123,6 +143,8 @@ export function Chart(container, width, height, className, options) {
 
         selection.on('mouseenter', function (data) {
 
+            // console.log("mouseenter", data);
+
             svg.append('text')
                 .attr('class', 'toolCircle')
                 .attr('dy', -15)
@@ -145,11 +167,16 @@ export function Chart(container, width, height, className, options) {
 
     function toolTipHTML(data) {
 
-        var tip = '';
-        tip += '<tspan x="0">' + 'Progress' + ': ' + data.data["percent"] + '%' + '</tspan>';
-        tip += '<tspan x="0" dy="1.2em">' + 'Captured Votes' + ': ' + data.data["count"] + '</tspan>';
-        tip += '<tspan x="0" dy="1.2em">' + 'Total' + ': ' + data.data["totalCount"] + '</tspan>';
-
+        if (options.chartType === 'Progress on Votes Count') {
+            var tip = '';
+            tip += '<tspan x="0">' + 'Progress' + ': ' + data.data["percent"] + '%' + '</tspan>';
+            tip += '<tspan x="0" dy="1.2em">' + 'Captured Votes' + ': ' + data.data["count"] + '</tspan>';
+            tip += '<tspan x="0" dy="1.2em">' + 'Total' + ': ' + data.data["totalCount"] + '</tspan>';
+        } else { //'Race for Seats Donut chart'
+            var tip = '';
+            tip += '<tspan x="0">' + 'Seats' + ': ' + data.data["seats"] + '</tspan>';
+            tip += '<tspan x="0" dy="1.2em">' + 'Party' + ': ' + data.data["name"] + '</tspan>';
+        }
         return tip;
     }
 

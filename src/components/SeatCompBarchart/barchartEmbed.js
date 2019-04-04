@@ -39,7 +39,7 @@ class BarChartEmbed extends EmbedBase {
                 "2019 NATIONAL ELECTION",
                 // "2019 PROVINCIAL ELECTION",
             ],
-            regionType: "province",
+            regionType: "national",
             provinceName: "Western Cape",
             muniName: "",
             muniCode: "",
@@ -249,8 +249,10 @@ class BarChartEmbed extends EmbedBase {
               <div className={className("form-group")}>
                   <label>Embed Code</label>
                   <div className={className("embedcode")}>
-                    <span>{`<script src="${DOMAIN}/embed/embed.js"></script>
-                    <script>showRaceForVotesCompBarChart(
+                    <span>{`                 
+                    <div id="${elementId}"></div>
+                    <script src="${DOMAIN}/embed/embed.js"></script>
+                    <script>showSeatsComparisonBarChart(
                         document.getElementById("${elementId}"),
                         {
                             stylesheetFor: "${stylesheetFor}",

@@ -408,12 +408,24 @@ class Map extends Component {
                         .attr("stroke-width", 3)
                         .style("fill-opacity", 0.8);
                 })
-                .on("mousemove", function(d, i) {	
+                .on("mousemove", function(d, i) {
                     tooltipDiv.transition()		
                         .duration(200)		
                         .style("opacity", 1);
+                    
+                    var undefinedText;
+                    if (self.state.regionType === "province") {
+                        undefinedText = "New municipality - no previous results available"
+                    } else {
+                        undefinedText = "New voting district - no previous results available"
+                    }
 
-                    tooltipDiv.html(getSubRegionName(d.properties, self.state) + " : " + getTurnout(d, i) + "%")	
+                    var turnoutData = getTurnout(d, i);
+                    var subRegionName = getSubRegionName(d.properties, self.state);
+                    var tooltipText = (typeof turnoutData !== "undefined")? 
+                                (subRegionName + " : " + turnoutData + "%") : undefinedText;
+
+                    tooltipDiv.html(tooltipText)	
                         .style("left", (d3.event.pageX) + "px")		
                         .style("top", (d3.event.pageY - 28) + "px");	
                 })

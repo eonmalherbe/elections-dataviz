@@ -153,7 +153,9 @@ class MapEmbed extends EmbedBase {
             <div className={className("form-group")}>
                 <label>Embed Code</label>
                 <div className={className("embedcode")}>
-                    <span>{`<script src="${DOMAIN}/embed/embed.js"></script>
+                    <span>{`
+                    <div id="${elementId}"></div>
+                    <script src="${DOMAIN}/embed/embed.js"></script>
                     <script>
                         showMap(document.getElementById("${elementId}"),{
                             stylesheetFor: "${stylesheetFor}",

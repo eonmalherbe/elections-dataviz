@@ -15,3 +15,5 @@ export {default as TVSeatCompBarchart} from "./TVSeatCompBarchart/barchart";
 export {default as TVSeatSwingBarchart} from "./TVSeatSwingBarchart/barchart";
 export {default as TVVoteCompBarchart} from "./TVVoteCompBarchart/barchart";
 export {default as TVVoteSwingBarchart} from "./TVVoteSwingBarchart/barchart";
+
+export {default as SeatDonutChart} from "./RaceForSeatDonut/piechart";

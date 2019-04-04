@@ -1,44 +1,43 @@
 import React, {Component} from "react";
 import EmbedBase from "../embedBase";
-import bootstrapStyles from "bootstrap/dist/css/bootstrap.min.css";
-import styles from "./mapEmbed.css";
 import config from "../../config";
+import bootstrapStyles from "bootstrap/dist/css/bootstrap.min.css";
+import styles from "./piechartEmbed.css";
 import events from "../../events";
-
 import {
     getElectionEvents,
     getProvincesData
 } from "../../api";
-
 import {
-    loadCanvg,
     triggerCustomEvent
 } from "../../utils";
 
 var provincesData = getProvincesData();
+
 function className(originClassName) {
     return bootstrapStyles[originClassName] || styles[originClassName] || originClassName;
 }
 
-class MapEmbed extends EmbedBase {
+class PieChartEmbed extends EmbedBase {
     
     constructor(props) {
         super(props);
         this.state = {
             elementId: "root",
-            disableNavigation: false, //checkbox
             eventDescription: "2014 National Election",
-            regionType: "province",
-            provinceName: "Western Cape",
+            regionType: "national",
+            provinceName: "",
             muniName: "",
+            muniCode: "",
+            iecId: "",
+
             electionEvents: [],
             stylesheetFor: "web",
-            componentID: 11
+            componentID: 8
         }
     }
 
     componentDidMount() {
-        loadCanvg();
         var self = this;
         getElectionEvents()
             .then(function(data) {
@@ -51,11 +50,13 @@ class MapEmbed extends EmbedBase {
     }
 
     onEventDescriptionChange(e) {
-        if (e.target.value.toLowerCase().indexOf("national") == -1 &&
-                this.state.regionType == "national") {
+        if (e.target.value.toLowerCase().indexOf("national") == -1) {
             this.setState({eventDescription: e.target.value, regionType: "province", provinceName: "Western Cape"});
         } else {
-            this.setState({eventDescription: e.target.value });
+            this.setState({
+                eventDescription: e.target.value,
+                regionType: "national"
+            });
         }
     }
 
@@ -65,29 +66,31 @@ class MapEmbed extends EmbedBase {
     }
 
     onPreview(e) {
-        triggerCustomEvent(events.MAP_PREVIEW, this.state);
+        triggerCustomEvent(events.CHART_PREVIEW, this.state);
     }
-
+    
     onExportAsPNG(e) {
         triggerCustomEvent(events.EXPORT_PNG, this.state);
     }
-      
+
     render () {
         var DOMAIN = config.DOMAIN;
         var {
-            elementId,       
-            stylesheetFor,     
-            disableNavigation,
+            elementId,
+            stylesheetFor,
             eventDescription,
-            regionType,
+            regionType,            
             provinceName,
             muniName,
+            muniCode,
+            iecId,
             electionEvents
         } = this.state;
+
         var curProvinceData = provincesData.filter(item => item.name == provinceName)[0];
         return (
           <div>
-            <h3> Map Embed Script Generation </h3>
+            <h3> Race For Seat Bar Chart Embed Script Generation </h3>
             <div className={className("form-group")}>
                 <label>Element ID </label>
                 <input 
@@ -117,19 +120,6 @@ class MapEmbed extends EmbedBase {
                                 return (<option key={item} value={item}>{item}</option>)
                             })
                         }
-                  </select>
-              </div>
-            <div className={className("form-group")}>
-                  <label>Region Type </label>
-                  <select className={className("form-control")} 
-                     value={regionType}
-                     onChange={this.onRegionTypeChange.bind(this)}>
-                        { 
-                            eventDescription.toLowerCase().indexOf("national") != -1 && 
-                            <option value="national">national</option>
-                        }
-                        <option value="province">province</option>
-                        <option value="municipality">municipality</option>
                   </select>
               </div>
               {
@@ -164,19 +154,32 @@ class MapEmbed extends EmbedBase {
                         </select>
                     </div>
               }
-
-              <div className={className("form-check")}>
-                
-                <label className={className("form-check-label")}>
-                    <input 
-                        type="checkbox" 
-                        className={className("form-check-input")} 
-                        value={disableNavigation}
-                        onChange={e => this.setState({disableNavigation: e.target.checked})} 
-                        />
-                    &nbsp;&nbsp;Disable Navigation
-                </label>
-              </div>
+              {
+                  (regionType == "municipality-vd") &&
+                    <div className={className("form-group")}>
+                        <label>Municipality Code</label>
+                        <input 
+                            type="text" 
+                            className={className("form-control")} 
+                            placeholder="CPT"
+                            value={muniCode}
+                            onChange={e => this.setState({muniCode: e.target.value})} 
+                            disabled={(regionType=="national")}/>
+                    </div>
+              }
+              {
+                  (regionType == "municipality-vd") &&
+                    <div className={className("form-group")}>
+                        <label>Voting District Number</label>
+                        <input 
+                            type="text" 
+                            className={className("form-control")} 
+                            placeholder="97860055"
+                            value={iecId}
+                            onChange={e => this.setState({iecId: e.target.value})} 
+                            disabled={(regionType=="national")}/>
+                    </div>
+              }
               <div className={className("form-group")}>
                 <button type="button" onClick={this.onPreview.bind(this)} className={className("btn") + " " + className("btn-primary") }>Preview</button>
               </div>
@@ -185,27 +188,27 @@ class MapEmbed extends EmbedBase {
                     onClick={this.onExportAsPNG.bind(this)} 
                     className={className("btn") + " " + className("btn-primary") }>Export As PNG</button>
               </div>
-            <div className={className("form-group")}>
-                <label>Embed Code</label>
-                <div className={className("embedcode")}>
+              <div className={className("form-group")}>
+                  <label>Embed Code</label>
+                  <div className={className("embedcode")}>
                     <span>{`
                     <div id="${elementId}"></div>
                     <script src="${DOMAIN}/embed/embed.js"></script>
-                    <script>
-                        showTurnoutMap(document.getElementById("${elementId}"),{
+                    <script>showSeatDonutChart(
+                        document.getElementById("${elementId}"),
+                        {
                             stylesheetFor: "${stylesheetFor}",
-                            disableNavigation: ${disableNavigation},
+                            eventDescription: "${eventDescription}",
                             regionType: "${regionType}",
                             provinceName: "${provinceName}",
                             muniName: "${muniName}",
-                        });</script>`.replace(/(\r\n|\n|\r)/gm, "")}
-                    </span>
-                </div>
-            </div>
+                            muniCode: "${muniCode}",
+                            iecId: "${iecId}"
+                        });</script>`.replace(/(\r\n|\n|\r)/gm, "")}</span>
+                  </div>
+              </div>
           </div>
         )
     }
 }
-export default MapEmbed;
-
-
+export default PieChartEmbed;

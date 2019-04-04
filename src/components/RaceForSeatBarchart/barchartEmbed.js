@@ -212,8 +212,10 @@ class BarChartEmbed extends EmbedBase {
               <div className={className("form-group")}>
                   <label>Embed Code</label>
                   <div className={className("embedcode")}>
-                    <span>{`<script src="${DOMAIN}/embed/embed.js"></script>
-                    <script>showBarChart(
+                    <span>{`
+                    <div id="${elementId}"></div>
+                    <script src="${DOMAIN}/embed/embed.js"></script>
+                    <script>showRaceForSeatsBarChart(
                         document.getElementById("${elementId}"),
                         {
                             stylesheetFor: "${stylesheetFor}",

@@ -16,7 +16,9 @@ import {
     TVSeatCompBarchart,
     TVSeatSwingBarchart,
     TVVoteCompBarchart,
-    TVVoteSwingBarchart
+    TVVoteSwingBarchart,
+
+    SeatDonutChart,
 } from "./components";
 
 window.showBarChart = (element, options) => {
@@ -30,7 +32,7 @@ window.showBarchartWithNavMap = (element, options) => {
         {...options}
         />, element);
 };
-
+ 
 window.showMap = (element, options) => {
     ReactDOM.render(<Map 
         {...options}
@@ -115,6 +117,11 @@ window.showTVVoteSwingBarchart = (element, options) => {
         />, element);
 };
 
+window.showSeatDonutChart = (element, options) => {
+    ReactDOM.render(<SeatDonutChart 
+        {...options}
+        />, element);
+};
 
 
 

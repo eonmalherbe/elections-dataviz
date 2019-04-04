@@ -17,7 +17,9 @@ import {
 
 var dataRefreshTime = 30 * 1000;
 var chartOptions = {
-  chartType: 'Progress on Votes Count'
+  chartType: 'Progress on Votes Count',
+  variable: 'percent',
+  category: 'name'
 };
 
 function className(originName) {

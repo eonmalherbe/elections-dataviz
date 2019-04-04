@@ -376,12 +376,23 @@ class Map extends Component {
                         .style("fill-opacity", 0.8);
                 })
                 .on("mousemove", function(d, i) {	
-                    if (self.state.regionType === "municipality") return;
+                    // if (self.state.regionType === "municipality") return;
                     tooltipDiv.transition()		
                         .duration(200)		
                         .style("opacity", 1);
 
-                    tooltipDiv.html(getSubRegionName(d.properties, self.state) + " : " + getMainPartyName(d, i))	
+                    var undefinedText;
+                    if (self.state.regionType === "province") {
+                        undefinedText = "New municipality - no previous results available"
+                    } else {
+                        undefinedText = "New voting district - no previous results available"
+                    }
+                    var mainPartyName = getMainPartyName(d, i);
+                    var subRegionName = getSubRegionName(d.properties, self.state);
+                    var tooltipText = (typeof mainPartyName !== "undefined")? 
+                                (subRegionName + " : " + mainPartyName) : undefinedText;
+
+                    tooltipDiv.html(tooltipText)	
                         .style("left", (d3.event.pageX) + "px")		
                         .style("top", (d3.event.pageY - 28) + "px");	
                 })
