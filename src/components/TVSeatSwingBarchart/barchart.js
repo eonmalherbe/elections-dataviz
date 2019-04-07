@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import * as d3 from "d3";
+import * as d3 from "../../d3";
 import styles from "../BarChart/barchart.css";
 import {Chart} from "../TVVoteSwingBarchart/d3deltabarchart";
 import svgToPng from "save-svg-as-png";

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import * as d3 from "d3";
+import * as d3 from "../../d3";
 import styles from "./piechart.css";
 import {Chart} from "./d3piechart";
 import svgToPng from "save-svg-as-png";

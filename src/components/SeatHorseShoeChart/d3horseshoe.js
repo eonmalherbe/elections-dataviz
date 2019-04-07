@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+import * as d3 from "../../d3";
 import {createTooltip} from "../../utils";
 
 export function Chart(container, width, height, className, options) {

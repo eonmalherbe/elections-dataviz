@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+import * as d3 from "../../d3";
 import {createTooltip} from "../../utils";
 import { type } from "os";
 import config from "../../config";

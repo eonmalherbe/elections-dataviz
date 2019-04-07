@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+import * as d3 from "../d3";
 import config from "../config";
 
 function calcPercent(a, b) {
