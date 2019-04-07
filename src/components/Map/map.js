@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import * as d3 from "d3";
+import * as d3 from "../../d3";
 import * as topojson from "topojson-client";
 import config from "../../config";
 import polylabel from "polylabel";
