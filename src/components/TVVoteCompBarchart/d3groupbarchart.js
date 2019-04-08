@@ -16,7 +16,7 @@ export function Chart(container, width, height, className, options) {
 
     var svg = container.append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 " + (width+XaxisOffset) + " " + (height+YaxisOffset))
+        .attr("viewBox", options.viewBox || ("0 0 " + (width+XaxisOffset) + " " + (height+YaxisOffset)))
         .classed("svg-content", true);
         
     var tooltipDiv = createTooltip(className);

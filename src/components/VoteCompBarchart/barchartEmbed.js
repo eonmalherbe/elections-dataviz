@@ -65,7 +65,7 @@ class BarChartEmbed extends EmbedBase {
                 var allParties = data["data"]["allParties"]["edges"].map(edge => edge["node"])
                 allParties = allParties.filter((thing, index, self) =>
                     index === self.findIndex((t) => (
-                        t.abbreviation === thing.abbreviation
+                        t.abbreviation === thing.abbreviation || t.name === thing.name
                     ))
                 )
                 self.setState({allParties});         

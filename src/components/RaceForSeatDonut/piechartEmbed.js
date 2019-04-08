@@ -33,7 +33,7 @@ class PieChartEmbed extends EmbedBase {
 
             electionEvents: [],
             stylesheetFor: "web",
-            componentID: 8
+            componentID: 17
         }
     }
 

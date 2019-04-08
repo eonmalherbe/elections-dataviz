@@ -66,7 +66,7 @@ class BarChartEmbed extends EmbedBase {
                 var allParties = data["data"]["allParties"]["edges"].map(edge => edge["node"])
                 allParties = allParties.filter((thing, index, self) =>
                     index === self.findIndex((t) => (
-                        t.abbreviation === thing.abbreviation
+                        t.abbreviation === thing.abbreviation || t.name === thing.name
                     ))
                 )
                 self.setState({allParties});         
@@ -244,8 +244,8 @@ class BarChartEmbed extends EmbedBase {
                         value={partyAbbrs}
                         onChange={this.onPartyAbbrsChange.bind(this)} >
                         {
-                            allParties && allParties.map(party => {
-                                return <option key={party["abbreviation"]} value={party["abbreviation"]}>{formatPartyName(party["name"])}</option>
+                            allParties && allParties.map((party, partyIdx) => {
+                                return <option key={partyIdx} value={party["abbreviation"]}>{formatPartyName(party["name"])}</option>
                             })
                         }
                   </select>

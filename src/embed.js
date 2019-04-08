@@ -1,3 +1,5 @@
+import 'babel-polyfill'; 
+import 'react-app-polyfill/ie11';
 import React from "react";
 import ReactDOM from "react-dom";
 import {
@@ -20,6 +22,8 @@ import {
 
     SeatDonutChart,
 } from "./components";
+
+console.log("added babel-polyfill & react-app-polyfill/ie11");
 
 window.showBarChart = (element, options) => {
     ReactDOM.render(<BarChart 

@@ -582,3 +582,11 @@ export function loadScriptsForEmbedMode() {
   loadCanvg();
   loadJSZip();
 }
+
+export function fetchDataFromOBJ(state, props) {
+  Object.keys(state).forEach(key => {
+    if (props[key]) {
+      state[key] = props[key];
+    }
+  })
+}

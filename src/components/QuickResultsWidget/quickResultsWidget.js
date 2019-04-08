@@ -8,7 +8,7 @@ import BarChart from '../BarChart/barchart';
 
 import ProgressVotesPieChart from '../ProgVotesCountPiechart/piechart';
 
-import RaceForSeatBarChart from '../RaceForSeatBarchart/barchart';
+import RaceForSeatDonut from '../RaceForSeatDonut/piechart';
 
 import SpoiltBarChart from '../SpoiltBarchart/barchart';
 
@@ -21,7 +21,8 @@ import Map from '../Map/map';
 import {saveAs} from "file-saver";
 import {
     getRegionName,
-    triggerCustomEvent
+    triggerCustomEvent,
+    fetchDataFromOBJ
 } from "../../utils";
 
 
@@ -48,30 +49,8 @@ class QuickResultsWidget extends Component {
             stylesheetFor: "web",
             componentID: 5
         }
-        if (props.numParties) {
-            this.state.numParties = props.numParties;
-        }
-        if (props.regionType) {
-            this.state.regionType = props.regionType;
-        }
-        if (props.provinceName) {
-            this.state.provinceName = props.provinceName;
-        }
-        if (props.muniName) {
-            this.state.muniName = props.muniName;
-        }
-        if (props.muniCode) {
-            this.state.muniCode = props.muniCode;
-        }
-        if (props.iecId) {
-            this.state.iecId = props.iecId;
-        }
-        if (props.stylesheetFor) {
-            this.state.stylesheetFor = props.stylesheetFor;
-        }
-        if (props.componentID) {
-          this.state.componentID = props.componentID;
-        }
+        fetchDataFromOBJ(this.state, props);
+
         this.exportAsPNG = this.exportAsPNG.bind(this);
         this.handleRegionChange = this.handleRegionChange.bind(this);
         this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
@@ -228,7 +207,7 @@ class QuickResultsWidget extends Component {
                                 comp == 'race for seats' && 
                                 <div className={cn("col-md-8")+" "+className("main-right-part")}>
                                     <div className={className("barchart-container")}>
-                                        <RaceForSeatBarChart 
+                                        <RaceForSeatDonut 
                                             ref={instance => { this.seatsInstance1 = instance; }} 
                                             {...this.state}
                                             componentID={-1000} />

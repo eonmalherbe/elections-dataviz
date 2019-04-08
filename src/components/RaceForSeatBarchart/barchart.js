@@ -12,7 +12,8 @@ import {
 } from "../../api";
 import {
   parseSeatsData,
-  getNationOrProvinceName2
+  getNationOrProvinceName2,
+  fetchDataFromOBJ
 } from "../../utils";
 
 
@@ -54,30 +55,8 @@ class BarChart extends Component {
         stylesheetFor: "web",
         componentID: 6
       }
-      if (props.numParties) {
-        this.state.numParties = props.numParties;
-      }
-      if (props.regionType) {
-        this.state.regionType = props.regionType;
-      }
-      if (props.provinceName) {
-        this.state.provinceName = props.provinceName;
-      }
-      if (props.muniName) {
-        this.state.muniName = props.muniName;
-      }
-      if (props.muniCode) {
-        this.state.muniCode = props.muniCode;
-      }
-      if (props.iecId) {
-        this.state.iecId = props.iecId;
-      }
-      if (props.stylesheetFor) {
-        this.state.stylesheetFor = props.stylesheetFor;
-      }
-      if (props.componentID) {
-        this.state.componentID = props.componentID;
-      }
+      fetchDataFromOBJ(this.state, props);
+
       this.chart = null;
       this.refreshIntervalID = 0;
       this.exportAsPNG = this.exportAsPNG.bind(this);
@@ -127,6 +106,7 @@ class BarChart extends Component {
       var targetState = event.detail;
       if (targetState.componentID != this.state.componentID)
         return;
+      console.log("targetState", targetState);
       svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-seats-barchart(${getNationOrProvinceName2(this.state)}).png`);
     }
 

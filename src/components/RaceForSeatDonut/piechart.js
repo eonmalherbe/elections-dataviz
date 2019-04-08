@@ -12,7 +12,8 @@ import {
 } from "../../api";
 import {
   parseSeatsData,
-  getNationOrProvinceName
+  getNationOrProvinceName,
+  fetchDataFromOBJ
 } from "../../utils";
 
 
@@ -20,7 +21,8 @@ var dataRefreshTime = 30 * 1000;
 var chartOptions = {
   chartType: 'Race For Seats Donut Chart',
   variable: 'seats',
-  category: 'name'
+  category: 'name',
+  viewBox: '170 0 360 320'
 };
 
 function className(originName) {
@@ -46,30 +48,10 @@ class DonutChart extends Component {
         muniCode: "",
         iecId: "",
         stylesheetFor: "web",
-        componentID: 8
+        componentID: 17
       }
 
-      if (props.regionType) {
-        this.state.regionType = props.regionType;
-      }
-      if (props.provinceName) {
-        this.state.provinceName = props.provinceName;
-      }
-      if (props.muniName) {
-        this.state.muniName = props.muniName;
-      }
-      if (props.muniCode) {
-        this.state.muniCode = props.muniCode;
-      }
-      if (props.iecId) {
-        this.state.iecId = props.iecId;
-      }
-      if (props.stylesheetFor) {
-        this.state.stylesheetFor = props.stylesheetFor;
-      }
-      if (props.componentID) {
-        this.state.componentID = props.componentID;
-      }
+      fetchDataFromOBJ(this.state, props);
 
       this.chart = null;
       this.refreshIntervalID = 0;
@@ -120,6 +102,7 @@ class DonutChart extends Component {
       var targetState = event.detail;
       if (targetState.componentID != this.state.componentID)
         return;
+      console.log("targetState", targetState);
       svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-seats-donutchart-chart(${getNationOrProvinceName(this.state)}).png`);
     }
 
@@ -140,6 +123,7 @@ class DonutChart extends Component {
       const {
         stylesheetFor
       } = this.state;
+      console.log("styles", styles);
       return (
           <div className={className("donutchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
             <div className={cn("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>

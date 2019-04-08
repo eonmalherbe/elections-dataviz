@@ -7,7 +7,8 @@ import config from "../../config";
 import {saveAs} from "file-saver";
 
 import {
-    getRegionName
+    getRegionName,
+    fetchDataFromOBJ
 } from "../../utils";
 
 function className(originName) {
@@ -31,31 +32,9 @@ class BarchartWithNavMap extends Component {
             iecId: "",
             stylesheetFor: "web",
             componentID: 2
-        }
-        if (props.numParties) {
-            this.state.numParties = props.numParties;
-        }
-        if (props.regionType) {
-            this.state.regionType = props.regionType;
-        }
-        if (props.provinceName) {
-            this.state.provinceName = props.provinceName;
-        }
-        if (props.muniName) {
-            this.state.muniName = props.muniName;
-        }
-        if (props.muniCode) {
-            this.state.muniCode = props.muniCode;
-        }
-        if (props.iecId) {
-            this.state.iecId = props.iecId;
-        }
-        if (props.stylesheetFor) {
-          this.state.stylesheetFor = props.stylesheetFor;
-        }
-        if (props.componentID) {
-          this.state.componentID = props.componentID;
-        }
+        }      
+
+        fetchDataFromOBJ(this.state, props);
 
         this.exportAsPNG = this.exportAsPNG.bind(this);
     }

@@ -41,12 +41,18 @@ export function Chart(container, width, height, className, options) {
 
     var totalSvg = container.append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom))
+        .attr("viewBox", options.viewBox || ("0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom)))
         .classed("svg-content", true);
     
+    
+    var transformX = height / 2, transformY = height / 2;
+    if (options.chartType === 'Progress on Votes Count') {
+    } else {
+        transformX = width / 2;
+    }
     var svg = totalSvg
         .append('g')
-        .attr('transform', 'translate(' + height / 2 + ',' + height / 2 + ')');
+        .attr('transform', 'translate(' + transformX + ',' + transformY + ')');
     
     var labelSvg = totalSvg
         .append('g')

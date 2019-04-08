@@ -13,7 +13,8 @@ import {
 } from "../../api";
 import {
   parseVotesComparisonData,
-  getRegionName
+  getRegionName,
+  fetchDataFromOBJ
 } from "../../utils";
 
 var provincesData = getProvincesData();
@@ -63,30 +64,8 @@ class BarChart extends Component {
         stylesheetFor: "web",
         componentID: 16
       }
-      if (props.partyAbbr) {
-        this.state.partyAbbr = props.partyAbbr;
-      }
-      if (props.regionType) {
-        this.state.regionType = props.regionType;
-      }
-      if (props.provinceName) {
-        this.state.provinceName = props.provinceName;
-      }
-      if (props.muniName) {
-        this.state.muniName = props.muniName;
-      }
-      if (props.muniCode) {
-        this.state.muniCode = props.muniCode;
-      }
-      if (props.iecId) {
-        this.state.iecId = props.iecId;
-      }
-      if (props.stylesheetFor) {
-        this.state.stylesheetFor = props.stylesheetFor;
-      }
-      if (props.componentID) {
-        this.state.componentID = props.componentID;
-      }
+
+      fetchDataFromOBJ(this.state, props);
 
       this.chart = null;
       this.refreshIntervalID = 0;

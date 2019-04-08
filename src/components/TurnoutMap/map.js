@@ -20,7 +20,8 @@ import {
   fixMapLabelIntersect,
   triggerCustomEvent,
   getMunicipalityiecId,
-  getRegionFileName
+  getRegionFileName,
+  fetchDataFromOBJ
 } from "../../utils";
 
 var regionColor = "#9c9c9c";
@@ -52,33 +53,8 @@ class Map extends Component {
             componentID: 11
         }
 
-        if (props.regionType) {
-            this.state.regionType = props.regionType;
-        }
-        if (props.provinceName) {
-            this.state.provinceName = props.provinceName;
-        }
-        if (props.muniName) {
-            this.state.muniName = props.muniName;
-        }
-        if (props.muniCode) {
-            this.state.muniCode = props.muniCode;
-        }
-        if (props.iecId) {
-            this.state.iecId = props.iecId;
-        }
-        if (props.stylesheetFor) {
-          this.state.stylesheetFor = props.stylesheetFor;
-        }
-        if (props.componentID) {
-          this.state.componentID = props.componentID;
-        }
-        if (props.disableNavigation) {
-            this.state.disableNavigation = props.disableNavigation;
-        }
-        if (props.stylesheetFor) {
-            this.state.stylesheetFor = props.stylesheetFor;
-        }
+        fetchDataFromOBJ(this.state, props);
+
         this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
         this.exportAsPNG = this.exportAsPNG.bind(this);
         this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
