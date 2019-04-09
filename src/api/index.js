@@ -29,6 +29,7 @@ export function getPartyColors() {
             name
             abbreviation
             colour
+            iecId
           }
         }
       }

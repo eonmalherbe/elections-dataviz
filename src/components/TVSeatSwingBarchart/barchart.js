@@ -43,6 +43,7 @@ class BarChart extends Component {
       super(props);
       this.state = {
         partyAbbrs: ["ANC", "DA", "EFF", "ID"],
+        partyIecIds: [null, null, null, null],
         eventDescriptions: [
             // "National Elections 1999",
             // "Provincial Elections 1999",

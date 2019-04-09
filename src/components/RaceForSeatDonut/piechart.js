@@ -121,12 +121,15 @@ class DonutChart extends Component {
     render () {
 
       const {
-        stylesheetFor
+        stylesheetFor,
+        componentID
       } = this.state;
-      console.log("styles", styles);
+      // console.log("styles", styles);
       return (
           <div className={className("donutchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
-            <div className={cn("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>
+            {
+              componentID != -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>
+            }
             <div 
               ref="vizcontainer" 
               className={className("chart-body")} 
@@ -157,7 +160,7 @@ class DonutChart extends Component {
         if (!this.chart)
           this.chart = new Chart(container, null, null, className, chartOptions);
 
-        console.log("chartData", chartData);
+        // console.log("chartData", chartData);
         
         this.chart.draw(chartData, partyColorsData);
     }

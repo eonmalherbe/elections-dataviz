@@ -45,6 +45,7 @@ class BarChartEmbed extends EmbedBase {
             muniCode: "",
             iecId: "",
             partyAbbr: "ANC",
+            partyIecId: null,
 
             electionEvents: [],
             allParties: [],
@@ -65,7 +66,7 @@ class BarChartEmbed extends EmbedBase {
                 var allParties = data["data"]["allParties"]["edges"].map(edge => edge["node"])
                 allParties = allParties.filter((thing, index, self) =>
                     index === self.findIndex((t) => (
-                        t.abbreviation === thing.abbreviation || t.name === thing.name
+                        t.iecId == thing.iecId
                     ))
                 )
                 self.setState({allParties});         
@@ -113,6 +114,7 @@ class BarChartEmbed extends EmbedBase {
             muniCode,
             iecId,
             partyAbbr,
+            partyIecId,
             electionEvents,
             allParties
         } = this.state;
@@ -226,12 +228,19 @@ class BarChartEmbed extends EmbedBase {
                   <label>Party Name</label>
                   
                   <select className={className("form-control")} 
-                        value={partyAbbr}
-                        onChange={e => this.setState({partyAbbr: e.target.value})} >
+                        value={partyAbbr+"\x22"+partyIecId}
+                        onChange={e => this.setState({
+                            partyAbbr: e.target.value.split("\x22")[0],
+                            partyIecId: e.target.value.split("\x22")[1],
+                        })} >
                         <option value="">Select ...</option>
                         {
                             allParties && allParties.map(party => {
-                                return <option key={party["name"]} value={party["abbreviation"]}>{party["name"]}</option>
+                                return <option 
+                                            key={party["name"]} 
+                                            value={party["abbreviation"] + "\x22" + party["iecId"]}>
+                                                {party["name"]}
+                                        </option>
                             })
                         }
                   </select>
@@ -260,7 +269,8 @@ class BarChartEmbed extends EmbedBase {
                             muniName: "${muniName}",
                             muniCode: "${muniCode}",
                             iecId: "${iecId}",
-                            partyAbbr: "${partyAbbr}"
+                            partyAbbr: "${partyAbbr}",
+                            partyIecId: ${partyIecId}
                         });</script>`.replace(/(\r\n|\n|\r)/gm, "")}</span>
                   </div>
               </div>

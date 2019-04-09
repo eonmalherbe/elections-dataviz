@@ -60,7 +60,10 @@ export function parseVotesComparisonData(data, props) {
   var partyfilter_edges = edges.map(edge => {
     var nodeData = edge["node"];
     var partyResults = nodeData["partyResults"] || nodeData["topResult"];
-    results = partyResults["edges"].filter(a => a.node["party"]["abbreviation"] == props.partyAbbr);
+    results = partyResults["edges"]
+      .filter(a => props.partyIecId
+        ? (a.node["party"]["iecId"] == props.partyIecId) 
+        : (a.node["party"]["abbreviation"] == props.partyAbbr));
     var result = results[0];
     if (result) {
       var el = result["node"];
@@ -106,9 +109,10 @@ export function parseVotesComparisonData(data, props) {
 }
 
 export function parseVotesComparisonDataMultipleParties(data, props) {
-  return props.partyAbbrs.map(partyAbbr => {
+  return props.partyAbbrs.map((partyAbbr, partyIdx) => {
     var newProps = {...props};
     newProps.partyAbbr = partyAbbr;
+    newProps.partyIecId = props.partyIecIds[partyIdx];
     return {
       partyAbbr,
       data: parseVotesComparisonData(data, newProps)
@@ -273,7 +277,13 @@ export function parseSeatsComparisonData(data, props) {
       partyInfo: node["party"]
     }
   }).filter(result => props.eventDescriptions.indexOf(result.name) != -1)
-  .filter(result => result.partyInfo["abbreviation"] == props.partyAbbr)
+  .filter(result => 
+    props.partyIecId
+    ? (result.partyInfo["iecId"] == props.partyIecId)
+    : (result.partyInfo["abbreviation"] == props.partyAbbr)
+  )
+
+  console.log("filter", data, results, props.partyIecId);
 
   var new_results = [];
   for(var i = 0; i < props.eventDescriptions.length; i ++) {
@@ -305,13 +315,17 @@ export function parseSeatsComparisonData(data, props) {
   // results.sort(function(a,b) {
   //   return b["seats"] - a["seats"];
   // })
+  console.log("new_results", new_results);
   return new_results;
 }
 
 export function parseSeatsComparisonDataMultipleParties(data, props) {
-  return props.partyAbbrs.map(partyAbbr => {
+  console.log("parseSeatsComparisonDataMultipleParties", data, props);
+  return props.partyAbbrs.map((partyAbbr, partyIdx) => {
     var newProps = {...props};
     newProps.partyAbbr = partyAbbr;
+    newProps.partyIecId = props.partyIecIds[partyIdx];
+    console.log("parseSeatsComparisonData", data, newProps);
     return {
       partyAbbr,
       data: parseSeatsComparisonData(data, newProps)
@@ -430,6 +444,20 @@ export function getRegionName(state) {
     return beautifiedMuniName(state.muniName) + "-" + state.iecId;
   }
 }
+
+export function getRegionName2(state) {
+  if (state.regionType == "national")
+    return "National Assembly";
+  return getRegionName(state);
+}
+
+export function getRegionName3(state) {
+  if (state.regionType == "national")
+    return "NATIONAL";
+  return getRegionName(state);
+}
+
+
 
 export function getNationOrProvinceName(state) {
   if (state.regionType == "national") {
@@ -589,4 +617,23 @@ export function fetchDataFromOBJ(state, props) {
       state[key] = props[key];
     }
   })
+}
+
+export function formatClassNameFromPartyAbbr(partyAbbr) {
+  return partyAbbr.replace(/[^a-zA-Z0-9]+/g, '');
+}
+
+export function onPartyAbbrsChange(e) {
+    var options = e.target.options;
+    var values = [];
+    for (var i = 0, l = options.length; i < l; i++) {
+      if (options[i].selected) {
+        values.push(options[i].value);
+      }
+    }
+    values = values.slice(0, 4);
+    this.setState({
+        partyAbbrs: values.map(value => value.split("\x22")[0]),
+        partyIecIds: values.map(value => value.split("\x22")[1]),
+    })
 }

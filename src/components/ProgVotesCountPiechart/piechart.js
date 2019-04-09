@@ -116,11 +116,14 @@ class PieChart extends Component {
    
     render () {
       const {
-        stylesheetFor
+        stylesheetFor,
+        componentID
       } = this.state;
       return (
           <div className={className("piechart")+" "+cn(`stylesheet-${stylesheetFor}`)}>
-            <div className={cn("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
+            {
+              componentID != -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
+            }
             <div 
               ref="vizcontainer" 
               className={className("chart-body")} 

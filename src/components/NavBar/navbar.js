@@ -23,6 +23,8 @@ function cssPrefix(originName) {
 
 var provincesData = getProvincesData();
 var metrosData = getMetrosData();
+var toShowChartLabels = ["Race for Votes", "Turnout", "Race for Seats"];
+var toShowCharts = ["race for votes", "turnout", "race for seats"];
 
 
 class CustomLink extends React.Component {
@@ -62,6 +64,7 @@ class NavBar extends Component {
             muniName: "",
             muniCode: "",
             iecId: "",
+            comp: "Race for Votes",
             activeLinkId: ''
         }
 
@@ -113,39 +116,50 @@ class NavBar extends Component {
         var lastClass = classList[classList.length - 1];
         var passInfo = lastClass.split('-');
 
-        var regionType, selectionData = {};
+        var regionType, selectionData = {}, chartType = "";
         var activeLinkId = '';
 
         if (passInfo[1] == '1') {
             regionType = "national";
+            chartType = toShowCharts[passInfo[2]];
             activeLinkId = '1';
         } else if (passInfo[1] == '2') {
             regionType = "province";
             selectionData = provincesData[passInfo[2]];
+            chartType = toShowCharts[passInfo[3]];
         } else if (passInfo[1] == '3') { // muni level
             regionType = "municipality";
             selectionData = provincesData[passInfo[2]].munis[passInfo[3]];
+            chartType = toShowCharts[passInfo[4]];
             activeLinkId = `3-${passInfo[2]}-${passInfo[3]}`;
         } else if (passInfo[1] == '4') { // metros
             regionType = "municipality"
             selectionData = metrosData[passInfo[2]];
+            chartType = "race for votes";
             activeLinkId = `4-${passInfo[2]}`;
         } else {
             return;
         }
+
+        if (!chartType)
+            return;
         
+        // console.log("handleNavBarSelection", regionType, chartType);
         e.preventDefault();
         var newState;
         if (regionType == "national") {
             newState = {regionType: regionType};
-            if (this.state.regionType == newState.regionType)
+            if (this.state.regionType == newState.regionType 
+                && this.state.comp == chartType)
                 return;
         } else if (regionType == "province") {
             newState = {
                 regionType: regionType,
                 provinceName: selectionData.name
             };
-            if (this.state.regionType == newState.regionType && this.state.provinceName == newState.provinceName)
+            if (this.state.regionType == newState.regionType 
+                && this.state.provinceName == newState.provinceName 
+                && this.state.comp == chartType)
                 return;
         } else if (regionType == "municipality") {
             newState = {
@@ -156,12 +170,18 @@ class NavBar extends Component {
             }; 
             if (this.state.regionType == newState.regionType 
                 && this.state.provinceName == newState.provinceName
-                && this.state.newState == newState.muniName)
+                && this.state.newState == newState.muniName
+                && this.state.comp == chartType)
                 return;
         }
 
-        triggerCustomEvent(events.REGION_CHANGE, newState);
-        triggerCustomEvent(events.MAP_PREVIEW, newState);
+        newState.comp = chartType;
+
+        // console.log("handleNavBarSelection", newState);
+
+        triggerCustomEvent(events.QUICK_RESULTS_PREVIEW, newState);
+        // triggerCustomEvent(events.REGION_CHANGE, newState);
+        // triggerCustomEvent(events.MAP_PREVIEW, newState);
 
         newState.activeLinkId = activeLinkId;
         this.setState(newState);
@@ -172,7 +192,14 @@ class NavBar extends Component {
             {
                 icon: '1',
                 label: 'National',
-                to: '1',
+                // to: '1',
+                content: toShowChartLabels.map((toshowchart, chartIdx) => {
+                    return {
+                        icon: `1-${chartIdx}`,
+                        label: toshowchart,
+                        to: `1-${chartIdx}`,
+                    }
+                })
             },
             {
                 icon: '',
@@ -181,7 +208,14 @@ class NavBar extends Component {
                     return {
                         icon: `2-${i}`,
                         label: province.name,
-                        to: `2-${i}`,
+                        // to: `2-${i}`,
+                        content: toShowChartLabels.map((toshowchart, chartIdx) => {
+                            return {
+                                icon: `2-${i}-${chartIdx}`,
+                                label: toshowchart,
+                                to: `2-${i}-${chartIdx}`,
+                            }
+                        })
                         // content: province.munis.map((muni, j) => {
                         //     return {
                         //         icon: `3-${i}-${j}`,
@@ -200,6 +234,13 @@ class NavBar extends Component {
                         icon: `4-${i}`,
                         label: metro.muniName.split("-")[1].split("[")[0],
                         to: `4-${i}`,
+                        // content: toShowCharts.map((toshowchart, chartIdx) => {
+                        //     return {
+                        //         icon: `4-${i}-${chartIdx}`,
+                        //         label: toshowchart,
+                        //         to: `4-${i}-${chartIdx}`,
+                        //     }
+                        // })
                     }
                 })
             }

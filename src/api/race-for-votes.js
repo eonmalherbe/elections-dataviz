@@ -19,6 +19,7 @@ export function getVotesDataForComparison(options) {
                     party {
                       name
                       abbreviation
+                      iecId
                     }
                   }
                 }
@@ -51,6 +52,7 @@ export function getVotesDataForComparison(options) {
                     party {
                       name
                       abbreviation
+                      iecId
                     }
                   }
                 }
@@ -85,6 +87,7 @@ export function getVotesDataForComparison(options) {
                     party {               
                       name
                       abbreviation
+                      iecId
                     }
                     validVotes
                     percOfVotes
@@ -160,6 +163,7 @@ export function getVotesDataM(options) {
                         id
                         name
                         abbreviation
+                        iecId
                       }
                     }
                   }
@@ -194,6 +198,7 @@ export function getVotesDataM(options) {
                         id
                         name
                         abbreviation
+                        iecId
                       }
                     }
                   }
@@ -227,6 +232,7 @@ export function getVotesDataM(options) {
                       party {               
                         name
                         abbreviation
+                        iecId
                       }
                       validVotes
                       percOfVotes
@@ -265,6 +271,7 @@ export function getVotesDataM(options) {
                       party{
                         name
                         abbreviation
+                        iecId
                       }
                       percOfVotes
                     }
@@ -302,6 +309,7 @@ export function getVotesDataM(options) {
                       id
                       name
                       abbreviation
+                      iecId
                   }
                 }
               }
@@ -330,6 +338,7 @@ export function getVotesDataM(options) {
                   party {               
                     name
                     abbreviation
+                    iecId
                   }
                   validVotes
                   percOfVotes
@@ -360,6 +369,7 @@ export function getVotesDataM(options) {
                     party{
                       name
                       abbreviation
+                      iecId
                     }
                   }
                 }

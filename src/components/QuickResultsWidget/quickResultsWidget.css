@@ -37,6 +37,21 @@
   overflow: hidden;
 }
 
+.quick-results-title {
+  background: #255781;
+  color: white;
+  text-align: center;
+  line-height: 40px;
+}
+
+.race-for-seats {
+
+}
+
+.quick-results-title.race-for-seats {
+  background: #D25E22;
+}
+
 .ELVIZ_row {
   margin-right: -15px;
   margin-left: -15px;

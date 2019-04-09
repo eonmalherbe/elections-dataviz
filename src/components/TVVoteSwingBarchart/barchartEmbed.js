@@ -12,7 +12,8 @@ import {
 
 import {
     triggerCustomEvent,
-    formatPartyName
+    formatPartyName,
+    onPartyAbbrsChange
 } from "../../utils";
 
 
@@ -46,6 +47,7 @@ class BarChartEmbed extends EmbedBase {
             muniCode: "",
             iecId: "",
             partyAbbrs: ["ANC", "DA", "EFF"],
+            partyIecIds: [null, null, null],
 
             electionEvents: [],
             allParties: [],
@@ -66,7 +68,7 @@ class BarChartEmbed extends EmbedBase {
                 var allParties = data["data"]["allParties"]["edges"].map(edge => edge["node"])
                 allParties = allParties.filter((thing, index, self) =>
                     index === self.findIndex((t) => (
-                        t.abbreviation === thing.abbreviation || t.name === thing.name
+                        t.iecId == thing.iecId
                     ))
                 )
                 self.setState({allParties});         
@@ -87,20 +89,6 @@ class BarChartEmbed extends EmbedBase {
         values = values.slice(0, 2);
         this.setState({
             eventDescriptions: values 
-        })
-    }
-
-    onPartyAbbrsChange(e) {
-        var options = e.target.options;
-        var values = [];
-        for (var i = 0, l = options.length; i < l; i++) {
-          if (options[i].selected) {
-            values.push(options[i].value);
-          }
-        }
-        values = values.slice(0, 4);
-        this.setState({
-            partyAbbrs: values 
         })
     }
 
@@ -129,6 +117,7 @@ class BarChartEmbed extends EmbedBase {
             muniCode,
             iecId,
             partyAbbrs,
+            partyIecIds,
             electionEvents,
             allParties
         } = this.state;
@@ -256,11 +245,15 @@ class BarChartEmbed extends EmbedBase {
               <div className={className("form-group")}>
                   <label>Party Names</label>
                   <select multiple className={className("form-control")+" "+className("multiparties-container")} 
-                        value={partyAbbrs}
-                        onChange={this.onPartyAbbrsChange.bind(this)} >
+                        value={partyAbbrs.map((partyAbbr, partyIdx) => partyAbbr+"\x22"+partyIecIds[partyIdx])}
+                        onChange={onPartyAbbrsChange.bind(this)} >
                         {
                             allParties && allParties.map((party, partyIdx) => {
-                                return <option key={partyIdx} value={party["abbreviation"]}>{formatPartyName(party["name"])}</option>
+                                return <option 
+                                            key={partyIdx} 
+                                            value={party["abbreviation"]+ "\x22" + party["iecId"]}>
+                                                {formatPartyName(party["name"])}
+                                    </option>
                             })
                         }
                   </select>
@@ -289,7 +282,8 @@ class BarChartEmbed extends EmbedBase {
                             muniName: "${muniName}",
                             muniCode: "${muniCode}",
                             iecId: "${iecId}",
-                            partyAbbrs: ${JSON.stringify(partyAbbrs)}
+                            partyAbbrs: ${JSON.stringify(partyAbbrs)},
+                            partyIecIds: ${JSON.stringify(partyIecIds)}
                         });</script>`.replace(/(\r\n|\n|\r)/gm, "")}</span>
                   </div>
               </div>

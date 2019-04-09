@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {createTooltip, formatPartyName} from "../../utils";
+import {createTooltip, formatPartyName, formatClassNameFromPartyAbbr} from "../../utils";
 import config from "../../config"
 
 export function Chart(container, width, height, className, options) {
@@ -96,7 +96,7 @@ export function Chart(container, width, height, className, options) {
     
       var groupSvg = groupSvgs.enter()
         .append("g")
-        .attr("class", d => `bar-group ${d.partyAbbr}`)
+        .attr("class", d => `bar-group ${formatClassNameFromPartyAbbr(d.partyAbbr)}`)
         .attr("transform", (d) => `translate(${x(d.partyAbbr)}, 0)`);
 
       groupSvg.append('rect')
@@ -132,7 +132,7 @@ export function Chart(container, width, height, className, options) {
             return d.name;
           }));
 
-        var groupSvg = svg.selectAll(`.bar-group.${partyAbbr}`);
+        var groupSvg = svg.selectAll(`.bar-group.${formatClassNameFromPartyAbbr(partyAbbr)}`);
 
         var barSvg = groupSvg.select(".bar-container");
         var barTextSvg = groupSvg.select(".bartext-container");

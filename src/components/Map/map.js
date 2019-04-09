@@ -147,11 +147,14 @@ class Map extends Component {
     render () {
         var {
             disableNavigation,
-            stylesheetFor
+            stylesheetFor,
+            componentID
         } = this.state;
         return (
             <div className={className("map-widget")+" "+cn(`stylesheet-${stylesheetFor}`)}>
-                <div className={cn("map-title")}>{getRegionName(this.state)}</div>
+                {
+                    componentID != -1000 && <div className={cn("map-title")}>{getRegionName(this.state)}</div>
+                }
 
                 <div ref="vizcontainer" className={className("map")}></div>
                 <div className={cn("loading-spinner")} ref="loading">

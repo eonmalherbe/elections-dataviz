@@ -21,9 +21,13 @@ import Map from '../Map/map';
 import {saveAs} from "file-saver";
 import {
     getRegionName,
+    getRegionName2,
+    getRegionName3,
     triggerCustomEvent,
     fetchDataFromOBJ
 } from "../../utils";
+
+// console.log("styles", styles);
 
 
 function className(originName) {
@@ -144,12 +148,12 @@ class QuickResultsWidget extends Component {
             provinceName,
             muniName,
             muniCode,
-            iecId,
-            comp
+            iecId
         } = this.state;
+        var self = this;
         return (
             <div className={className("quickresultswidget") + " " + cn(`stylesheet-${stylesheetFor}`)}>
-                <div className={cn("row") + " " + cn("component-transition-menu")}>
+                {/* <div className={cn("row") + " " + cn("component-transition-menu")}>
                     <div className={cn("col-md-2") + " " + className("label")}>
                         Show Results 
                     </div>
@@ -181,7 +185,7 @@ class QuickResultsWidget extends Component {
                             className={comp == 'spoilt votes'? className("active") : ""} 
                             onClick={() => this.setState({comp: 'spoilt votes'})}> Spoilt Votes </button>
                     </div>
-                </div>
+                </div> */}
                 <div className={cn("row")}>
                     <div className={cn("col-md-4")+" "+className("main-left-part")}>
                         <NavBar />
@@ -189,6 +193,14 @@ class QuickResultsWidget extends Component {
                             {
                                 comp == 'race for votes' && 
                                 <div className={cn("col-md-8")+" "+className("main-right-part")}>
+                                    <div className={className("quick-results-title")}>
+                                        RACE FOR VOTES: <span className="regionName">{getRegionName2(self.state)}</span>
+                                    </div>
+                                    {/* <div className={className("event-description")}>
+                                        {
+                                            /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
+                                        }
+                                    </div> */}
                                     <div className={className("barchart-container")}>
                                         <BarChart 
                                             ref={instance => { this.votesInstance1 = instance; }} 
@@ -206,6 +218,14 @@ class QuickResultsWidget extends Component {
                             {
                                 comp == 'race for seats' && 
                                 <div className={cn("col-md-8")+" "+className("main-right-part")}>
+                                    <div className={className("quick-results-title")+" "+className("race-for-seats")}>
+                                        RACE FOR SEATS: <span className="regionName">{getRegionName(self.state)}</span>(#SEATS)
+                                    </div>
+                                    {/* <div className={className("event-description")}>
+                                        {
+                                            /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
+                                        }
+                                    </div> */}
                                     <div className={className("barchart-container")}>
                                         <RaceForSeatDonut 
                                             ref={instance => { this.seatsInstance1 = instance; }} 
@@ -223,6 +243,14 @@ class QuickResultsWidget extends Component {
                             {
                                 comp == 'turnout' && 
                                 <div className={cn("col-md-8")+" "+className("main-right-part")}>
+                                    <div className={className("quick-results-title")}>
+                                        RACE FOR VOTES: TURNOUT - {getRegionName3(self.state)}
+                                    </div>
+                                    {/* <div className={className("event-description")}>
+                                        {
+                                            /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
+                                        }
+                                    </div> */}
                                     <div className={className("barchart-container")}>
                                         <TurnoutBarchart 
                                             ref={instance => { this.turnoutInstance1 = instance; }} 
@@ -241,6 +269,14 @@ class QuickResultsWidget extends Component {
                             {
                                 comp == 'counting progress' && 
                                 <div className={cn("col-md-8")+" "+className("main-right-part")}>
+                                    <div className={className("quick-results-title")}>
+                                        COUNTING PROGRESS: {getRegionName(self.state)}
+                                    </div>
+                                    {/* <div className={className("event-description")}>
+                                        {
+                                            /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
+                                        }
+                                    </div> */}
                                     <div className={className("barchart-container")}>
                                         <ProgressVotesPieChart 
                                             ref={instance => { this.progressInstance1 = instance; }} 
@@ -258,6 +294,14 @@ class QuickResultsWidget extends Component {
                             {
                                 comp == 'spoilt votes' &&
                                 <div className={cn("col-md-8")+" "+className("main-right-part")}>
+                                    <div className={className("quick-results-title")}>
+                                        SPOILT VOTES: {getRegionName(self.state)}<br/>
+                                    </div>
+                                    {/* <div className={className("event-description")}>
+                                        {
+                                            /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
+                                        }
+                                    </div> */}
                                     <div className={className("barchart-container")}>
                                         <SpoiltBarChart 
                                             ref={instance => { this.spoiltInstance1 = instance; }} 

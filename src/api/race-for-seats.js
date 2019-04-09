@@ -20,6 +20,7 @@ export function getSeatsDataForComparison(options) {
                   }
                   name
                   abbreviation
+                  iecId
                 }
                 province{
                   name
@@ -46,6 +47,7 @@ export function getSeatsDataForComparison(options) {
                   }
                   name
                   abbreviation
+                  iecId
                 }
                 province{
                   name
@@ -77,6 +79,7 @@ export function getSeatsData(options) {
                   party{
                     name
                     abbreviation
+                    iecId
                   }
                   province{
                     name
@@ -108,6 +111,7 @@ export function getSeatsData(options) {
                   party{
                     name
                     abbreviation
+                    iecId
                   }
                   province{
                     name

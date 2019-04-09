@@ -44,6 +44,7 @@ class BarChart extends Component {
       super(props);
       this.state = {
         partyAbbr: "ANC",
+        partyIecId: null,
         eventDescriptions: [
             "National Elections 1999",
             // "Provincial Elections 1999",
@@ -137,11 +138,14 @@ class BarChart extends Component {
       
     render () {
       const {
-        stylesheetFor
+        stylesheetFor,
+        componentID
       } = this.state;
       return (
           <div className={className("barchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
-            <div className={cn("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
+            {
+                componentID && <div className={cn("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
+            }
             <div 
               ref="vizcontainer" 
               className={className("chart-body")} 
