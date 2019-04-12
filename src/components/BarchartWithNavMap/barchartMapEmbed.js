@@ -67,7 +67,7 @@ class BarChartWithNavMapEmbed extends EmbedBase {
 
     onPreview(e) {
         var newState = JSON.parse(JSON.stringify(this.state));
-        delete newState.componentID;
+        newState.componentID = -1000;
         triggerCustomEvent(events.CHART_PREVIEW, newState);
         triggerCustomEvent(events.MAP_PREVIEW, newState);
     }

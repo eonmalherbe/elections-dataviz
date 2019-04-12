@@ -37,8 +37,8 @@ export function parseVotesData(data, props) {
         var el = node["node"];
         return {
             name: el["party"]["abbreviation"],
-            validVotes: el["validVotes"],
-            percOfVotes: el["percOfVotes"],
+            validVotes: el["validVotes"].toFixed(2),
+            percOfVotes: el["percOfVotes"].toFixed(2),
             partyInfo: el["party"]
         }
     });
@@ -69,7 +69,7 @@ export function parseVotesComparisonData(data, props) {
       var el = result["node"];
       return {
           name: nodeData["event"]["description"],
-          percOfVotes: el["percOfVotes"],
+          percOfVotes: el["percOfVotes"].toFixed(2),
           partyInfo: el["party"]
       }
     }
@@ -384,12 +384,14 @@ export function parseTurnoutDataForAllEvents(data, props) {
   return edges.map(function(edge) {
     var node = edge.node;
     var event = node["event"]["description"];
-    var percVoterTurnout = node["percVoterTurnout"]; 
+    var eventType = node["event"]["eventType"]["description"];
+    var percVoterTurnout = node["percVoterTurnout"].toFixed(2); 
     return {
       name: event,
+      eventType: eventType,
       percVoterTurnout
     }
-  }).filter(edge => edge.name.toLowerCase().indexOf(props.eventType) != -1)
+  }).filter(edge => edge.eventType.toLowerCase().indexOf(props.eventType) != -1)
 }
 
 export function parseSpoiltVotesData(data, props) {
@@ -621,7 +623,7 @@ export function handleRegionChange(event) {
 
 export function fetchDataFromOBJ(state, props) {
   Object.keys(state).forEach(key => {
-    if (key != "componentID" && props[key]) {
+    if (props[key]) {
       state[key] = props[key];
     }
   })

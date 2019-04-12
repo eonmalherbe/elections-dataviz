@@ -80,6 +80,9 @@ import {client} from "./config"
               node{
                 event {
                   description
+                  eventType {
+                    description
+                  }
                 }
                 percVoterTurnout
               }

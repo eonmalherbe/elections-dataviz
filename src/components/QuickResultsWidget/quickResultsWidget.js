@@ -130,7 +130,7 @@ class QuickResultsWidget extends Component {
         this.setState(newState);
 
         var triggerState = JSON.parse(JSON.stringify(newState));
-        delete triggerState.componentID;
+        triggerState.componentID = -1000;
 
         triggerCustomEvent(events.CHART_PREVIEW, triggerState);
         triggerCustomEvent(events.MAP_PREVIEW, triggerState);

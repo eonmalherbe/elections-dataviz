@@ -392,10 +392,14 @@ class Map extends Component {
                         .style("opacity", 1);
                     
                     var undefinedText;
-                    if (self.state.regionType === "province") {
-                        undefinedText = "New municipality - no previous results available"
+                    if (self.state.eventDescription.indexOf("2019") == -1) {
+                        if (self.state.regionType === "province") {
+                            undefinedText = "New municipality - no previous results available"
+                        } else {
+                            undefinedText = "New voting district - no previous results available"
+                        }
                     } else {
-                        undefinedText = "New voting district - no previous results available"
+                        undefinedText = "votes not counted yet";
                     }
 
                     var turnoutData = getTurnout(d, i);
