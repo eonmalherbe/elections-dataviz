@@ -6,6 +6,7 @@ import config from "../../config";
 import events from "../../events";
 
 import {
+    getElectionEvents,
     getProvincesData
 } from "../../api";
 
@@ -26,19 +27,36 @@ class MapEmbed extends EmbedBase {
         this.state = {
             elementId: "root",
             disableNavigation: false, //checkbox
+            eventDescription: "2014 National Election",
             regionType: "province",
             provinceName: "Western Cape",
             muniName: "",
+            electionEvents: [],
             stylesheetFor: "web",
             componentID: 3
         }
     }
 
     componentDidMount() {
-        loadCanvg();
+        loadCanvg();        
+        var self = this;
+        getElectionEvents()
+            .then(function(data) {
+                var electionEvents = data["data"]["allEvents"].map(edge => edge["description"])
+                self.setState({electionEvents});
+            }).catch(error => console.error(error));
     }
 
     componentDidUpdate() {
+    }
+
+    onEventDescriptionChange(e) {
+        if (e.target.value.toLowerCase().indexOf("national") == -1 &&
+                this.state.regionType == "national") {
+            this.setState({eventDescription: e.target.value, regionType: "province", provinceName: "Western Cape"});
+        } else {
+            this.setState({eventDescription: e.target.value });
+        }
     }
 
     onRegionTypeChange(e) {
@@ -58,11 +76,13 @@ class MapEmbed extends EmbedBase {
         var DOMAIN = config.DOMAIN;
         var {
             elementId,  
-            stylesheetFor,          
+            stylesheetFor,    
+            eventDescription,      
             disableNavigation,
             regionType,
             provinceName,
             muniName,
+            electionEvents,
         } = this.state;
         var curProvinceData = provincesData.filter(item => item.name == provinceName)[0];
         return (
@@ -85,6 +105,18 @@ class MapEmbed extends EmbedBase {
                         <option value="tv">TV</option>
                         <option value="web">Web</option>
                         <option value="none">None</option>
+                  </select>
+            </div>
+            <div className={className("form-group")}>
+                  <label>Event </label>
+                  <select className={className("form-control")} 
+                     value={eventDescription}
+                     onChange={this.onEventDescriptionChange.bind(this)}>
+                        {
+                            electionEvents.map(item => {
+                                return (<option key={item} value={item}>{item}</option>)
+                            })
+                        }
                   </select>
             </div>
             <div className={className("form-group")}>

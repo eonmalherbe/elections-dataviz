@@ -76,8 +76,9 @@ class Map extends Component {
         document.removeEventListener(events.MAP_PREVIEW, this.handlePreviewEvent);
     }
 
-    componentDidUpdate() {
-        this.draw(this.getContainer(), this.state)
+    componentDidUpdate(prevProps, prevState) {
+        if (JSON.stringify(prevState) !== JSON.stringify(this.state))
+            this.draw(this.getContainer(), this.state)
     }
 
 
@@ -470,7 +471,7 @@ class Map extends Component {
                             regionType: self.state.regionType, 
                             provinceName: self.state.provinceName,
                             muniName: self.state.muniName,
-                            muniImuniCodeD: self.state.muniCode,
+                            muniCode: self.state.muniCode,
                             iecId: self.state.iecId,
                         }
                         newState.regionType = regionType;
@@ -529,7 +530,7 @@ class Map extends Component {
                     //             regionType: self.state.regionType, 
                     //             provinceName: self.state.provinceName,
                     //             muniName: self.state.muniName,
-                    //             muniImuniCodeD: self.state.muniCode,
+                    //             muniCode: self.state.muniCode,
                     //             iecId: self.state.iecId,
                     //         }
                             
@@ -559,7 +560,7 @@ class Map extends Component {
                 regionType: self.state.regionType, 
                 provinceName: self.state.provinceName,
                 muniName: self.state.muniName,
-                muniImuniCodeD: self.state.muniCode,
+                muniCode: self.state.muniCode,
                 iecId: self.state.iecId,
             }
             

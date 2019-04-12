@@ -12,7 +12,8 @@ import {
 import {
   parseSpoiltVotesData,
   getRegionName,
-  fetchDataFromOBJ
+  fetchDataFromOBJ,
+  handleRegionChange
 } from "../../utils";
 
 
@@ -55,7 +56,7 @@ class BarChart extends Component {
       this.refreshIntervalID = 0;
       this.exportAsPNG = this.exportAsPNG.bind(this);
       this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
-      this.handleRegionChange = this.handleRegionChange.bind(this);
+      this.handleRegionChange = handleRegionChange.bind(this);
       this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
     }
   
@@ -80,11 +81,6 @@ class BarChart extends Component {
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
       document.removeEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
       clearInterval(this.refreshIntervalID);
-    }
-
-    handleRegionChange(event) {
-      var newState = event.detail;
-      this.setState(newState)
     }
 
     exportAsPNGUri() {

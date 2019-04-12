@@ -24,7 +24,8 @@ import {
     getRegionName2,
     getRegionName3,
     triggerCustomEvent,
-    fetchDataFromOBJ
+    fetchDataFromOBJ,
+    handleRegionChange
 } from "../../utils";
 
 // console.log("styles", styles);
@@ -56,7 +57,7 @@ class QuickResultsWidget extends Component {
         fetchDataFromOBJ(this.state, props);
 
         this.exportAsPNG = this.exportAsPNG.bind(this);
-        this.handleRegionChange = this.handleRegionChange.bind(this);
+        this.handleRegionChange = handleRegionChange.bind(this);
         this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
     }
 
@@ -70,12 +71,6 @@ class QuickResultsWidget extends Component {
         document.removeEventListener(events.EXPORT_SUPERWIDGET_PNG, this.exportAsPNG);
         document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
         document.removeEventListener(events.QUICK_RESULTS_PREVIEW, this.handlePreviewEvent);
-    }
-
-    handleRegionChange(event) {
-      var newState = event.detail;
-    //   if (newState.regionType != "municipality-vd")
-        this.setState(newState)
     }
 
     exportAsPNG(event) {
@@ -134,8 +129,11 @@ class QuickResultsWidget extends Component {
         var newState = event.detail;
         this.setState(newState);
 
-        triggerCustomEvent(events.CHART_PREVIEW, newState);
-        triggerCustomEvent(events.MAP_PREVIEW, newState);
+        var triggerState = JSON.parse(JSON.stringify(newState));
+        delete triggerState.componentID;
+
+        triggerCustomEvent(events.CHART_PREVIEW, triggerState);
+        triggerCustomEvent(events.MAP_PREVIEW, triggerState);
     };
 
     render() {

@@ -104,6 +104,45 @@
         }
       ]
     },
+    "src/components/spoilt.mdx": {
+      "name": "Spoilt vs Valid votes - Bar Chart",
+      "id": "21dcbb5043d439e36acbcb077f0f986b",
+      "filepath": "src/components/spoilt.mdx",
+      "link": null,
+      "slug": "src-components-spoilt",
+      "route": "/src-components-spoilt",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "simple-bar-chart",
+          "value": "Simple Bar Chart"
+        }
+      ]
+    },
+    "src/components/turnout.mdx": {
+      "name": "Turnout",
+      "id": "888a4f4356a036c05348d42dc3b300d4",
+      "filepath": "src/components/turnout.mdx",
+      "link": null,
+      "slug": "src-components-turnout",
+      "route": "/src-components-turnout",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 2,
+          "slug": "simple-bar-chart",
+          "value": "Simple Bar Chart"
+        },
+        {
+          "depth": 2,
+          "slug": "map",
+          "value": "Map"
+        }
+      ]
+    },
     "src/components/race-for-votes.mdx": {
       "name": "Race for Votes",
       "id": "0e9182d5805ee07038fc371fd7275a81",
@@ -148,45 +187,6 @@
           "depth": 2,
           "slug": "change-from-previous-swing",
           "value": "Change from Previous (Swing)"
-        }
-      ]
-    },
-    "src/components/spoilt.mdx": {
-      "name": "Spoilt vs Valid votes - Bar Chart",
-      "id": "21dcbb5043d439e36acbcb077f0f986b",
-      "filepath": "src/components/spoilt.mdx",
-      "link": null,
-      "slug": "src-components-spoilt",
-      "route": "/src-components-spoilt",
-      "order": 0,
-      "menu": null,
-      "headings": [
-        {
-          "depth": 1,
-          "slug": "simple-bar-chart",
-          "value": "Simple Bar Chart"
-        }
-      ]
-    },
-    "src/components/turnout.mdx": {
-      "name": "Turnout",
-      "id": "888a4f4356a036c05348d42dc3b300d4",
-      "filepath": "src/components/turnout.mdx",
-      "link": null,
-      "slug": "src-components-turnout",
-      "route": "/src-components-turnout",
-      "order": 0,
-      "menu": null,
-      "headings": [
-        {
-          "depth": 2,
-          "slug": "simple-bar-chart",
-          "value": "Simple Bar Chart"
-        },
-        {
-          "depth": 2,
-          "slug": "map",
-          "value": "Map"
         }
       ]
     }

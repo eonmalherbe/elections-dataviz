@@ -198,7 +198,11 @@ export function parseProgressVotesCount(data, props) {
 //     return locationToMainParty;
 // }
 
-
+function getTopPartyNameFromNode(node) {
+  if (node && node["topParty"] && node["topParty"]["party"] && node["topParty"]["party"]["name"])
+      return node["topParty"]["party"]["name"];
+  return "";
+}
 
 export function parseMainPartyData(data, props) {
   if (!data)  return null;
@@ -210,24 +214,21 @@ export function parseMainPartyData(data, props) {
       edges.forEach(function(edge) {
           var node = edge.node;
           var provinceName = node["location"]["name"];
-          var partyName = node["topParty"]["party"]["name"];
-          locationToMainParty[provinceName] = partyName;
+          locationToMainParty[provinceName] = getTopPartyNameFromNode(node);
       })
   } else if (regionType === "province") {
       edges = data["data"]["topPartiesByMunicipality"].edges;
       edges.forEach(function(edge) {
           var node = edge.node;
           var muniCode = node["location"]["code"];
-          var partyName = node["topParty"]["party"]["name"];
-          locationToMainParty[muniCode] = partyName;
+          locationToMainParty[muniCode] = getTopPartyNameFromNode(node);
       })
   } else {// "municipality"
       edges = data["data"]["topPartiesByVotingDistrict"].edges;
       edges.forEach(function(edge) {
           var node = edge.node;
           var iecId = node["location"]["iecId"];
-          var partyName = node["topParty"]["party"]["name"];
-          locationToMainParty[iecId] = partyName;
+          locationToMainParty[iecId] = getTopPartyNameFromNode(node);
       })
   }
   return locationToMainParty;
@@ -611,9 +612,16 @@ export function loadScriptsForEmbedMode() {
   loadJSZip();
 }
 
+
+export function handleRegionChange(event) {
+  var newState = JSON.parse(JSON.stringify(event.detail));
+  delete newState.componentID;
+  this.setState(newState)
+}
+
 export function fetchDataFromOBJ(state, props) {
   Object.keys(state).forEach(key => {
-    if (props[key]) {
+    if (key != "componentID" && props[key]) {
       state[key] = props[key];
     }
   })

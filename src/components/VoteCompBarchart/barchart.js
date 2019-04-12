@@ -14,7 +14,8 @@ import {
 import {
   parseVotesComparisonData,
   getRegionName,
-  fetchDataFromOBJ
+  fetchDataFromOBJ,
+  handleRegionChange
 } from "../../utils";
 
 var provincesData = getProvincesData();
@@ -72,7 +73,7 @@ class BarChart extends Component {
       this.refreshIntervalID = 0;
       this.exportAsPNG = this.exportAsPNG.bind(this);
       this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
-      this.handleRegionChange = this.handleRegionChange.bind(this);
+      this.handleRegionChange = handleRegionChange.bind(this);
       this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
     }
   
@@ -117,11 +118,6 @@ class BarChart extends Component {
       if (targetState.componentID != this.state.componentID)
         return;
       svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-votes-comparison-barchart(${getRegionName(this.state)}).png`);
-    }
-
-    handleRegionChange(event) {
-      var newState = event.detail;
-      this.setState(newState)
     }
 
     handlePreviewEvent(event) {

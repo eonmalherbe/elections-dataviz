@@ -13,7 +13,8 @@ import {
 import {
   parseVotesData,
   getRegionName,
-  fetchDataFromOBJ
+  fetchDataFromOBJ,
+  handleRegionChange
 } from "../../utils";
 
 var dataRefreshTime = 30 * 1000;
@@ -31,8 +32,10 @@ var partyColorsData;
 var chartOptions = {
   chartType: "Race For Votes",
   yAxisLabel: "PERCENTAGE VOTES",
+  dynamicYAxisFromValues: true,
+  customizeDynamicMaxValue: (maxVal) => Math.min(100, maxVal * 1.5),
   yValue: d => d.percOfVotes,
-  yValueFormat: value => value + '%'
+  yValueFormat: value => value + '%',
 }
 
 class BarChart extends Component {
@@ -58,7 +61,7 @@ class BarChart extends Component {
       this.refreshIntervalID = 0;
       this.exportAsPNG = this.exportAsPNG.bind(this);
       this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
-      this.handleRegionChange = this.handleRegionChange.bind(this);
+      this.handleRegionChange = handleRegionChange.bind(this);
       this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
     }
   
@@ -105,16 +108,11 @@ class BarChart extends Component {
       });
     }
 
-    handleRegionChange(event) {
-      var newState = event.detail;
-      this.setState(newState)
-    }
-
     handlePreviewEvent(event) {
       var newState = event.detail;
       if (this.chart)
         this.chart.destroy();
-      this.chart = new Chart(this.getContainer(), null, null, className);
+      this.chart = new Chart(this.getContainer(), null, null, className, chartOptions);
       this.setState(newState)
     }
 
@@ -127,6 +125,9 @@ class BarChart extends Component {
         stylesheetFor,
         componentID
       } = this.state;
+
+      console.log("rfv barchart componentID", componentID);
+
       return (
           <div className={className("barchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
             {
@@ -161,7 +162,7 @@ class BarChart extends Component {
         var chartData = parseVotesData(data, props);
        
         if (!this.chart)
-          this.chart = new Chart(container, null, null, className);
+          this.chart = new Chart(container, null, null, className, chartOptions);
         this.chart.draw(chartData, partyColorsData);
     }
 }
