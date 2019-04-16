@@ -10,7 +10,7 @@ import {client} from "./config"
         query: gql`
         {
           allProvincialBallots(
-            event_Description:"${eventDescription}"
+            event:"${eventDescription}"
           ){
             edges{
               node{
@@ -30,8 +30,8 @@ import {client} from "./config"
         query: gql`
         {
           allMunicipalBallots(
-            event_Description:"${eventDescription}",
-            location_Province_Name:"${options.provinceName}"
+            event:"${eventDescription}",
+            province:"${options.provinceName}"
           ) {
             edges{
               node {
@@ -53,7 +53,7 @@ import {client} from "./config"
           query: gql`
           {
             allVotingDistrictBallots( 
-            event_Description:"${eventDescription}",
+            event:"${eventDescription}",
             location_Ward_Municipality_Name_Icontains:"${muniRegName}") {
               edges{
                 node{
@@ -96,7 +96,7 @@ import {client} from "./config"
         query: gql`
         {
           allProvincialBallots(
-            location_Name:"${options.provinceName}"
+            province:"${options.provinceName}"
           ) {
             edges{
               node {
@@ -117,8 +117,8 @@ import {client} from "./config"
           query: gql`
           {
             allMunicipalBallots( 
-                location_Province_Name:"${options.provinceName}", 
-                location_Code: "${muniCode}"
+                province:"${options.provinceName}", 
+                municipalCode: "${muniCode}"
             ) {
               edges{
                 node{
@@ -137,8 +137,8 @@ import {client} from "./config"
           query: gql`
           {
             allVotingDistrictBallots(
-                location_IecId:"${options.iecId}", 
-                location_Ward_Municipality_Code:"${options.muniCode}"
+                iecId:"${options.iecId}", 
+                municipalCode:"${options.muniCode}"
             ) {
               edges{
                 node{
