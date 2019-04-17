@@ -3,6 +3,7 @@ import { HttpLink } from "apollo-link-http"
 import { InMemoryCache } from "apollo-cache-inmemory"
 
 var API_URI = "https://elections2019.xyz/graphql";
+API_URI = "http://localhost/graphql";
 
 
 const client = new ApolloClient({
