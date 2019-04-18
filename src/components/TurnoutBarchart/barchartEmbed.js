@@ -42,7 +42,7 @@ class BarChartEmbed extends EmbedBase {
         var self = this;
         getElectionEvents()
             .then(function(data) {
-                var electionEvents = data["data"]["allEvents"].map(edge => edge["description"])
+                var electionEvents = data["data"]["allEvents"]
                 self.setState({electionEvents});
             }).catch(error => console.error(error));
     }

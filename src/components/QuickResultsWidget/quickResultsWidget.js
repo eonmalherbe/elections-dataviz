@@ -19,17 +19,27 @@ import NavBar from '../NavBar/navbar';
 import Map from '../Map/map';
 
 import {saveAs} from "file-saver";
+
+import {
+    getSpoiltData,
+    getTurnoutDataForOneEvent,
+    getProgressVotesCount,
+} from "../../api";
+
 import {
     getRegionName,
     getRegionName2,
     getRegionName3,
     triggerCustomEvent,
     fetchDataFromOBJ,
-    handleRegionChange
+    handleRegionChange,
+
+    parseSpoiltVotesData,
+    parseTurnoutDataForOneEvent,
+    parseProgressVotesCount
 } from "../../utils";
 
-// console.log("styles", styles);
-
+var dataRefreshTime = 30 * 1000;
 
 function className(originName) {
     return styles[originName] || originName;
@@ -52,25 +62,73 @@ class QuickResultsWidget extends Component {
             iecId: "",
             comp: "race for votes",
             stylesheetFor: "web",
+            currentTurnout: 0,
+            currentCountingProg: 0,
+            currentSpoiltVotes: 0,
             componentID: 5
         }
         fetchDataFromOBJ(this.state, props);
 
+        this.refreshIntervalID = 0;
         this.exportAsPNG = this.exportAsPNG.bind(this);
         this.handleRegionChange = handleRegionChange.bind(this);
         this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
     }
 
     componentDidMount() {
+        var self = this;
+        this.refreshIntervalID = setInterval(() => {
+            self.fetchCurrentResultData();
+        }, dataRefreshTime);
+
         document.addEventListener(events.EXPORT_SUPERWIDGET_PNG, this.exportAsPNG);
         document.addEventListener(events.REGION_CHANGE, this.handleRegionChange);
         document.addEventListener(events.QUICK_RESULTS_PREVIEW, this.handlePreviewEvent);
+
+        this.fetchCurrentResultData();
     }
   
     componentWillUnmount() {
         document.removeEventListener(events.EXPORT_SUPERWIDGET_PNG, this.exportAsPNG);
         document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
         document.removeEventListener(events.QUICK_RESULTS_PREVIEW, this.handlePreviewEvent);
+    }
+
+    fetchCurrentResultData() {
+        console.log("fetchCurrentResultData start");
+        var self = this;
+        var newProps = JSON.parse(JSON.stringify(this.state));
+        newProps.eventDescription = "2019_mock1";
+        var dataLoaders = [
+            getSpoiltData(newProps), 
+            getTurnoutDataForOneEvent(newProps),
+            getProgressVotesCount(newProps)
+        ];
+
+        Promise.all(dataLoaders).then(function(values){ 
+            var spoiltData = values[0];
+            var turnoutData = values[1];
+            var progVotesData = values[2];
+
+            console.log("spoiltData", spoiltData);
+            console.log("turnoutData", turnoutData);
+            console.log("progVotesData", progVotesData);
+
+            var parsedSpoiltData = parseSpoiltVotesData(spoiltData, newProps);
+            var parsedTurnoutData = parseTurnoutDataForOneEvent(turnoutData, newProps);
+            var parsedProgVotesData = parseProgressVotesCount(progVotesData, newProps);
+
+            self.setState({            
+                currentTurnout: parsedTurnoutData[0].percVoterTurnout,
+                currentCountingProg: parsedProgVotesData[0].percent,
+                currentSpoiltVotes: parsedSpoiltData[1].percent
+            });
+
+            console.log("parsedSpoiltData", parsedSpoiltData);
+            console.log("parsedTurnoutData", parsedTurnoutData);
+            console.log("parsedProgVotesData", parsedProgVotesData);
+
+        }).catch(error => console.error(error));
     }
 
     exportAsPNG(event) {
@@ -146,7 +204,10 @@ class QuickResultsWidget extends Component {
             provinceName,
             muniName,
             muniCode,
-            iecId
+            iecId,
+            currentTurnout,
+            currentCountingProg,
+            currentSpoiltVotes
         } = this.state;
         var self = this;
         return (
@@ -194,6 +255,20 @@ class QuickResultsWidget extends Component {
                                     <div className={className("quick-results-title")}>
                                         RACE FOR VOTES: <span className="regionName">{getRegionName2(self.state)}</span>
                                     </div>
+                                    <div className={cn("current-progress")}>
+                                        <div className={cn("current-turnout")}>
+                                            <div>Turnout</div>
+                                            <div>{currentTurnout}%</div>
+                                        </div>
+                                        <div className={cn("current-counting-progress")}>
+                                            <div>Counting Progress</div>
+                                            <div>{currentCountingProg}%</div>
+                                        </div>
+                                        <div className={cn("current-spoilt-votes")}>
+                                            <div>Spoilt Votes</div>
+                                            <div>{currentSpoiltVotes}%</div>
+                                        </div>
+                                    </div>
                                     {/* <div className={className("event-description")}>
                                         {
                                             /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
@@ -219,6 +294,20 @@ class QuickResultsWidget extends Component {
                                     <div className={className("quick-results-title")+" "+className("race-for-seats")}>
                                         RACE FOR SEATS: <span className="regionName">{getRegionName(self.state)}</span>(#SEATS)
                                     </div>
+                                    <div className={cn("current-progress")}>
+                                        <div className={cn("current-turnout")}>
+                                            <div>Turnout</div>
+                                            <div>{currentTurnout}%</div>
+                                        </div>
+                                        <div className={cn("current-counting-progress")}>
+                                            <div>Counting Progress</div>
+                                            <div>{currentCountingProg}%</div>
+                                        </div>
+                                        <div className={cn("current-spoilt-votes")}>
+                                            <div>Spoilt Votes</div>
+                                            <div>{currentSpoiltVotes}%</div>
+                                        </div>
+                                    </div>
                                     {/* <div className={className("event-description")}>
                                         {
                                             /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
@@ -243,6 +332,20 @@ class QuickResultsWidget extends Component {
                                 <div className={cn("col-md-8")+" "+className("main-right-part")}>
                                     <div className={className("quick-results-title")}>
                                         RACE FOR VOTES: TURNOUT - {getRegionName3(self.state)}
+                                    </div>
+                                    <div className={cn("current-progress")}>
+                                        <div className={cn("current-turnout")}>
+                                            <div>Turnout</div>
+                                            <div>{currentTurnout}%</div>
+                                        </div>
+                                        <div className={cn("current-counting-progress")}>
+                                            <div>Counting Progress</div>
+                                            <div>{currentCountingProg}%</div>
+                                        </div>
+                                        <div className={cn("current-spoilt-votes")}>
+                                            <div>Spoilt Votes</div>
+                                            <div>{currentSpoiltVotes}%</div>
+                                        </div>
                                     </div>
                                     {/* <div className={className("event-description")}>
                                         {
@@ -270,6 +373,20 @@ class QuickResultsWidget extends Component {
                                     <div className={className("quick-results-title")}>
                                         COUNTING PROGRESS: {getRegionName(self.state)}
                                     </div>
+                                    <div className={cn("current-progress")}>
+                                        <div className={cn("current-turnout")}>
+                                            <div>Turnout</div>
+                                            <div>{currentTurnout}%</div>
+                                        </div>
+                                        <div className={cn("current-counting-progress")}>
+                                            <div>Counting Progress</div>
+                                            <div>{currentCountingProg}%</div>
+                                        </div>
+                                        <div className={cn("current-spoilt-votes")}>
+                                            <div>Spoilt Votes</div>
+                                            <div>{currentSpoiltVotes}%</div>
+                                        </div>
+                                    </div>
                                     {/* <div className={className("event-description")}>
                                         {
                                             /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
@@ -294,6 +411,20 @@ class QuickResultsWidget extends Component {
                                 <div className={cn("col-md-8")+" "+className("main-right-part")}>
                                     <div className={className("quick-results-title")}>
                                         SPOILT VOTES: {getRegionName(self.state)}<br/>
+                                    </div>
+                                    <div className={cn("current-progress")}>
+                                        <div className={cn("current-turnout")}>
+                                            <div>Turnout</div>
+                                            <div>{currentTurnout}%</div>
+                                        </div>
+                                        <div className={cn("current-counting-progress")}>
+                                            <div>Counting Progress</div>
+                                            <div>{currentCountingProg}%</div>
+                                        </div>
+                                        <div className={cn("current-spoilt-votes")}>
+                                            <div>Spoilt Votes</div>
+                                            <div>{currentSpoiltVotes}%</div>
+                                        </div>
                                     </div>
                                     {/* <div className={className("event-description")}>
                                         {

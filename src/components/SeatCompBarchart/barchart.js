@@ -136,13 +136,13 @@ class BarChart extends Component {
       } = this.state;
       
       return (
-          <div className={className("barchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
+          <div className={cn("barchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
             {
                 componentID != -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>
             }
             <div 
               ref="vizcontainer" 
-              className={className("chart-body")} 
+              className={cn("chart-body")} 
               ></div>
           </div>
         )

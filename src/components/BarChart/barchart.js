@@ -129,13 +129,13 @@ class BarChart extends Component {
       console.log("rfv barchart componentID", componentID);
 
       return (
-          <div className={className("barchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
+          <div className={cn("barchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
             {
               componentID != -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
             }
             <div 
               ref="vizcontainer" 
-              className={className("chart-body")} 
+              className={cn("chart-body")} 
               ></div>
           </div>
         )

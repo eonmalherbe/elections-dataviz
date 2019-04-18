@@ -344,7 +344,7 @@ export function parseTurnoutData(data, props) {
       edges.forEach(function(edge) {
           var node = edge.node;
           var provinceName = node["location"]["name"];
-          var percVoterTurnout = node["percVoterTurnout"]; 
+          var percVoterTurnout = node["percVoterTurnout"].toFixed(2); 
           locationToTurnout[provinceName] = percVoterTurnout;
       })
   } else if (regionType === "province") {
@@ -352,7 +352,7 @@ export function parseTurnoutData(data, props) {
       edges.forEach(function(edge) {
           var node = edge.node;
           var muniCode = node["location"]["code"];
-          var percVoterTurnout = node["percVoterTurnout"]; 
+          var percVoterTurnout = node["percVoterTurnout"].toFixed(2); 
           locationToTurnout[muniCode] = percVoterTurnout;
       })
   } else {// "municipality" or "municipality-vd"
@@ -360,7 +360,7 @@ export function parseTurnoutData(data, props) {
       edges.forEach(function(edge) {
           var node = edge.node;
           var iecId = node["location"]["iecId"];
-          var percVoterTurnout = node["percVoterTurnout"]; 
+          var percVoterTurnout = node["percVoterTurnout"].toFixed(2); 
           locationToTurnout[iecId] = percVoterTurnout;
       })
   }
@@ -392,6 +392,31 @@ export function parseTurnoutDataForAllEvents(data, props) {
       percVoterTurnout
     }
   }).filter(edge => edge.eventType.toLowerCase().indexOf(props.eventType) != -1)
+}
+
+export function parseTurnoutDataForOneEvent(data, props) {
+  if (!data)  return null;
+  var edges;
+  var regionType = props.regionType;
+  if (regionType == "national") {
+    edges = data["data"]["allBallots"].edges;
+  } else if (regionType == "province") {
+    edges = data["data"]["allProvincialBallots"].edges;
+  } else if (regionType == "municipality") {
+    edges = data["data"]["allMunicipalBallots"].edges;
+  } else if (regionType == "municipality-vd") {
+    edges = data["data"]["allVotingDistrictBallots"].edges;
+  }
+  
+  return edges.map(function(edge) {
+    var node = edge.node;
+    var event = node["event"]["description"];
+    var percVoterTurnout = node["percVoterTurnout"].toFixed(2); 
+    return {
+      name: event,
+      percVoterTurnout
+    }
+  })
 }
 
 export function parseSpoiltVotesData(data, props) {
@@ -646,4 +671,15 @@ export function onPartyAbbrsChange(e) {
         partyAbbrs: values.map(value => value.split("\x22")[0]),
         partyIecIds: values.map(value => value.split("\x22")[1]),
     })
+}
+
+export function nationalEventSelected(state) {
+  for (var i = 0; i < state.electionEvents.length; i ++) {
+    if (state.electionEvents[i].description == state.eventDescription) {
+      if (state.electionEvents[i].eventType.description.toLowerCase().indexOf("national") != -1) {
+        return true;
+      }
+    }
+  }
+  return false;
 }

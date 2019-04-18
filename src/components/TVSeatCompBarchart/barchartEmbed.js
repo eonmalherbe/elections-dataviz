@@ -60,7 +60,7 @@ class BarChartEmbed extends EmbedBase {
         var self = this;
         getElectionEvents()
             .then(function(data) {
-                var electionEvents = data["data"]["allEvents"].map(edge => edge["description"])
+                var electionEvents = data["data"]["allEvents"]
                 self.setState({electionEvents});
             }).catch(error => console.error(error));
         getPartyColors()
@@ -161,9 +161,9 @@ class BarChartEmbed extends EmbedBase {
                      onChange={this.onEventDescriptionChange.bind(this)}>
                         {
                             electionEvents
-                            .filter(item => item.toLowerCase().indexOf(regionType=="national"?"national":"provincial") != -1)
+                            .filter(item => item.eventType.description.toLowerCase().indexOf(regionType=="national"?"national":"provincial") != -1)
                             .map(item => {
-                                return (<option key={item} value={item}>{item}</option>)
+                                return (<option key={item.description} value={item.description}>{item.description}</option>)
                             })
                         }
                   </select>

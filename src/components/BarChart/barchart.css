@@ -1,8 +1,3 @@
-.ELVIZ_chart-title {
-  font-weight: bold;
-  text-align: center;
-}
-
 .ELVIZ_percentage-label {
   font-style: italic;
 }
@@ -24,20 +19,97 @@
   fill: #DEDEDE;
 }
 
-.barchart.ELVIZ_stylesheet-tv {
+.ELVIZ_barchart.ELVIZ_stylesheet-tv {
   background: #1a1917;
   color: white;
   overflow: hidden;
 }
 
-.barchart.ELVIZ_stylesheet-tv .ELVIZ_grouprect{
+.ELVIZ_barchart.ELVIZ_stylesheet-tv .ELVIZ_grouprect{
   fill: rgb(21, 73, 117);
 }
 
-.barchart.ELVIZ_stylesheet-tv svg {
+.ELVIZ_barchart.ELVIZ_stylesheet-tv svg {
   color: white;
 }
-.barchart.ELVIZ_stylesheet-tv text {
+.ELVIZ_barchart.ELVIZ_stylesheet-tv text {
   fill: white;
   color: white;
+}
+
+
+
+/* barchart */
+
+.ELVIZ_barchart {
+  width: 100%;
+  padding-top: 32%;
+  position: relative;
+}
+
+.ELVIZ_barchart .ELVIZ_chart-title {
+  font-weight: bold;
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.ELVIZ_barchart .ELVIZ_chart-body {
+  position: absolute;
+  width: 100%;
+  height: calc(100% - 20px);
+  top: 20px;
+  left: 0;
+}
+
+/* groupbarchart */
+
+.ELVIZ_groupbarchart {
+  width: 100%;
+  padding-top: 46%;
+  position: relative;
+}
+
+.ELVIZ_groupbarchart .ELVIZ_chart-title {
+  font-weight: bold;
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.ELVIZ_groupbarchart .ELVIZ_chart-body {
+  position: absolute;
+  width: 100%;
+  height: calc(100% - 20px);
+  top: 20px;
+  left: 0;
+}
+
+/* deltabarchart */
+
+.ELVIZ_deltabarchart {
+  width: 100%;
+  padding-top: 46%;
+  position: relative;
+}
+
+.ELVIZ_deltabarchart .ELVIZ_chart-title {
+  font-weight: bold;
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.ELVIZ_deltabarchart .ELVIZ_chart-body {
+  position: absolute;
+  width: 100%;
+  height: calc(100% - 20px);
+  top: 20px;
+  left: 0;
 }

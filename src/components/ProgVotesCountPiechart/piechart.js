@@ -122,7 +122,7 @@ class PieChart extends Component {
             }
             <div 
               ref="vizcontainer" 
-              className={className("chart-body")} 
+              className={cn("chart-body")} 
               ></div>
           </div>
         )

@@ -12,7 +12,8 @@ import {
 
 import {
     loadCanvg,
-    triggerCustomEvent
+    triggerCustomEvent,
+    nationalEventSelected
 } from "../../utils";
 
 var provincesData = getProvincesData();
@@ -42,7 +43,7 @@ class MapEmbed extends EmbedBase {
         var self = this;
         getElectionEvents()
             .then(function(data) {
-                var electionEvents = data["data"]["allEvents"].map(edge => edge["description"])
+                var electionEvents = data["data"]["allEvents"]
                 self.setState({electionEvents});
             }).catch(error => console.error(error));
     }
@@ -114,7 +115,7 @@ class MapEmbed extends EmbedBase {
                      onChange={this.onEventDescriptionChange.bind(this)}>
                         {
                             electionEvents.map(item => {
-                                return (<option key={item} value={item}>{item}</option>)
+                                return (<option key={item.description} value={item.description}>{item.description}</option>)
                             })
                         }
                   </select>
@@ -125,7 +126,7 @@ class MapEmbed extends EmbedBase {
                      value={regionType}
                      onChange={this.onRegionTypeChange.bind(this)}>
                         { 
-                            eventDescription.toLowerCase().indexOf("national") != -1 && 
+                            nationalEventSelected(this.state) && 
                             <option value="national">national</option>
                         }
                         <option value="province">province</option>
