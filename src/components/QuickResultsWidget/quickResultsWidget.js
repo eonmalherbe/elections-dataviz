@@ -62,9 +62,6 @@ class QuickResultsWidget extends Component {
             iecId: "",
             comp: "race for votes",
             stylesheetFor: "web",
-            currentTurnout: 0,
-            currentCountingProg: 0,
-            currentSpoiltVotes: 0,
             componentID: 5
         }
         fetchDataFromOBJ(this.state, props);
@@ -94,11 +91,15 @@ class QuickResultsWidget extends Component {
         document.removeEventListener(events.QUICK_RESULTS_PREVIEW, this.handlePreviewEvent);
     }
 
+    componentDidUpdate() {
+      this.fetchCurrentResultData()
+    }
+
     fetchCurrentResultData() {
         console.log("fetchCurrentResultData start");
         var self = this;
         var newProps = JSON.parse(JSON.stringify(this.state));
-        newProps.eventDescription = "2019_mock1";
+        // newProps.eventDescription = "2019_mock1";
         var dataLoaders = [
             getSpoiltData(newProps), 
             getTurnoutDataForOneEvent(newProps),
@@ -118,11 +119,15 @@ class QuickResultsWidget extends Component {
             var parsedTurnoutData = parseTurnoutDataForOneEvent(turnoutData, newProps);
             var parsedProgVotesData = parseProgressVotesCount(progVotesData, newProps);
 
-            self.setState({            
+            var newState = {            
                 currentTurnout: parsedTurnoutData[0].percVoterTurnout,
                 currentCountingProg: parsedProgVotesData[0].percent,
                 currentSpoiltVotes: parsedSpoiltData[1].percent
-            });
+            };
+
+            self.refs.currentTurnout.innerHTML = newState.currentTurnout + "%";
+            self.refs.currentCountingProg.innerHTML = newState.currentCountingProg + "%";
+            self.refs.currentSpoiltVotes.innerHTML = newState.currentSpoiltVotes + "%";
 
             console.log("parsedSpoiltData", parsedSpoiltData);
             console.log("parsedTurnoutData", parsedTurnoutData);
@@ -194,6 +199,26 @@ class QuickResultsWidget extends Component {
         triggerCustomEvent(events.MAP_PREVIEW, triggerState);
     };
 
+    renderTurnoutProgressSpoilt() {
+        var currentTurnout = 0, currentCountingProg = 0, currentSpoiltVotes = 0;
+        return (
+            <div className={cn("current-progress")}>
+                <div className={cn("current-turnout")}>
+                    <div>Turnout</div>
+                    <div ref="currentTurnout">{currentTurnout}%</div>
+                </div>
+                <div className={cn("current-counting-progress")}>
+                    <div>Counting Progress</div>
+                    <div ref="currentCountingProg">{currentCountingProg}%</div>
+                </div>
+                <div className={cn("current-spoilt-votes")}>
+                    <div>Spoilt Votes</div>
+                    <div ref="currentSpoiltVotes">{currentSpoiltVotes}%</div>
+                </div>
+            </div>
+        )
+    }
+
     render() {
         var {
             comp,
@@ -205,9 +230,6 @@ class QuickResultsWidget extends Component {
             muniName,
             muniCode,
             iecId,
-            currentTurnout,
-            currentCountingProg,
-            currentSpoiltVotes
         } = this.state;
         var self = this;
         return (
@@ -255,20 +277,9 @@ class QuickResultsWidget extends Component {
                                     <div className={className("quick-results-title")}>
                                         RACE FOR VOTES: <span className="regionName">{getRegionName2(self.state)}</span>
                                     </div>
-                                    <div className={cn("current-progress")}>
-                                        <div className={cn("current-turnout")}>
-                                            <div>Turnout</div>
-                                            <div>{currentTurnout}%</div>
-                                        </div>
-                                        <div className={cn("current-counting-progress")}>
-                                            <div>Counting Progress</div>
-                                            <div>{currentCountingProg}%</div>
-                                        </div>
-                                        <div className={cn("current-spoilt-votes")}>
-                                            <div>Spoilt Votes</div>
-                                            <div>{currentSpoiltVotes}%</div>
-                                        </div>
-                                    </div>
+                                    {
+                                        this.renderTurnoutProgressSpoilt()
+                                    }
                                     {/* <div className={className("event-description")}>
                                         {
                                             /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
@@ -294,20 +305,9 @@ class QuickResultsWidget extends Component {
                                     <div className={className("quick-results-title")+" "+className("race-for-seats")}>
                                         RACE FOR SEATS: <span className="regionName">{getRegionName(self.state)}</span>(#SEATS)
                                     </div>
-                                    <div className={cn("current-progress")}>
-                                        <div className={cn("current-turnout")}>
-                                            <div>Turnout</div>
-                                            <div>{currentTurnout}%</div>
-                                        </div>
-                                        <div className={cn("current-counting-progress")}>
-                                            <div>Counting Progress</div>
-                                            <div>{currentCountingProg}%</div>
-                                        </div>
-                                        <div className={cn("current-spoilt-votes")}>
-                                            <div>Spoilt Votes</div>
-                                            <div>{currentSpoiltVotes}%</div>
-                                        </div>
-                                    </div>
+                                    {
+                                        this.renderTurnoutProgressSpoilt()
+                                    }
                                     {/* <div className={className("event-description")}>
                                         {
                                             /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
@@ -333,20 +333,9 @@ class QuickResultsWidget extends Component {
                                     <div className={className("quick-results-title")}>
                                         RACE FOR VOTES: TURNOUT - {getRegionName3(self.state)}
                                     </div>
-                                    <div className={cn("current-progress")}>
-                                        <div className={cn("current-turnout")}>
-                                            <div>Turnout</div>
-                                            <div>{currentTurnout}%</div>
-                                        </div>
-                                        <div className={cn("current-counting-progress")}>
-                                            <div>Counting Progress</div>
-                                            <div>{currentCountingProg}%</div>
-                                        </div>
-                                        <div className={cn("current-spoilt-votes")}>
-                                            <div>Spoilt Votes</div>
-                                            <div>{currentSpoiltVotes}%</div>
-                                        </div>
-                                    </div>
+                                    {
+                                        this.renderTurnoutProgressSpoilt()
+                                    }
                                     {/* <div className={className("event-description")}>
                                         {
                                             /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
@@ -373,20 +362,9 @@ class QuickResultsWidget extends Component {
                                     <div className={className("quick-results-title")}>
                                         COUNTING PROGRESS: {getRegionName(self.state)}
                                     </div>
-                                    <div className={cn("current-progress")}>
-                                        <div className={cn("current-turnout")}>
-                                            <div>Turnout</div>
-                                            <div>{currentTurnout}%</div>
-                                        </div>
-                                        <div className={cn("current-counting-progress")}>
-                                            <div>Counting Progress</div>
-                                            <div>{currentCountingProg}%</div>
-                                        </div>
-                                        <div className={cn("current-spoilt-votes")}>
-                                            <div>Spoilt Votes</div>
-                                            <div>{currentSpoiltVotes}%</div>
-                                        </div>
-                                    </div>
+                                    {
+                                        this.renderTurnoutProgressSpoilt()
+                                    }
                                     {/* <div className={className("event-description")}>
                                         {
                                             /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
@@ -412,20 +390,9 @@ class QuickResultsWidget extends Component {
                                     <div className={className("quick-results-title")}>
                                         SPOILT VOTES: {getRegionName(self.state)}<br/>
                                     </div>
-                                    <div className={cn("current-progress")}>
-                                        <div className={cn("current-turnout")}>
-                                            <div>Turnout</div>
-                                            <div>{currentTurnout}%</div>
-                                        </div>
-                                        <div className={cn("current-counting-progress")}>
-                                            <div>Counting Progress</div>
-                                            <div>{currentCountingProg}%</div>
-                                        </div>
-                                        <div className={cn("current-spoilt-votes")}>
-                                            <div>Spoilt Votes</div>
-                                            <div>{currentSpoiltVotes}%</div>
-                                        </div>
-                                    </div>
+                                    {
+                                        this.renderTurnoutProgressSpoilt()
+                                    }
                                     {/* <div className={className("event-description")}>
                                         {
                                             /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]

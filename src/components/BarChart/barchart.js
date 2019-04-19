@@ -78,6 +78,7 @@ class BarChart extends Component {
     }
 
     componentDidUpdate() {
+      console.log("component did update");
       this.draw(this.getContainer(), this.state)
     }
 

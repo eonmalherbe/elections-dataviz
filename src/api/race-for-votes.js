@@ -273,6 +273,7 @@ export function getVotesDataM(options) {
                         abbreviation
                         iecId
                       }
+                      validVotes
                       percOfVotes
                     }
                   }  

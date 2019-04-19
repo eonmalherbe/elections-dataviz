@@ -33,6 +33,9 @@ export function parseVotesData(data, props) {
 
     results = results.slice(0, props.numParties);
 
+    console.log("data", data);
+    console.log("results", results)
+
     return results.map(function(node) {
         var el = node["node"];
         return {

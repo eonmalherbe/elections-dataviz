@@ -191,7 +191,7 @@ class NavBar extends Component {
         var content = [
             {
                 icon: '1',
-                label: 'National',
+                label: 'National Assembly',
                 // to: '1',
                 content: toShowChartLabels.map((toshowchart, chartIdx) => {
                     return {
@@ -203,7 +203,7 @@ class NavBar extends Component {
             },
             {
                 icon: '',
-                label: 'Provinces',
+                label: 'Province Legislature',
                 content: provincesData.map((province, i) => {
                     return {
                         icon: `2-${i}`,
@@ -226,24 +226,24 @@ class NavBar extends Component {
                     }
                 })
             },
-            {
-                icon: '',
-                label: 'Metros',
-                content: metrosData.map((metro, i) => {
-                    return {
-                        icon: `4-${i}`,
-                        label: metro.muniName.split("-")[1].split("[")[0],
-                        to: `4-${i}`,
-                        // content: toShowCharts.map((toshowchart, chartIdx) => {
-                        //     return {
-                        //         icon: `4-${i}-${chartIdx}`,
-                        //         label: toshowchart,
-                        //         to: `4-${i}-${chartIdx}`,
-                        //     }
-                        // })
-                    }
-                })
-            }
+            // {
+            //     icon: '',
+            //     label: 'Metros',
+            //     content: metrosData.map((metro, i) => {
+            //         return {
+            //             icon: `4-${i}`,
+            //             label: metro.muniName.split("-")[1].split("[")[0],
+            //             to: `4-${i}`,
+            //             // content: toShowCharts.map((toshowchart, chartIdx) => {
+            //             //     return {
+            //             //         icon: `4-${i}-${chartIdx}`,
+            //             //         label: toshowchart,
+            //             //         to: `4-${i}-${chartIdx}`,
+            //             //     }
+            //             // })
+            //         }
+            //     })
+            // }
         ];
         
         return (
