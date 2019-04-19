@@ -60,7 +60,7 @@ class QuickResultsWidget extends Component {
             muniName: "",
             muniCode: "",
             iecId: "",
-            comp: "race for votes",
+            comp: "votes-default",
             stylesheetFor: "web",
             componentID: 5
         }
@@ -146,7 +146,7 @@ class QuickResultsWidget extends Component {
         var self = this;
         var zipfileName = `quick-results-widget-${comp.replace(/\s/gi, '-')}(${getRegionName(self.state)})`;
         var imageLoadPromises = [];
-        if (comp == 'race for votes') {
+        if (comp == 'votes-default') {
             imageLoadPromises = [
                 this.votesInstance1.exportAsPNGUri(), 
                 this.votesInstance2.exportAsPNGUri()
@@ -240,8 +240,8 @@ class QuickResultsWidget extends Component {
                     </div>
                     <div className={cn("col-md-2")}>
                         <button 
-                            className={comp == 'race for votes'? className("active") : ""} 
-                            onClick={() => this.setState({comp: 'race for votes'})}> Race for votes </button>
+                            className={comp == 'votes-default'? className("active") : ""} 
+                            onClick={() => this.setState({comp: 'votes-default'})}> Race for votes </button>
                     </div>
                     <div className={cn("col-md-2")}>
                         <button  
@@ -272,7 +272,7 @@ class QuickResultsWidget extends Component {
                         <NavBar />
                     </div>
                             {
-                                comp == 'race for votes' && 
+                                comp == 'votes-default' && 
                                 <div className={cn("col-md-8")+" "+className("main-right-part")}>
                                     <div className={className("quick-results-title")}>
                                         RACE FOR VOTES: <span className="regionName">{getRegionName2(self.state)}</span>
@@ -300,7 +300,7 @@ class QuickResultsWidget extends Component {
                                 </div>
                             }
                             {
-                                comp == 'race for seats' && 
+                                comp == 'seats-default' && 
                                 <div className={cn("col-md-8")+" "+className("main-right-part")}>
                                     <div className={className("quick-results-title")+" "+className("race-for-seats")}>
                                         RACE FOR SEATS: <span className="regionName">{getRegionName(self.state)}</span>(#SEATS)
@@ -328,7 +328,7 @@ class QuickResultsWidget extends Component {
                                 </div>
                             }
                             {
-                                comp == 'turnout' && 
+                                comp == 'votes-turnout' && 
                                 <div className={cn("col-md-8")+" "+className("main-right-part")}>
                                     <div className={className("quick-results-title")}>
                                         RACE FOR VOTES: TURNOUT - {getRegionName3(self.state)}
@@ -357,7 +357,7 @@ class QuickResultsWidget extends Component {
                                 
                             }
                             {
-                                comp == 'counting progress' && 
+                                comp == 'votes-progress' && 
                                 <div className={cn("col-md-8")+" "+className("main-right-part")}>
                                     <div className={className("quick-results-title")}>
                                         COUNTING PROGRESS: {getRegionName(self.state)}

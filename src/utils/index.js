@@ -395,6 +395,11 @@ export function parseTurnoutDataForAllEvents(data, props) {
       percVoterTurnout
     }
   }).filter(edge => edge.eventType.toLowerCase().indexOf(props.eventType) != -1)
+  .sort(function(edge1, edge2) {
+    var edge1Year = parseInt(/(19|20)\d{2}/g.exec(edge1.name)[0]);
+    var edge2Year = parseInt(/(19|20)\d{2}/g.exec(edge2.name)[0]);
+    return edge1Year - edge2Year;
+  })
 }
 
 export function parseTurnoutDataForOneEvent(data, props) {

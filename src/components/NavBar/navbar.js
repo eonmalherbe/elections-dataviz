@@ -23,9 +23,6 @@ function cssPrefix(originName) {
 
 var provincesData = getProvincesData();
 var metrosData = getMetrosData();
-var toShowChartLabels = ["Race for Votes", "Turnout", "Race for Seats"];
-var toShowCharts = ["race for votes", "turnout", "race for seats"];
-
 
 class CustomLink extends React.Component {
     constructor() {
@@ -117,26 +114,109 @@ class NavBar extends Component {
         var passInfo = lastClass.split('-');
 
         var regionType, selectionData = {}, chartType = "";
-        var activeLinkId = '';
+        var activeLinkId = passInfo.slice(1, passInfo.length).join('-');
 
         if (passInfo[1] == '1') {
             regionType = "national";
-            chartType = toShowCharts[passInfo[2]];
-            activeLinkId = '1';
+            if (passInfo[2] == '1') {
+                switch (passInfo[3]) {
+                    case '1':
+                        chartType = "votes-default";
+                        break;
+                    case '2':
+                        chartType = "votes-comparisons";
+                        break;
+                    case '3':
+                        chartType = "votes-CSIR";
+                        break;
+                    case '4':
+                        chartType = "votes-progress";
+                        break;
+                    case '5':
+                        chartType = "votes-turnout";
+                        break;
+                    case '6':
+                        chartType = "votes-myvd";
+                        break;
+                    default:
+                        return;
+                }
+            } else if (passInfo[2] == '2') {
+                switch (passInfo[3]) {
+                    case '1':
+                        chartType = "seats-default";
+                        break;
+                    case '2':
+                        chartType = "seats-comparisons";
+                        break;
+                    case '3':
+                        chartType = "seats-electeds";
+                        break;
+                    case '4':
+                        chartType = "seats-women";
+                        break;
+                    case '5':
+                        chartType = "seats-age";
+                        break;
+                    default:
+                        return;
+                }
+            } else {
+                return;
+            }
         } else if (passInfo[1] == '2') {
             regionType = "province";
             selectionData = provincesData[passInfo[2]];
-            chartType = toShowCharts[passInfo[3]];
-        } else if (passInfo[1] == '3') { // muni level
-            regionType = "municipality";
-            selectionData = provincesData[passInfo[2]].munis[passInfo[3]];
-            chartType = toShowCharts[passInfo[4]];
-            activeLinkId = `3-${passInfo[2]}-${passInfo[3]}`;
-        } else if (passInfo[1] == '4') { // metros
+            if (passInfo[3] == '1') {
+                switch (passInfo[4]) {
+                    case '1':
+                        chartType = "votes-default"; // done
+                        break;
+                    case '2':
+                        chartType = "votes-comparisons";
+                        break;
+                    case '3':
+                        chartType = "votes-progress"; // done
+                        break;
+                    case '4':
+                        chartType = "votes-turnout";// done
+                        break;
+                    case '5':
+                        chartType = "votes-split";
+                        break;
+                    case '6':
+                        chartType = "votes-CSIR";
+                        break;
+                    default:
+                        return;
+                }
+            } else if (passInfo[3] == '2') {
+                switch (passInfo[4]) {
+                    case '1':
+                        chartType = "seats-default"; // done
+                        break;
+                    case '2':
+                        chartType = "seats-comparisons";
+                        break;
+                    case '3':
+                        chartType = "seats-electeds";
+                        break;
+                    case '4':
+                        chartType = "seats-women";
+                        break;
+                    case '5':
+                        chartType = "seats-age";
+                        break;
+                    default:
+                        return;
+                }
+            } else {
+                return;
+            }
+        } else if (passInfo[1] == '3') { // metros
             regionType = "municipality"
             selectionData = metrosData[passInfo[2]];
-            chartType = "race for votes";
-            activeLinkId = `4-${passInfo[2]}`;
+            chartType = "votes-default";
         } else {
             return;
         }
@@ -190,59 +270,177 @@ class NavBar extends Component {
     render () {
         var content = [
             {
-                icon: '1',
                 label: 'National Assembly',
-                // to: '1',
-                content: toShowChartLabels.map((toshowchart, chartIdx) => {
-                    return {
-                        icon: `1-${chartIdx}`,
-                        label: toshowchart,
-                        to: `1-${chartIdx}`,
+                content: [
+                    {
+                        label: "Race for votes",
+                        content: [
+                            {
+                                icon: `1-1-1`,
+                                label: `National assembly`,
+                                to: `1-1-1`,
+                            },
+                            {
+                                icon: `1-1-2`,
+                                label: `Comparisons`,
+                                to: `1-1-2`,
+                            },
+                            {
+                                icon: `1-1-3`,
+                                label: `CSIR Predictions`,
+                                to: `1-1-3`,
+                            },
+                            {
+                                icon: `1-1-4`,
+                                label: `Counting progress`,
+                                to: `1-1-4`,
+                            },
+                            {
+                                icon: `1-1-5`,
+                                label: `Turnout`,
+                                to: `1-1-5`,
+                            },
+                            {
+                                icon: `1-1-6`,
+                                label: `My voting District`,
+                                to: `1-1-6`,
+                            },
+                            {
+                                label: `Metros`,
+                                content: metrosData.map((metro, i) => {
+                                    return {
+                                        icon: `3-${i}`,
+                                        label: metro.muniName.split("-")[1].split("[")[0],
+                                        to: `3-${i}`,
+                                    }
+                                })
+                            }
+                        ]
+                    },
+                    {
+                        label: "Race for seats",
+                        content: [
+                            {
+                                icon: `1-2-1`,
+                                label: `National assembly`,
+                                to: `1-2-1`
+                            },
+                            {
+                                icon: `1-2-2`,
+                                label: `Comparisons`,
+                                to: `1-2-2`,
+                            },
+                            {
+                                icon: `1-2-3`,
+                                label: `Electeds`,
+                                to: `1-2-3`,
+                            },
+                            {
+                                icon: `1-2-4`,
+                                label: `Women`,
+                                to: `1-2-4`,
+                            },
+                            {
+                                icon: `1-2-5`,
+                                label: `Age`,
+                                to: `1-2-5`,
+                            }
+                        ]
                     }
-                })
+                ]
             },
             {
-                icon: '',
                 label: 'Province Legislature',
                 content: provincesData.map((province, i) => {
                     return {
-                        icon: `2-${i}`,
                         label: province.name,
-                        // to: `2-${i}`,
-                        content: toShowChartLabels.map((toshowchart, chartIdx) => {
-                            return {
-                                icon: `2-${i}-${chartIdx}`,
-                                label: toshowchart,
-                                to: `2-${i}-${chartIdx}`,
+                        content: [
+                            {
+                                label: "Race for votes",
+                                content: [
+                                    {
+                                        icon: `2-${i}-1-1`,
+                                        label: `Provincial legislature`,
+                                        to: `2-${i}-1-1`,
+                                    },
+                                    {
+                                        icon: `2-${i}-1-2`,
+                                        label: `Comparisons`,
+                                        to: `2-${i}-1-2`,
+                                    },
+                                    {
+                                        icon: `2-${i}-1-3`,
+                                        label: `Counting progress`,
+                                        to: `2-${i}-1-3`,
+                                    },
+                                    {
+                                        icon: `2-${i}-1-4`,
+                                        label: `Turnout`,
+                                        to: `2-${i}-1-4`,
+                                    },
+                                    {
+                                        icon: `2-${i}-1-5`,
+                                        label: `Split (Nat/Prov)`,
+                                        to: `2-${i}-1-5`,
+                                    },
+                                    {
+                                        icon: `2-${i}-1-6`,
+                                        label: `CSIR Predictions`,
+                                        to: `2-${i}-1-6`,
+                                    }
+                                ]
+                            },
+                            {
+                                label: "Race for seats",
+                                content: [
+                                    {
+                                        icon: `2-${i}-2-1`,
+                                        label: `Provincial legislature`,
+                                        to: `2-${i}-2-1`,
+                                    },
+                                    {
+                                        icon: `2-${i}-2-2`,
+                                        label: `Comparisons`,
+                                        to: `2-${i}-2-2`,
+                                    },
+                                    {
+                                        icon: `2-${i}-2-3`,
+                                        label: `Electeds`,
+                                        to: `2-${i}-2-3`,
+                                    },
+                                    {
+                                        icon: `2-${i}-2-4`,
+                                        label: `Women`,
+                                        to: `2-${i}-2-4`,
+                                    },
+                                    {
+                                        icon: `2-${i}-2-5`,
+                                        label: `Age`,
+                                        to: `2-${i}-2-5`,
+                                    }
+                                ]
                             }
-                        })
-                        // content: province.munis.map((muni, j) => {
-                        //     return {
-                        //         icon: `3-${i}-${j}`,
-                        //         label: muni.muniName.split("-")[1].split("[")[0],
-                        //         to: `3-${i}-${j}`,
-                        //     }
-                        // })
+                        ]
                     }
                 })
             },
             // {
             //     icon: '',
             //     label: 'Metros',
-            //     content: metrosData.map((metro, i) => {
-            //         return {
-            //             icon: `4-${i}`,
-            //             label: metro.muniName.split("-")[1].split("[")[0],
-            //             to: `4-${i}`,
-            //             // content: toShowCharts.map((toshowchart, chartIdx) => {
-            //             //     return {
-            //             //         icon: `4-${i}-${chartIdx}`,
-            //             //         label: toshowchart,
-            //             //         to: `4-${i}-${chartIdx}`,
-            //             //     }
-            //             // })
-            //         }
-            //     })
+                // content: metrosData.map((metro, i) => {
+                //     return {
+                //         icon: `4-${i}`,
+                //         label: metro.muniName.split("-")[1].split("[")[0],
+                //         to: `4-${i}`,
+                //         // content: toShowCharts.map((toshowchart, chartIdx) => {
+                //         //     return {
+                //         //         icon: `4-${i}-${chartIdx}`,
+                //         //         label: toshowchart,
+                //         //         to: `4-${i}-${chartIdx}`,
+                //         //     }
+                //         // })
+                //     }
+                // })
             // }
         ];
         
