@@ -98,7 +98,6 @@ class DonutChart extends Component {
       var targetState = event.detail;
       if (targetState.componentID != this.state.componentID)
         return;
-      console.log("targetState", targetState);
       svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-seats-donutchart-chart(${getNationOrProvinceName(this.state)}).png`);
     }
 

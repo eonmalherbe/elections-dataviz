@@ -250,12 +250,22 @@ class NavBar extends Component {
             }; 
             if (this.state.regionType == newState.regionType 
                 && this.state.provinceName == newState.provinceName
-                && this.state.newState == newState.muniName
+                && this.state.muniName == newState.muniName
                 && this.state.comp == chartType)
                 return;
         }
 
         newState.comp = chartType;
+
+        if (newState.comp == "votes-myvd") {
+            newState.regionType = "municipality-vd";
+            newState.iecId = "86550385";
+        }
+
+        if (newState.comp == "seats-electeds" || newState.comp == "seats-women" || newState.comp == "seats-age") {
+            triggerCustomEvent(events.SEATS_ELECTEDS_EVENT, newState);
+            return;
+        }
 
         // console.log("handleNavBarSelection", newState);
 
@@ -285,11 +295,11 @@ class NavBar extends Component {
                                 label: `Comparisons`,
                                 to: `1-1-2`,
                             },
-                            {
-                                icon: `1-1-3`,
-                                label: `CSIR Predictions`,
-                                to: `1-1-3`,
-                            },
+                            // {
+                            //     icon: `1-1-3`,
+                            //     label: `CSIR Predictions`,
+                            //     to: `1-1-3`,
+                            // },
                             {
                                 icon: `1-1-4`,
                                 label: `Counting progress`,
@@ -335,22 +345,22 @@ class NavBar extends Component {
                                 label: `Electeds`,
                                 to: `1-2-3`,
                             },
-                            {
-                                icon: `1-2-4`,
-                                label: `Women`,
-                                to: `1-2-4`,
-                            },
-                            {
-                                icon: `1-2-5`,
-                                label: `Age`,
-                                to: `1-2-5`,
-                            }
+                            // {
+                            //     icon: `1-2-4`,
+                            //     label: `Women`,
+                            //     to: `1-2-4`,
+                            // },
+                            // {
+                            //     icon: `1-2-5`,
+                            //     label: `Age`,
+                            //     to: `1-2-5`,
+                            // }
                         ]
                     }
                 ]
             },
             {
-                label: 'Province Legislature',
+                label: 'Provincial Legislature',
                 content: provincesData.map((province, i) => {
                     return {
                         label: province.name,
@@ -378,16 +388,16 @@ class NavBar extends Component {
                                         label: `Turnout`,
                                         to: `2-${i}-1-4`,
                                     },
-                                    {
-                                        icon: `2-${i}-1-5`,
-                                        label: `Split (Nat/Prov)`,
-                                        to: `2-${i}-1-5`,
-                                    },
-                                    {
-                                        icon: `2-${i}-1-6`,
-                                        label: `CSIR Predictions`,
-                                        to: `2-${i}-1-6`,
-                                    }
+                                    // {
+                                    //     icon: `2-${i}-1-5`,
+                                    //     label: `Split (Nat/Prov)`,
+                                    //     to: `2-${i}-1-5`,
+                                    // },
+                                    // {
+                                    //     icon: `2-${i}-1-6`,
+                                    //     label: `CSIR Predictions`,
+                                    //     to: `2-${i}-1-6`,
+                                    // },
                                 ]
                             },
                             {
@@ -408,16 +418,16 @@ class NavBar extends Component {
                                         label: `Electeds`,
                                         to: `2-${i}-2-3`,
                                     },
-                                    {
-                                        icon: `2-${i}-2-4`,
-                                        label: `Women`,
-                                        to: `2-${i}-2-4`,
-                                    },
-                                    {
-                                        icon: `2-${i}-2-5`,
-                                        label: `Age`,
-                                        to: `2-${i}-2-5`,
-                                    }
+                                    // {
+                                    //     icon: `2-${i}-2-4`,
+                                    //     label: `Women`,
+                                    //     to: `2-${i}-2-4`,
+                                    // },
+                                    // {
+                                    //     icon: `2-${i}-2-5`,
+                                    //     label: `Age`,
+                                    //     to: `2-${i}-2-5`,
+                                    // }
                                 ]
                             }
                         ]

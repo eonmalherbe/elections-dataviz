@@ -78,7 +78,6 @@ class BarChart extends Component {
     }
 
     componentDidUpdate() {
-      console.log("component did update");
       this.draw(this.getContainer(), this.state)
     }
 
@@ -126,8 +125,6 @@ class BarChart extends Component {
         stylesheetFor,
         componentID
       } = this.state;
-
-      console.log("rfv barchart componentID", componentID);
 
       return (
           <div className={cn("barchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>

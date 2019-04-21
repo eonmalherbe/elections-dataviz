@@ -77,7 +77,6 @@ export function Chart(container, width, height, className, options) {
   
     this.draw = function(chartData, colorsData) {
 
-      console.log("draw Chart", options);
       if (!chartData) {
         errorText.text("chart data is not available");
         return;
@@ -129,8 +128,6 @@ export function Chart(container, width, height, className, options) {
         var maxValue = d3.max(chartData, function(d) { return parseFloat(options.yValue(d)); });
         if (options.customizeDynamicMaxValue) {
           minMaxY[1] = options.customizeDynamicMaxValue(maxValue);
-          console.log("maxValue -> minMaxY1", maxValue, minMaxY[1]);
-          console.log("chartData", chartData );
         } else {
           minMaxY[1] = maxValue + 1;
         }

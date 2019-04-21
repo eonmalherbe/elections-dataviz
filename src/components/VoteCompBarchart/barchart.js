@@ -140,7 +140,7 @@ class BarChart extends Component {
       return (
           <div className={cn("barchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
             {
-                componentID && <div className={cn("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
+              componentID != -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
             }
             <div 
               ref="vizcontainer" 

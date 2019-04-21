@@ -9,6 +9,8 @@ import BarChart from '../BarChart/barchart';
 import ProgressVotesPieChart from '../ProgVotesCountPiechart/piechart';
 
 import RaceForSeatDonut from '../RaceForSeatDonut/piechart';
+import VoteCompBarchart from '../VoteCompBarchart/barchart';
+import SeatCompBarchart from '../SeatCompBarchart/barchart';
 
 import SpoiltBarChart from '../SpoiltBarchart/barchart';
 
@@ -24,6 +26,8 @@ import {
     getSpoiltData,
     getTurnoutDataForOneEvent,
     getProgressVotesCount,
+    getVotesDataM,
+    getSeatsData
 } from "../../api";
 
 import {
@@ -36,7 +40,9 @@ import {
 
     parseSpoiltVotesData,
     parseTurnoutDataForOneEvent,
-    parseProgressVotesCount
+    parseProgressVotesCount,
+    parseVotesData,
+    parseSeatsData,
 } from "../../utils";
 
 var dataRefreshTime = 30 * 1000;
@@ -59,10 +65,28 @@ class QuickResultsWidget extends Component {
             provinceName: "",
             muniName: "",
             muniCode: "",
-            iecId: "",
+            iecId: "65010035", // regionIecId
             comp: "votes-default",
             stylesheetFor: "web",
-            componentID: 5
+            componentID: 5,
+
+            partyAbbrs: ["ANC", "DA", "EFF", "ID"],
+            partyIecIds: [null, null, null, null],        
+            eventDescriptions: [
+                // "National Elections 1999",
+                // "Provincial Elections 1999",
+                "14 Apr 2004 National Election",
+                // "14 Apr 2004 Provincial Election",
+                "22 Apr 2009 National Election",
+                // "22 Apr 2009 Provincial Election",
+                "2014 National Election",
+                // "2014 Provincial Election",
+                "2019 NATIONAL ELECTION",
+                // "2019 PROVINCIAL ELECTION",
+            ],
+            currentTurnout: 0,
+            currentCountingProg: 0,
+            currentSpoiltVotes: 0
         }
         fetchDataFromOBJ(this.state, props);
 
@@ -82,6 +106,8 @@ class QuickResultsWidget extends Component {
         document.addEventListener(events.REGION_CHANGE, this.handleRegionChange);
         document.addEventListener(events.QUICK_RESULTS_PREVIEW, this.handlePreviewEvent);
 
+        document.addEventListener(events.SEATS_ELECTEDS_EVENT, this.handleSeatsElectedsEvent); // "seats-electeds-event"
+
         this.fetchCurrentResultData();
     }
   
@@ -95,44 +121,67 @@ class QuickResultsWidget extends Component {
       this.fetchCurrentResultData()
     }
 
+    handleSeatsElectedsEvent(event) {
+        console.log("handleSeatsElectedsEvent", event.detail);
+    }
+
     fetchCurrentResultData() {
-        console.log("fetchCurrentResultData start");
         var self = this;
         var newProps = JSON.parse(JSON.stringify(this.state));
+        var {comp} = this.state;
+
         // newProps.eventDescription = "2019_mock1";
         var dataLoaders = [
             getSpoiltData(newProps), 
             getTurnoutDataForOneEvent(newProps),
-            getProgressVotesCount(newProps)
+            getProgressVotesCount(newProps),
         ];
+
+        if (comp == 'votes-comparisons') {
+            dataLoaders.push(getVotesDataM(newProps));
+        }
+        if (comp == 'seats-comparisons') {
+            dataLoaders.push(getSeatsData(newProps));
+        }
 
         Promise.all(dataLoaders).then(function(values){ 
             var spoiltData = values[0];
             var turnoutData = values[1];
             var progVotesData = values[2];
 
-            console.log("spoiltData", spoiltData);
-            console.log("turnoutData", turnoutData);
-            console.log("progVotesData", progVotesData);
-
             var parsedSpoiltData = parseSpoiltVotesData(spoiltData, newProps);
             var parsedTurnoutData = parseTurnoutDataForOneEvent(turnoutData, newProps);
             var parsedProgVotesData = parseProgressVotesCount(progVotesData, newProps);
 
-            var newState = {            
-                currentTurnout: parsedTurnoutData[0].percVoterTurnout,
-                currentCountingProg: parsedProgVotesData[0].percent,
-                currentSpoiltVotes: parsedSpoiltData[1].percent
-            };
-
-            self.refs.currentTurnout.innerHTML = newState.currentTurnout + "%";
-            self.refs.currentCountingProg.innerHTML = newState.currentCountingProg + "%";
-            self.refs.currentSpoiltVotes.innerHTML = newState.currentSpoiltVotes + "%";
-
-            console.log("parsedSpoiltData", parsedSpoiltData);
-            console.log("parsedTurnoutData", parsedTurnoutData);
-            console.log("parsedProgVotesData", parsedProgVotesData);
-
+            if (parsedTurnoutData[0] && parsedProgVotesData[0] && parsedSpoiltData[1]) {
+                var newState = {            
+                    currentTurnout: parsedTurnoutData[0].percVoterTurnout,
+                    currentCountingProg: parsedProgVotesData[0].percent,
+                    currentSpoiltVotes: parsedSpoiltData[1].percent
+                };
+    
+                if (comp == 'votes-comparisons') {
+                    var votesData = values[3];
+                    var parsedVotesData = parseVotesData(votesData, newProps);
+                    newState.partyAbbrs = parsedVotesData.map(voteItem => voteItem.name);
+                    newState.partyIecIds = parsedVotesData.map(voteItem => voteItem.iecId);
+                } else if (comp == 'seats-comparisons') {
+                    var seatsData = values[3];
+                    var parsedSeatsData = parseSeatsData(seatsData, newProps);
+                    newState.partyAbbrs = parsedSeatsData.map(seatItem => seatItem.name);
+                    newState.partyIecIds = parsedSeatsData.map(seatItem => seatItem.iecId);
+                }
+    
+                if (newState.partyIecIds && newState.partyIecIds.join(" ") != self.state.partyIecIds.join(" ")) {
+                    self.setState(newState);
+                } else {
+                    if (self.refs.currentTurnout && self.refs.currentCountingProg && self.refs.currentSpoiltVotes) {
+                        self.refs.currentTurnout.innerHTML = newState.currentTurnout + "%";
+                        self.refs.currentCountingProg.innerHTML = newState.currentCountingProg + "%";
+                        self.refs.currentSpoiltVotes.innerHTML = newState.currentSpoiltVotes + "%";
+                    }
+                }
+            }
         }).catch(error => console.error(error));
     }
 
@@ -200,7 +249,12 @@ class QuickResultsWidget extends Component {
     };
 
     renderTurnoutProgressSpoilt() {
-        var currentTurnout = 0, currentCountingProg = 0, currentSpoiltVotes = 0;
+        var {
+            currentTurnout,
+            currentCountingProg,
+            currentSpoiltVotes,
+        } = this.state;
+
         return (
             <div className={cn("current-progress")}>
                 <div className={cn("current-turnout")}>
@@ -219,199 +273,214 @@ class QuickResultsWidget extends Component {
         )
     }
 
-    render() {
+    renderQuickResultsTitle() {
         var {
-            comp,
-            numParties,
-            eventDescription,
-            stylesheetFor,
-            regionType,
-            provinceName,
-            muniName,
-            muniCode,
-            iecId,
+            comp
         } = this.state;
         var self = this;
+        if (comp == 'votes-default') {
+            return (
+                <div className={className("quick-results-title")}>
+                    RACE FOR VOTES: <span className="regionName">{getRegionName2(self.state)}</span>
+                </div>
+            );
+        }
+        if (comp == 'seats-default') {
+            return (
+                <div className={className("quick-results-title")+" "+className("race-for-seats")}>
+                    RACE FOR SEATS: <span className="regionName">{getRegionName(self.state)}</span>(#SEATS)
+                </div>
+            );
+        }
+        if (comp == 'votes-turnout') {
+            return (
+                <div className={className("quick-results-title")}>
+                    RACE FOR VOTES: TURNOUT - {getRegionName3(self.state)}
+                </div>
+            );
+        }
+        if (comp == 'votes-progress') {
+            return (
+                <div className={className("quick-results-title")}>
+                    COUNTING PROGRESS: {getRegionName(self.state)}
+                </div>
+            );
+        }
+        if (comp == 'votes-comparisons') {
+            return (
+                <div className={className("quick-results-title")}>
+                    VOTES COMPARISONS: {getRegionName(self.state)}
+                </div>
+            );
+        }
+        if (comp == 'seats-comparisons') {
+            return (
+                <div className={className("quick-results-title")}>
+                    SEATS COMPARISONS: {getRegionName(self.state)}
+                </div>
+            );
+        }
+        if (comp == 'votes-myvd') {
+            return (
+                <div className={className("quick-results-title")}>
+                    My Voting District {getRegionName(self.state)}
+                </div>
+            );
+        }
+        return null;
+    }
+
+    renderMap() {
+        var {
+            comp
+        } = this.state;
+        if (comp == 'votes-myvd') {
+            return null;
+        }
+        if (comp == 'votes-turnout') {
+            return (
+                <div className={className("map-container")}>
+                    <TurnoutMap 
+                        ref={instance => { this.turnoutInstance2 = instance; }} 
+                        {...this.state}
+                        componentID={-1000} />
+                </div>
+            );
+        } else {
+            return (
+                <div className={className("map-container")}>
+                    <Map 
+                        ref={instance => { this.mapInstance = instance; }} 
+                        {...this.state}
+                        componentID={-1000} />
+                </div>
+            );
+        }
+    }
+
+    renderBarchart() {
+        var {
+            comp,
+            partyIecIds,
+            partyAbbrs,
+        } = this.state;
+        if (comp == 'votes-default' || comp == 'votes-myvd') {
+            return (
+                <div className={className("barchart-container")}>
+                    <BarChart 
+                        ref={instance => { this.votesInstance1 = instance; }} 
+                        {...this.state} 
+                        componentID={-1000}/>
+                </div>
+            );
+        }
+        if (comp == 'seats-default') {
+            return (
+                <div className={className("barchart-container")}>
+                    <RaceForSeatDonut 
+                        ref={instance => { this.seatsInstance1 = instance; }} 
+                        {...this.state}
+                        componentID={-1000} />
+                </div>
+            );
+        }
+        if (comp == 'votes-turnout') {
+            return (
+                <div className={className("barchart-container")}>
+                    <TurnoutBarchart 
+                        ref={instance => { this.turnoutInstance1 = instance; }} 
+                        {...this.state}
+                        componentID={-1000} />
+                </div>
+            );
+        }
+        if (comp == 'votes-progress') {
+            return (
+                <div className={className("barchart-container")}>
+                    <ProgressVotesPieChart 
+                        ref={instance => { this.progressInstance1 = instance; }} 
+                        {...this.state}
+                        componentID={-1000} />
+                </div>
+            );
+        }
+        if (comp == 'votes-comparisons') {
+            return (
+                <div className={className("barchart-container")}>
+                    {
+                        partyIecIds.map((partyIecId, partyIdx) => {
+                            return <VoteCompBarchart 
+                                key={partyIdx}
+                                {...this.state}
+                                partyAbbr={partyAbbrs[partyIdx]}
+                                partyIecId={partyIecId}
+                                componentID={-1000}
+                            />
+                        })
+                    }
+                </div>
+            );
+        }
+        if (comp == 'seats-comparisons') {
+            return (
+                <div className={className("barchart-container")}>
+                    {
+                        partyIecIds.map((partyIecId, partyIdx) => {
+                            return <SeatCompBarchart 
+                                key={partyIdx}
+                                {...this.state}
+                                partyAbbr={partyAbbrs[partyIdx]}
+                                partyIecId={partyIecId}
+                                componentID={-1000}
+                            />
+                        })
+                    }
+                </div>
+            );
+        }
+        return null;
+    }
+
+    renderMyVDEnterForm() {
+        var {comp} = this.state;
+        if (comp != 'votes-myvd') {
+            return null;
+        }
+        return (
+            <div className="voting-district-enter-form">
+                <input ref="vdInput" type="text" placeholder="65010035 or 86550385"/>
+                <button onClick={this.onShowVDResult.bind(this)}> Show Result</button>
+            </div>
+        )
+    }
+
+    onShowVDResult() {
+        console.log("onShowVDResult", this.refs.vdInput.value);
+        var newState = {
+            regionType: "municipality-vd",
+            iecId: this.refs.vdInput.value
+        }
+        triggerCustomEvent(events.REGION_CHANGE, newState);
+        // this.setState(newState);
+    }
+
+    render() {
+        var {
+            stylesheetFor,
+        } = this.state;
         return (
             <div className={className("quickresultswidget") + " " + cn(`stylesheet-${stylesheetFor}`)}>
-                {/* <div className={cn("row") + " " + cn("component-transition-menu")}>
-                    <div className={cn("col-md-2") + " " + className("label")}>
-                        Show Results 
-                    </div>
-                    <div className={cn("col-md-2")}>
-                        <button 
-                            className={comp == 'votes-default'? className("active") : ""} 
-                            onClick={() => this.setState({comp: 'votes-default'})}> Race for votes </button>
-                    </div>
-                    <div className={cn("col-md-2")}>
-                        <button  
-                            className={comp == 'race for seats'? className("active") : ""} 
-                            onClick={() => this.setState({comp: 'race for seats'})}> Race for seats</button>
-                    </div>
-                    <div className={cn("col-md-2")}>
-                        <button  
-                            className={comp == 'turnout'? className("active") : ""} 
-                            onClick={() => this.setState({comp: 'turnout'})}> Turnout</button>
-                    </div>
-                    {
-                        (eventDescription.indexOf("2014") != -1) &&
-                        <div className={cn("col-md-2")}>
-                            <button  
-                                className={comp == 'counting progress'? className("active") : ""} 
-                                onClick={() => this.setState({comp: 'counting progress'})}> Counting progress </button>
-                        </div>
-                    }
-                    <div className={cn("col-md-2")}>
-                        <button  
-                            className={comp == 'spoilt votes'? className("active") : ""} 
-                            onClick={() => this.setState({comp: 'spoilt votes'})}> Spoilt Votes </button>
-                    </div>
-                </div> */}
                 <div className={cn("row")}>
                     <div className={cn("col-md-4")+" "+className("main-left-part")}>
                         <NavBar />
                     </div>
-                            {
-                                comp == 'votes-default' && 
-                                <div className={cn("col-md-8")+" "+className("main-right-part")}>
-                                    <div className={className("quick-results-title")}>
-                                        RACE FOR VOTES: <span className="regionName">{getRegionName2(self.state)}</span>
-                                    </div>
-                                    {
-                                        this.renderTurnoutProgressSpoilt()
-                                    }
-                                    {/* <div className={className("event-description")}>
-                                        {
-                                            /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
-                                        }
-                                    </div> */}
-                                    <div className={className("barchart-container")}>
-                                        <BarChart 
-                                            ref={instance => { this.votesInstance1 = instance; }} 
-                                            {...this.state} 
-                                            componentID={-1000}/>
-                                    </div>
-                                    <div className={className("map-container")}>
-                                        <Map 
-                                            ref={instance => { this.votesInstance2 = instance; }} 
-                                            {...this.state} 
-                                            componentID={-1000}/>
-                                    </div>
-                                </div>
-                            }
-                            {
-                                comp == 'seats-default' && 
-                                <div className={cn("col-md-8")+" "+className("main-right-part")}>
-                                    <div className={className("quick-results-title")+" "+className("race-for-seats")}>
-                                        RACE FOR SEATS: <span className="regionName">{getRegionName(self.state)}</span>(#SEATS)
-                                    </div>
-                                    {
-                                        this.renderTurnoutProgressSpoilt()
-                                    }
-                                    {/* <div className={className("event-description")}>
-                                        {
-                                            /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
-                                        }
-                                    </div> */}
-                                    <div className={className("barchart-container")}>
-                                        <RaceForSeatDonut 
-                                            ref={instance => { this.seatsInstance1 = instance; }} 
-                                            {...this.state}
-                                            componentID={-1000} />
-                                    </div>
-                                    <div className={className("map-container")}>
-                                        <Map 
-                                            ref={instance => { this.seatsInstance2 = instance; }} 
-                                            {...this.state}
-                                            componentID={-1000} />
-                                    </div>
-                                </div>
-                            }
-                            {
-                                comp == 'votes-turnout' && 
-                                <div className={cn("col-md-8")+" "+className("main-right-part")}>
-                                    <div className={className("quick-results-title")}>
-                                        RACE FOR VOTES: TURNOUT - {getRegionName3(self.state)}
-                                    </div>
-                                    {
-                                        this.renderTurnoutProgressSpoilt()
-                                    }
-                                    {/* <div className={className("event-description")}>
-                                        {
-                                            /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
-                                        }
-                                    </div> */}
-                                    <div className={className("barchart-container")}>
-                                        <TurnoutBarchart 
-                                            ref={instance => { this.turnoutInstance1 = instance; }} 
-                                            {...this.state}
-                                            componentID={-1000} />
-                                    </div>
-                                    <div className={className("map-container")}>
-                                        <TurnoutMap 
-                                            ref={instance => { this.turnoutInstance2 = instance; }} 
-                                            {...this.state}
-                                            componentID={-1000} />
-                                    </div>
-                                </div>
-                                
-                            }
-                            {
-                                comp == 'votes-progress' && 
-                                <div className={cn("col-md-8")+" "+className("main-right-part")}>
-                                    <div className={className("quick-results-title")}>
-                                        COUNTING PROGRESS: {getRegionName(self.state)}
-                                    </div>
-                                    {
-                                        this.renderTurnoutProgressSpoilt()
-                                    }
-                                    {/* <div className={className("event-description")}>
-                                        {
-                                            /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
-                                        }
-                                    </div> */}
-                                    <div className={className("barchart-container")}>
-                                        <ProgressVotesPieChart 
-                                            ref={instance => { this.progressInstance1 = instance; }} 
-                                            {...this.state}
-                                            componentID={-1000} />
-                                    </div>
-                                    <div className={className("map-container")}>
-                                        <Map 
-                                            ref={instance => { this.progressInstance2 = instance; }} 
-                                            {...this.state}
-                                            componentID={-1000} />
-                                    </div>
-                                </div>
-                            }
-                            {
-                                comp == 'spoilt votes' &&
-                                <div className={cn("col-md-8")+" "+className("main-right-part")}>
-                                    <div className={className("quick-results-title")}>
-                                        SPOILT VOTES: {getRegionName(self.state)}<br/>
-                                    </div>
-                                    {
-                                        this.renderTurnoutProgressSpoilt()
-                                    }
-                                    {/* <div className={className("event-description")}>
-                                        {
-                                            /(19|20)\d{2}/g.exec(this.state.eventDescription)[0]
-                                        }
-                                    </div> */}
-                                    <div className={className("barchart-container")}>
-                                        <SpoiltBarChart 
-                                            ref={instance => { this.spoiltInstance1 = instance; }} 
-                                            {...this.state}
-                                            componentID={-1000} />
-                                    </div>
-                                    <div className={className("map-container")}>
-                                        <Map 
-                                            ref={instance => { this.spoiltInstance2 = instance; }} 
-                                            {...this.state}
-                                            componentID={-1000} />
-                                    </div>
-                                </div> 
-                            }
+                    <div className={cn("col-md-8")+" "+className("main-right-part")}>
+                        {this.renderQuickResultsTitle()}
+                        {this.renderTurnoutProgressSpoilt()}
+                        {this.renderMyVDEnterForm()}
+                        {this.renderBarchart()}
+                        {this.renderMap()}
+                    </div>
                 </div>
             </div>
         );

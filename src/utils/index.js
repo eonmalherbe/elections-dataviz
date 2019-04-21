@@ -8,7 +8,7 @@ function calcPercent(a, b) {
     return (a/b*100).toFixed(2);
   }
 }
-
+ 
 export function parseVotesData(data, props) {
     var results, firstEdge;
     var regionType = props.regionType;
@@ -33,13 +33,11 @@ export function parseVotesData(data, props) {
 
     results = results.slice(0, props.numParties);
 
-    console.log("data", data);
-    console.log("results", results)
-
     return results.map(function(node) {
         var el = node["node"];
         return {
             name: el["party"]["abbreviation"],
+            iecId: el["party"]["iecId"],
             validVotes: el["validVotes"].toFixed(2),
             percOfVotes: el["percOfVotes"].toFixed(2),
             partyInfo: el["party"]
@@ -252,7 +250,8 @@ export function parseSeatsData(data, props) {
     return {
       seats,
       name: node["party"]["abbreviation"],
-      partyInfo: node["party"]
+      iecId: node["party"]["iecId"],
+      partyInfo: node["party"],
     }
   })
   
@@ -287,8 +286,6 @@ export function parseSeatsComparisonData(data, props) {
     : (result.partyInfo["abbreviation"] == props.partyAbbr)
   )
 
-  console.log("filter", data, results, props.partyIecId);
-
   var new_results = [];
   for(var i = 0; i < props.eventDescriptions.length; i ++) {
     var available = false;
@@ -319,17 +316,14 @@ export function parseSeatsComparisonData(data, props) {
   // results.sort(function(a,b) {
   //   return b["seats"] - a["seats"];
   // })
-  console.log("new_results", new_results);
   return new_results;
 }
 
 export function parseSeatsComparisonDataMultipleParties(data, props) {
-  console.log("parseSeatsComparisonDataMultipleParties", data, props);
   return props.partyAbbrs.map((partyAbbr, partyIdx) => {
     var newProps = {...props};
     newProps.partyAbbr = partyAbbr;
     newProps.partyIecId = props.partyIecIds[partyIdx];
-    console.log("parseSeatsComparisonData", data, newProps);
     return {
       partyAbbr,
       data: parseSeatsComparisonData(data, newProps)

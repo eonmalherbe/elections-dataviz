@@ -102,7 +102,6 @@ class BarChart extends Component {
       var targetState = event.detail;
       if (targetState.componentID != this.state.componentID)
         return;
-      console.log("targetState", targetState);
       svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-seats-barchart(${getNationOrProvinceName2(this.state)}).png`);
     }
 
