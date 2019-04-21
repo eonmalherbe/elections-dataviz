@@ -120,6 +120,8 @@ export function Chart(container, width, height, className, options) {
         }	
       }
 
+      console.log("chartData", chartData);
+
       x.domain(chartData.map(function (d) {
           return d.name;
         }));
@@ -184,6 +186,10 @@ export function Chart(container, width, height, className, options) {
   
         barSvg.selectAll(`.${className("bar")}`).data(chartData)
           .attr("fill", (d, i) => getFillColor(d, i))
+          .attr("x", function (d) {
+            return x(d.name)+x.bandwidth()/20;
+          })
+          .attr("width", x.bandwidth()*9/10)
           .transition()
           .duration(300)
           .attr("y", function (d) {
@@ -215,6 +221,9 @@ export function Chart(container, width, height, className, options) {
             return y(0) - 5;
           })
         barTextSvg.selectAll(`.${className("bartext")}`).data(chartData)
+          .attr("x", function (d) {
+            return x(d.name)+x.bandwidth()/2;
+          })
           .text(function(d) {
             return options.yValueFormat(options.yValue(d));
           })
