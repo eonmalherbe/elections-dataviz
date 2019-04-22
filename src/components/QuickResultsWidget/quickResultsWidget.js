@@ -195,38 +195,24 @@ class QuickResultsWidget extends Component {
         var self = this;
         var zipfileName = `quick-results-widget-${comp.replace(/\s/gi, '-')}(${getRegionName(self.state)})`;
         var imageLoadPromises = [];
-        if (comp == 'votes-default') {
+        if (comp == 'votes-comparisons' || comp == 'seats-comparisons') {
             imageLoadPromises = [
-                this.votesInstance1.exportAsPNGUri(), 
-                this.votesInstance2.exportAsPNGUri()
+                ...this.barchartInstances.map(instance => instance.exportAsPNGUri()),
+                this.mapInstance.exportAsPNGUri()
             ];
-        } else if (comp == 'race for seats') {
+        } else {
             imageLoadPromises = [
-                this.seatsInstance1.exportAsPNGUri(), 
-                this.seatsInstance2.exportAsPNGUri()
-            ];
-        } else if (comp == 'turnout') {
-            imageLoadPromises = [
-                this.turnoutInstance1.exportAsPNGUri(), 
-                this.turnoutInstance2.exportAsPNGUri()
-            ];
-        } else if (comp == 'counting progress') {
-            imageLoadPromises = [
-                this.progressInstance1.exportAsPNGUri(), 
-                this.progressInstance2.exportAsPNGUri()
-            ];
-        } else if (comp == 'spoilt votes') {
-            imageLoadPromises = [
-                this.spoiltInstance1.exportAsPNGUri(), 
-                this.spoiltInstance2.exportAsPNGUri()
+                this.barchartInstance.exportAsPNGUri(), 
+                this.mapInstance.exportAsPNGUri()
             ];
         }
         Promise.all(imageLoadPromises).then(values => {
             var zip = new window.JSZip();
 
             var imgs = zip.folder(zipfileName);
-            imgs.file("image1.png", values[0], {base64: true});
-            imgs.file("image2.png", values[1], {base64: true});
+            values.forEach((element, idx) => {
+                imgs.file(`image${idx+1}.png`, element, {base64: true});
+            });
 
             zip.generateAsync({type:"blob"})
             .then(function(content) {
@@ -341,7 +327,7 @@ class QuickResultsWidget extends Component {
             return (
                 <div className={className("map-container")}>
                     <TurnoutMap 
-                        ref={instance => { this.turnoutInstance2 = instance; }} 
+                        ref={instance => { this.mapInstance = instance; }} 
                         {...this.state}
                         componentID={-1000} />
                 </div>
@@ -368,7 +354,7 @@ class QuickResultsWidget extends Component {
             return (
                 <div className={className("barchart-container")}>
                     <BarChart 
-                        ref={instance => { this.votesInstance1 = instance; }} 
+                        ref={instance => { this.barchartInstance = instance; }} 
                         {...this.state} 
                         componentID={-1000}/>
                 </div>
@@ -378,7 +364,7 @@ class QuickResultsWidget extends Component {
             return (
                 <div className={className("barchart-container")}>
                     <RaceForSeatDonut 
-                        ref={instance => { this.seatsInstance1 = instance; }} 
+                        ref={instance => { this.barchartInstance = instance; }} 
                         {...this.state}
                         componentID={-1000} />
                 </div>
@@ -388,7 +374,7 @@ class QuickResultsWidget extends Component {
             return (
                 <div className={className("barchart-container")}>
                     <TurnoutBarchart 
-                        ref={instance => { this.turnoutInstance1 = instance; }} 
+                        ref={instance => { this.barchartInstance = instance; }} 
                         {...this.state}
                         componentID={-1000} />
                 </div>
@@ -398,18 +384,21 @@ class QuickResultsWidget extends Component {
             return (
                 <div className={className("barchart-container")}>
                     <ProgressVotesPieChart 
-                        ref={instance => { this.progressInstance1 = instance; }} 
+                        ref={instance => { this.barchartInstance = instance; }} 
                         {...this.state}
                         componentID={-1000} />
                 </div>
             );
         }
         if (comp == 'votes-comparisons') {
+            var {numParties} = this.state;
+            this.barchartInstances = new Array(numParties);
             return (
                 <div className={className("barchart-container")}>
                     {
                         partyIecIds.map((partyIecId, partyIdx) => {
                             return <VoteCompBarchart 
+                                ref={instance => { this.barchartInstances[partyIdx] = instance; }} 
                                 key={partyIdx}
                                 {...this.state}
                                 partyAbbr={partyAbbrs[partyIdx]}
@@ -422,11 +411,13 @@ class QuickResultsWidget extends Component {
             );
         }
         if (comp == 'seats-comparisons') {
+            this.barchartInstances = new Array(numParties);
             return (
                 <div className={className("barchart-container")}>
                     {
                         partyIecIds.map((partyIecId, partyIdx) => {
                             return <SeatCompBarchart 
+                                ref={instance => { this.barchartInstances[partyIdx] = instance; }} 
                                 key={partyIdx}
                                 {...this.state}
                                 partyAbbr={partyAbbrs[partyIdx]}

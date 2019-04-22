@@ -267,8 +267,6 @@ class NavBar extends Component {
             return;
         }
 
-        // console.log("handleNavBarSelection", newState);
-
         triggerCustomEvent(events.QUICK_RESULTS_PREVIEW, newState);
         // triggerCustomEvent(events.REGION_CHANGE, newState);
         // triggerCustomEvent(events.MAP_PREVIEW, newState);
