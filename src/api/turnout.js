@@ -49,12 +49,13 @@ import {client} from "./config"
       })
     } else { // municipality or municipality-vd
       var muniRegName = options.muniName.split(" - ")[1];
+      var muniCode = options.muniCode || options.muniName.split(" - ")[0];
         return client.query({
           query: gql`
           {
             allVotingDistrictBallots( 
             event:"${eventDescription}",
-            location_Ward_Municipality_Name_Icontains:"${muniRegName}") {
+            municipalCode:"${muniCode}") {
               edges{
                 node{
                   location {

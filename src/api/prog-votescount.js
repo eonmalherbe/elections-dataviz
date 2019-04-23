@@ -10,7 +10,7 @@ export function getProgressVotesCount(options) {
         query: gql`
         {
           allBallots(
-            event_Description:"${eventDescription}"
+            event:"${eventDescription}"
           ){
             edges{
               node{
@@ -27,8 +27,8 @@ export function getProgressVotesCount(options) {
         query: gql`
         {
           allProvincialBallots(
-            event_Description:"${eventDescription}",
-            location_Name:"${options.provinceName}"
+            event:"${eventDescription}",
+            province:"${options.provinceName}"
           ){
             edges{
               node{
@@ -47,9 +47,9 @@ export function getProgressVotesCount(options) {
         query: gql`
         {
           allMunicipalBallots(
-            event_Description:"${eventDescription}",
-            location_Province_Name:"${options.provinceName}", 
-            location_Code: "${muniCode}"
+            event:"${eventDescription}",
+            province:"${options.provinceName}", 
+            municipalCode: "${muniCode}"
           ) {
             edges{
               node {
@@ -66,9 +66,9 @@ export function getProgressVotesCount(options) {
         query: gql`
         {
           allVotingDistrictBallots(
-            event_Description:"${eventDescription}",
-            location_IecId:"${options.iecId}", 
-            location_Ward_Municipality_Code:"${options.muniCode}"
+            event:"${eventDescription}",
+            iecId:"${options.iecId}", 
+            municipalCode:"${options.muniCode}"
           ) {
             edges{
               node{
