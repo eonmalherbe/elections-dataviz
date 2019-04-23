@@ -147,8 +147,10 @@ class Map extends Component {
     }
 
     handlePreviewEvent(event) {
-        var newState = event.detail;
-        this.setState(newState)
+        if (!this.state.disableNavigation) {
+            var newState = event.detail;
+            this.setState(newState)
+        }
     }
 
     getContainer() {
@@ -161,7 +163,6 @@ class Map extends Component {
       
     render () {
         var {
-            disableNavigation,
             stylesheetFor,
             componentID
         } = this.state;
@@ -404,10 +405,7 @@ class Map extends Component {
                         .duration(200)		
                         .style("opacity", 0);	
                 })
-                .on("click", function(d, i) {
-                    if (self.state.disableNavigation) {
-                        return;
-                    }
+                .on("click", function(d, i) {                  
                     tooltipDiv.transition()		
                         .duration(200)		
                         .style("opacity", 0);	
@@ -419,8 +417,6 @@ class Map extends Component {
                             regionType: "province",
                             provinceName: d.properties.SPROVINCE
                         }
-                        triggerCustomEvent(events.REGION_CHANGE, newState);
-                        self.setState(newState);
                     } else if (regionType === "province") {
                         newState = {
                             regionType: "municipality", 
@@ -428,10 +424,7 @@ class Map extends Component {
                             muniName: d.properties.smunicipal,
                             muniCode: getMunicipalityCode(d.properties),
                         }
-                        triggerCustomEvent(events.REGION_CHANGE, newState);
-
-                        self.setState(newState);
-                    } else { // "municipality"
+                    } else if (regionType === "municipality"){ // "municipality"
                         var newState = {
                             regionType: "municipality-vd", 
                             provinceName: self.state.provinceName,
@@ -439,10 +432,14 @@ class Map extends Component {
                             muniCode: self.state.muniCode,
                             iecId: getMunicipalityiecId(d.properties),
                         }
-                        triggerCustomEvent(events.REGION_CHANGE, newState);
-
-                        self.setState(newState);
+                    } else { // "municipality-vd"
+                        return;
                     }
+                    triggerCustomEvent(events.REGION_CHANGE, newState);
+                    if (self.state.disableNavigation) {
+                        return;
+                    }
+                    self.setState(newState);
                 })
             if (!self.state.disableNavigation) {
                 var fo = svg.append("foreignObject")
@@ -503,42 +500,18 @@ class Map extends Component {
                         }
                     }
                 }
-                // foDiv
-                //     .append("button")
-                //     .attr("class", "go-back")
-                //     .style("height", "30px")
-                //     .style("color", "black")
-                //     .html("go back")
-                //     .on("click", function() {
-                //         var regionType = self.state.regionType;
-                //         var newState, event;
-    
-                //         var newState = {
-                //             regionType: self.state.regionType, 
-                //             provinceName: self.state.provinceName,
-                //             muniName: self.state.muniName,
-                //             muniCode: self.state.muniCode,
-                //             iecId: self.state.iecId,
-                //         }
-                        
-                //         if (regionType === "province") {
-                //             newState.regionType = "national";
-                //         } else if (regionType === "municipality") {
-                //             newState.regionType = "province";
-                //         } else if (regionType === "municipality-vd") {
-                //             newState.regionType = "municipality";
-                //         }
-    
-                //         triggerCustomEvent(events.REGION_CHANGE, newState);
-                //         self.setState(newState);
-                //     });
             }
             self.getLoadingSpinner()
                 .style("display", "none");
         }).catch(error => {
             console.error(error);
+
             self.getLoadingSpinner()
                 .style("display", "none");
+            
+            if (self.state.disableNavigation) {
+                return;
+            }
 
             var currentRegionName = getRegionName(this.state);
             var regionType = self.state.regionType;

@@ -8,6 +8,63 @@ function calcPercent(a, b) {
     return (a/b*100).toFixed(2);
   }
 }
+
+export function getShortenedEventDescription(event) {
+  var year = /(19|20)\d{2}/g.exec(event["description"])[0];
+  var shortenedNatProv = (event["eventType"]["description"] == "National Election"? "Nat": "Prov");
+  return `${year} ${shortenedNatProv}`;
+}
+
+export function parseVotesDataForAllEvents(data, props) {
+    var results, edges;
+    var regionType = props.regionType;
+    if (regionType == "national") {
+      edges = data["data"]["allBallots"].edges;
+    } else if (regionType == "province") {
+      edges = data["data"]["allProvincialBallots"].edges;
+    } else if (regionType == "municipality") {
+      edges= data["data"]["allMunicipalBallots"].edges;
+    } else { //"municipality-vd"
+      edges = data["data"]["allVotingDistrictBallots"].edges;
+    }
+
+    console.log("props", props)
+    return edges.map(edge => {
+      var nodeData = edge["node"];
+
+      var eventDescription = getShortenedEventDescription(nodeData["event"]); //nodeData["event"]["description"];
+      var partyResults = nodeData["partyResults"] || nodeData["topResult"];
+      results = partyResults["edges"];
+      results = results.sort(function(a, b) {return b.node.percOfVotes - a.node.percOfVotes});
+      results = results.slice(0, props.numPartiesSplitNatProv);
+
+      return {
+        longEventDescription: nodeData["event"]["description"],
+        eventDescription,
+        data: results.map(function(node) {
+          var el = node["node"];
+          return {
+              name: el["party"]["abbreviation"],
+              iecId: el["party"]["iecId"],
+              validVotes: el["validVotes"].toFixed(2),
+              percOfVotes: el["percOfVotes"].toFixed(2),
+              partyInfo: el["party"]
+          }
+        })
+      }
+    }).filter(edge => props.eventDescriptionsSplitNatProv.indexOf(edge.longEventDescription) != -1)
+    .sort(function(edge1, edge2) {
+      var edge1Year = parseInt(/(19|20)\d{2}/g.exec(edge1.eventDescription)[0]);
+      var edge2Year = parseInt(/(19|20)\d{2}/g.exec(edge2.eventDescription)[0]);
+      if (edge1Year == edge2Year) {
+        if (edge1.eventDescription > edge2.eventDescription) {
+          return 1;
+        }
+        return -1;
+      }
+      return edge1Year - edge2Year;
+    })
+}
  
 export function parseVotesData(data, props) {
     var results, firstEdge;
@@ -43,6 +100,19 @@ export function parseVotesData(data, props) {
             partyInfo: el["party"]
         }
     });
+}
+
+export function fetchLocationTrackFromVDdata(data) {
+  var firstEdge = data["data"]["allVotingDistrictBallots"].edges[0];
+  var nodeData = firstEdge["node"];
+  var locationResult = nodeData["location"];
+  var newState = {
+    regionType: "municipality-vd",
+    iecId: locationResult["iecId"],
+    muniCode: locationResult["ward"]["municipality"]["code"],
+    provinceName: locationResult["ward"]["municipality"]["province"]["name"],
+  };     
+  return newState;      
 }
 
 export function parseVotesComparisonData(data, props) {
@@ -656,8 +726,8 @@ export function fetchDataFromOBJ(state, props) {
   })
 }
 
-export function formatClassNameFromPartyAbbr(partyAbbr) {
-  return partyAbbr.replace(/[^a-zA-Z0-9]+/g, '');
+export function formatClassNameFromString(str) {
+  return "formedClass_" + str.replace(/[^a-zA-Z0-9]+/g, '');
 }
 
 export function onPartyAbbrsChange(e) {

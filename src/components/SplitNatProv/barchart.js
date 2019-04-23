@@ -1,30 +1,26 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
-import styles from "./piechart.css";
-import {Chart} from "../ProgVotesCountPiechart/d3piechart";
+import styles from "../BarChart/barchart.css";
+import {Chart} from "../SplitNatProv/d3groupbarchart";
 import svgToPng from "save-svg-as-png";
 
 import events from "../../events";
 import config from "../../config";
 import {
-  getSeatsData,
-  getPartyColors
+  getVotesDataForAllEvents,
+  getPartyColors,
+  getProvincesData
 } from "../../api";
 import {
-  parseSeatsData,
-  getNationOrProvinceName,
+  parseVotesDataForAllEvents,
+  getRegionName,
   fetchDataFromOBJ,
   handleRegionChange
 } from "../../utils";
 
+var provincesData = getProvincesData();
 
 var dataRefreshTime = 30 * 1000;
-var chartOptions = {
-  chartType: 'Race For Seats Donut Chart',
-  variable: 'seats',
-  category: 'name',
-  viewBox: '170 0 360 320'
-};
 
 function className(originName) {
   return styles[originName] || originName;
@@ -36,22 +32,42 @@ function cn(originName) {
 
 var partyColorsData;
 
-class DonutChart extends Component {
+var chartOptions = {
+  topLabel: "NATIONAL ASSEMBLY: 2009, 2014, 2019",
+  usedValue: "% VDS COUNTED",
+  yValue: d => d.percOfVotes,
+  yValueFormat: value => value + '%',
+  dynamicYAxisFromValues: false
+}
+
+class BarChart extends Component {
 
     constructor(props) {
       super(props);
       this.state = {
-        numParties: 100,
-        eventDescription: "2014 National Election",
-        regionType: "national",
-        provinceName: "",
+        numPartiesSplitNatProv: 3,
+        eventDescriptionsSplitNatProv: [
+          // "National Elections 1999",
+          // "Provincial Elections 1999",
+          // "14 Apr 2004 National Election",
+          // "14 Apr 2004 Provincial Election",
+          "22 Apr 2009 National Election",
+          "22 Apr 2009 Provincial Election",
+          "2014 National Election",
+          "2014 Provincial Election",
+          // "2019 NATIONAL ELECTION",
+          // "2019 PROVINCIAL ELECTION",
+        ],
+        regionType: "province",
+        provinceName: "Western Cape",
         muniName: "",
         muniCode: "",
         iecId: "",
         stylesheetFor: "web",
-        componentID: 17
+        componentID: 18
       }
 
+      console.log("SplitNatProv state and props", this.state, props)
       fetchDataFromOBJ(this.state, props);
 
       this.chart = null;
@@ -63,6 +79,7 @@ class DonutChart extends Component {
     }
   
     componentDidMount() {
+
       var self = this;
       this.draw(this.getContainer(), this.state);
       this.refreshIntervalID = setInterval(() => {
@@ -78,7 +95,10 @@ class DonutChart extends Component {
     }
 
     componentWillUnmount() {
-      this.chart = null;
+      if (this.chart) {
+        this.chart.destroy();
+        this.chart = null;
+      }
       document.removeEventListener(events.EXPORT_PNG, this.exportAsPNG);
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
       document.removeEventListener(events.CHART_PREVIEW, this.handlePreviewEvent);
@@ -98,7 +118,7 @@ class DonutChart extends Component {
       var targetState = event.detail;
       if (targetState.componentID != this.state.componentID)
         return;
-      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-seats-donutchart-chart(${getNationOrProvinceName(this.state)}).png`);
+      svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-votes-comparison-barchart(${getRegionName(this.state)}).png`);
     }
 
     handlePreviewEvent(event) {
@@ -114,16 +134,11 @@ class DonutChart extends Component {
     }
       
     render () {
-
       const {
-        stylesheetFor,
-        componentID
+        stylesheetFor
       } = this.state;
       return (
-          <div className={className("donutchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
-            {
-              componentID != -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>
-            }
+          <div className={cn("groupbarchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
             <div 
               ref="vizcontainer" 
               className={cn("chart-body")} 
@@ -134,28 +149,33 @@ class DonutChart extends Component {
 
     draw(container, props) {
       var self = this;
-      var seatsDataLoader = getSeatsData(props);
-      var dataLoaders = [seatsDataLoader];
+      var votesDataLoader = getVotesDataForAllEvents(props);
+      var dataLoaders = [votesDataLoader];
 
+      chartOptions.topLabel = `${getRegionName(props)} Race for Votes - Split (Nat/Prov)`;
+      if (this.state.componentID == -1000) {
+        chartOptions.topLabel = ``;
+      }
+      
       if (!partyColorsData) {
         var partyColorsLoader = getPartyColors();
         dataLoaders.push(partyColorsLoader);
       }
 
       Promise.all(dataLoaders).then(function(values){ 
-        var seatsData = values[0];
-        partyColorsData = partyColorsData || values[1];         
-        self.drawGraph(container, props, seatsData, partyColorsData);
+        var votesData = values[0];
+        partyColorsData = partyColorsData || values[1];          
+        self.drawGraph(container, props, votesData, partyColorsData);
       }).catch(error => console.error(error));
     }
 
     drawGraph(container, props, data, partyColorsData) {
-        var chartData = parseSeatsData(data, props);
+        var chartData = parseVotesDataForAllEvents(data, props);
+
         if (!this.chart)
           this.chart = new Chart(container, null, null, className, chartOptions);
-        
         this.chart.draw(chartData, partyColorsData);
     }
 }
 
-export default DonutChart;
+export default BarChart;

@@ -13,6 +13,7 @@ import VoteCompBarchart from '../VoteCompBarchart/barchart';
 import SeatCompBarchart from '../SeatCompBarchart/barchart';
 
 import SpoiltBarChart from '../SpoiltBarchart/barchart';
+import SplitNatProvChart from '../SplitNatProv/barchart';
 
 import TurnoutBarchart from '../TurnoutBarchart/barchart';
 import TurnoutMap from '../TurnoutMap/map';
@@ -61,6 +62,8 @@ class QuickResultsWidget extends Component {
         this.state = {
             numParties: 5,
             eventDescription: "2014 National Election",
+            nationalEventDescription: "2014 National Election",
+            provincialEventDescription: "2014 Provincial Election",
             regionType: "national",
             provinceName: "",
             muniName: "",
@@ -82,6 +85,18 @@ class QuickResultsWidget extends Component {
                 "2014 National Election",
                 // "2014 Provincial Election",
                 "2019 NATIONAL ELECTION",
+                // "2019 PROVINCIAL ELECTION",
+            ],
+            eventDescriptionsSplitNatProv: [
+                // "National Elections 1999",
+                // "Provincial Elections 1999",
+                // "14 Apr 2004 National Election",
+                // "14 Apr 2004 Provincial Election",
+                "22 Apr 2009 National Election",
+                "22 Apr 2009 Provincial Election",
+                "2014 National Election",
+                "2014 Provincial Election",
+                // "2019 NATIONAL ELECTION",
                 // "2019 PROVINCIAL ELECTION",
             ],
             currentTurnout: 0,
@@ -117,12 +132,11 @@ class QuickResultsWidget extends Component {
         document.removeEventListener(events.QUICK_RESULTS_PREVIEW, this.handlePreviewEvent);
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps, prevState) {
       this.fetchCurrentResultData()
     }
 
     handleSeatsElectedsEvent(event) {
-        console.log("handleSeatsElectedsEvent", event.detail);
     }
 
     fetchCurrentResultData() {
@@ -313,21 +327,59 @@ class QuickResultsWidget extends Component {
                 </div>
             );
         }
+        if (comp == 'votes-split') {
+            return (
+                <div className={className("quick-results-title")}>
+                    {getRegionName(self.state)} Race for Votes - Split (Nat/Prov)
+                </div>
+                
+            )
+        }
         return null;
     }
 
     renderMap() {
         var {
-            comp
+            comp,
+            iecId,
+            muniCode
         } = this.state;
+        var mapState = JSON.parse(JSON.stringify(this.state));
         if (comp == 'votes-myvd') {
+            if (iecId && iecId.length && muniCode && muniCode.length) {
+                mapState.disableNavigation = true;
+                return (
+                    <div className={className("map-container")}>
+                        <Map 
+                            ref={instance => { this.mapInstance = instance; }} 
+                            key={comp}
+                            {...mapState}
+                            componentID={-1000}
+                        />
+                    </div>
+                );
+            }
             return null;
         }
-        if (comp == 'votes-turnout') {
+        if (comp == 'votes-split') {
+            mapState.disableNavigation = true;
+            mapState.regionType = "national";
+            return (
+                <div className={className("map-container")}>
+                    <Map 
+                        ref={instance => { this.mapInstance = instance; }} 
+                        key={comp}
+                        {...mapState}
+                        componentID={-1000}
+                    />
+                </div>
+            ); 
+        } else if (comp == 'votes-turnout') {
             return (
                 <div className={className("map-container")}>
                     <TurnoutMap 
                         ref={instance => { this.mapInstance = instance; }} 
+                        key={comp}
                         {...this.state}
                         componentID={-1000} />
                 </div>
@@ -337,6 +389,7 @@ class QuickResultsWidget extends Component {
                 <div className={className("map-container")}>
                     <Map 
                         ref={instance => { this.mapInstance = instance; }} 
+                        key={comp}
                         {...this.state}
                         componentID={-1000} />
                 </div>
@@ -354,6 +407,7 @@ class QuickResultsWidget extends Component {
             return (
                 <div className={className("barchart-container")}>
                     <BarChart 
+                        key={comp}
                         ref={instance => { this.barchartInstance = instance; }} 
                         {...this.state} 
                         componentID={-1000}/>
@@ -429,6 +483,18 @@ class QuickResultsWidget extends Component {
                 </div>
             );
         }
+        if (comp == 'votes-split') {
+            return (
+                <div className={className("barchart-container")}>
+                    <SplitNatProvChart 
+                        ref={instance => { this.barchartInstance = instance; }} 
+                        {...this.state}
+                        componentID={-1000}
+                    />
+                </div>
+                
+            )
+        }
         return null;
     }
 
@@ -446,13 +512,12 @@ class QuickResultsWidget extends Component {
     }
 
     onShowVDResult() {
-        console.log("onShowVDResult", this.refs.vdInput.value);
         var newState = {
             regionType: "municipality-vd",
-            iecId: this.refs.vdInput.value
+            iecId: this.refs.vdInput.value,
+            muniCode: ""
         }
         triggerCustomEvent(events.REGION_CHANGE, newState);
-        // this.setState(newState);
     }
 
     render() {
@@ -463,7 +528,7 @@ class QuickResultsWidget extends Component {
             <div className={className("quickresultswidget") + " " + cn(`stylesheet-${stylesheetFor}`)}>
                 <div className={cn("row")}>
                     <div className={cn("col-md-4")+" "+className("main-left-part")}>
-                        <NavBar />
+                        <NavBar {...this.state}/>
                     </div>
                     <div className={cn("col-md-8")+" "+className("main-right-part")}>
                         {this.renderQuickResultsTitle()}

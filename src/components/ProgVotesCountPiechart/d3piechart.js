@@ -18,7 +18,6 @@ export function Chart(container, width, height, className, options) {
         
 
     function colour(key) {
-        // console.log("colorsData", colorsData);
         if (colorsData && colorsData[key]) {
             return colorsData[key];
         }
@@ -149,9 +148,6 @@ export function Chart(container, width, height, className, options) {
     function toolTip(selection) {
 
         selection.on('mouseenter', function (data) {
-
-            // console.log("mouseenter", data);
-
             svg.append('text')
                 .attr('class', 'toolCircle')
                 .attr('dy', -15)

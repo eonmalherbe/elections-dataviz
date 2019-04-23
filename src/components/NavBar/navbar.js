@@ -10,7 +10,8 @@ import {
 } from "../../api";
 
 import {
-    triggerCustomEvent
+    triggerCustomEvent,
+    fetchDataFromOBJ
 } from "../../utils";
 
 function className(originName) {
@@ -56,6 +57,8 @@ class NavBar extends Component {
         super(props);
         this.state = {
             eventDescription: "2014 National Election",
+            nationalEventDescription: "2014 National Election",
+            provincialEventDescription: "2014 Provincial Election",
             regionType: "national",
             provinceName: "",
             muniName: "",
@@ -64,6 +67,8 @@ class NavBar extends Component {
             comp: "Race for Votes",
             activeLinkId: ''
         }
+
+        fetchDataFromOBJ(this.state, props);
 
         if (props.regionType) {
             this.state.regionType = props.regionType;
@@ -113,10 +118,11 @@ class NavBar extends Component {
         var lastClass = classList[classList.length - 1];
         var passInfo = lastClass.split('-');
 
-        var regionType, selectionData = {}, chartType = "";
+        var eventDescription, regionType, selectionData = {}, chartType = "";
         var activeLinkId = passInfo.slice(1, passInfo.length).join('-');
 
         if (passInfo[1] == '1') {
+            eventDescription = this.state.nationalEventDescription;
             regionType = "national";
             if (passInfo[2] == '1') {
                 switch (passInfo[3]) {
@@ -165,6 +171,7 @@ class NavBar extends Component {
                 return;
             }
         } else if (passInfo[1] == '2') {
+            eventDescription = this.state.provincialEventDescription;
             regionType = "province";
             selectionData = provincesData[passInfo[2]];
             if (passInfo[3] == '1') {
@@ -214,6 +221,7 @@ class NavBar extends Component {
                 return;
             }
         } else if (passInfo[1] == '3') { // metros
+            eventDescription = this.state.nationalEventDescription;
             regionType = "municipality"
             selectionData = metrosData[passInfo[2]];
             chartType = "votes-default";
@@ -224,7 +232,6 @@ class NavBar extends Component {
         if (!chartType)
             return;
         
-        // console.log("handleNavBarSelection", regionType, chartType);
         e.preventDefault();
         var newState;
         if (regionType == "national") {
@@ -254,12 +261,12 @@ class NavBar extends Component {
                 && this.state.comp == chartType)
                 return;
         }
-
+        newState.eventDescription = eventDescription;
         newState.comp = chartType;
 
         if (newState.comp == "votes-myvd") {
             newState.regionType = "municipality-vd";
-            newState.iecId = "86550385";
+            newState.iecId = "";
         }
 
         if (newState.comp == "seats-electeds" || newState.comp == "seats-women" || newState.comp == "seats-age") {
@@ -386,11 +393,11 @@ class NavBar extends Component {
                                         label: `Turnout`,
                                         to: `2-${i}-1-4`,
                                     },
-                                    // {
-                                    //     icon: `2-${i}-1-5`,
-                                    //     label: `Split (Nat/Prov)`,
-                                    //     to: `2-${i}-1-5`,
-                                    // },
+                                    {
+                                        icon: `2-${i}-1-5`,
+                                        label: `Split (Nat/Prov)`,
+                                        to: `2-${i}-1-5`,
+                                    },
                                     // {
                                     //     icon: `2-${i}-1-6`,
                                     //     label: `CSIR Predictions`,

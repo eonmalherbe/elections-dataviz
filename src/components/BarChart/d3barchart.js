@@ -79,6 +79,8 @@ export function Chart(container, width, height, className, options) {
 
       if (!chartData) {
         errorText.text("chart data is not available");
+        barSvg.selectAll('rect').remove();
+        barTextSvg.selectAll('text').remove();
         return;
       } else {
         errorText.text("");
@@ -119,8 +121,6 @@ export function Chart(container, width, height, className, options) {
           return formatPartyName(d.partyInfo.name) + " : " + options.yValueFormat(options.yValue(d));
         }	
       }
-
-      console.log("chartData", chartData);
 
       x.domain(chartData.map(function (d) {
           return d.name;

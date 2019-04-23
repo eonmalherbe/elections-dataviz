@@ -7,11 +7,11 @@ export function Chart(container, width, height, className, options) {
       options = {};
   }
   width = 700;
-  height = 300;
+  height = 250;
   container.selectAll("svg").remove();
 
     var XaxisOffset = 70;
-    var YaxisOffset = 120;
+    var YaxisOffset = 50;
     var predefColors = ["blue", "yellow", "red"];
 
     var svg = container.append("svg")
@@ -26,6 +26,14 @@ export function Chart(container, width, height, className, options) {
   
     var y = d3.scaleLinear()
       .rangeRound([height, YaxisOffset]);
+
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+  
+    svg.append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(" + XaxisOffset +", 0)")
   
     var errorText = svg.append("g")
       .attr("transform", "translate("+(width/2)+","+(height/2)+")")
@@ -34,34 +42,28 @@ export function Chart(container, width, height, className, options) {
   
     this.draw = function(groupChartData, colorsData) {
 
-      svg.selectAll(".topLabel").remove();
-      svg.append("text")
+    svg.selectAll(".topLabel").remove();
+    svg.append("text")
         .attr("class", "topLabel")
         .attr("text-anchor", "middle")
         .attr("x", width/2)
         .attr("y", 20)
         .text(options.topLabel);
 
-      // svg.append("text")
-      //   .attr("text-anchor", "end")
-      //   .attr("x", width)
-      //   .attr("y", 40)
-      //   .text(options.usedValue);
-
-      if (!groupChartData) {
+    if (!groupChartData) {
         errorText.text("chart data is not available");
         return;
-      } else {
+    } else {
         errorText.text("");
-      }
-      var partyColorByName = {};
-
-        var partyColorsData = colorsData;
-        if (partyColorsData && partyColorsData["data"]["allParties"]["edges"]) {
-            partyColorsData["data"]["allParties"]["edges"].forEach(edge => {
-            partyColorByName[edge.node.name] = edge.node.colour;
-            })
-        }
+    }
+    var partyColorByName = {};
+    var partyAbbrByName = {};
+    if (colorsData && colorsData["data"]["allParties"]["edges"]) {
+      colorsData["data"]["allParties"]["edges"].forEach(edge => {
+        partyColorByName[edge.node.name] = edge.node.colour;
+        partyAbbrByName[edge.node.name] = edge.node.abbreviation;
+      })
+    }   
 
       function getFillColorFromPartyName(partyName, i) {
         return partyColorByName[partyName.split("/")[0]] || predefColors[i%predefColors.length];
@@ -79,13 +81,21 @@ export function Chart(container, width, height, className, options) {
         }	
       }
 
-      x.domain(groupChartData.map(item => item.partyAbbr));
+      x.domain(groupChartData.map(item => item.eventDescription));
 
       var minMaxY = [0, 100];
       if (options.dynamicYAxisFromValues) {
-        minMaxY[1] = d3.max(groupChartData.map(item => d3.max(item.data, function(d) { return parseFloat(options.yValue(d)); }))) + 1
+        minMaxY[1] = Math.min(100, d3.max(groupChartData.map(item => d3.max(item.data, function(d) { return parseFloat(options.yValue(d)); }))) * 1.5);
       }
       y.domain(minMaxY);
+
+      var availableParties = 
+ 
+      svg.select(".x.axis").transition().duration(300).call(d3.axisBottom(x));
+      svg.select(".y.axis").transition().duration(300).call(d3.axisLeft(y)
+        .ticks(4)
+        .tickFormat(function(d) { return options.yValueFormat(d); })
+      )
 
       var groupSvgs = svg.selectAll(`.bar-group`).data(groupChartData);
       groupSvgs.exit()
@@ -96,47 +106,28 @@ export function Chart(container, width, height, className, options) {
     
       var groupSvg = groupSvgs.enter()
         .append("g")
-        .attr("class", d => `bar-group ${formatClassNameFromString(d.partyAbbr)}`)
-        .attr("transform", (d) => `translate(${x(d.partyAbbr)}, 0)`);
-
-      groupSvg.append('rect')
-        .attr('class', className(config.CSS_PREFIX + "grouprect"))
-        .attr('x', -x.bandwidth()*1/12)
-        .attr('y', YaxisOffset - 85)
-        .attr('width', x.bandwidth()*5/6)
-        .attr('height', 120 + height - YaxisOffset);
-
-      groupSvg.append("g")
-        .attr("class", "groupname-container")
-        .attr("transform", `translate(${x.bandwidth()*1/3}, ${YaxisOffset - 50})`)
-        .append("text")
-          .attr("text-anchor", "middle")
-          .text(d => d.partyAbbr)
+        .attr("class", d => `bar-group ${formatClassNameFromString(d.eventDescription)}`)
+        .attr("transform", (d) => `translate(${x(d.eventDescription) + x.bandwidth()*1/20}, 0)`);
 
       groupSvg.append("g")
         .attr("class", "bar-container");
-
       groupSvg.append("g")
         .attr("class", "bartext-container");
-
-      groupSvg.append("g")
-        .attr("class", "baraxistext-container");
       
       for (var i = 0; i < groupChartData.length; i ++) {
-        var partyAbbr = groupChartData[i].partyAbbr;
+        var eventDescription = groupChartData[i].eventDescription;
         var chartData = groupChartData[i].data;
 
         var subX = d3.scaleBand()
-          .rangeRound([0, x.bandwidth()*2/3])
+          .rangeRound([0, x.bandwidth()*9/10])
           .domain(chartData.map(function (d) {
             return d.name;
           }));
 
-        var groupSvg = svg.selectAll(`.bar-group.${formatClassNameFromString(partyAbbr)}`);
+        var groupSvg = svg.selectAll(`.bar-group.${formatClassNameFromString(eventDescription)}`);
 
         var barSvg = groupSvg.select(".bar-container");
         var barTextSvg = groupSvg.select(".bartext-container");
-        var barAxisTextSvg = groupSvg.select(".baraxistext-container");
 
         var bars = barSvg.selectAll(`.${className("bar")}`).data(chartData);
   
@@ -191,31 +182,7 @@ export function Chart(container, width, height, className, options) {
             .attr("height", function (d) {
               return height - y(Number(options.yValue(d)));
             })
-            
 
-          var barAxisTexts = barAxisTextSvg.selectAll(`.${className("bartext")}`).data(chartData);
-          barAxisTexts.exit()
-            .transition()
-            .duration(300)
-            .style("fill-opacity", 1e-6)
-            .remove();
-    
-          barAxisTexts.enter().append("text")
-            .attr("class", className("bartext"))
-            .attr("x", function (d) {
-              return subX(d.name)+subX.bandwidth()/2;
-            })
-            .attr("text-anchor", "middle")
-            .attr("font-size", "7px")
-            .attr("y", function(d) {
-              return y(0) + 18;
-            })
-          barAxisTextSvg.selectAll(`.${className("bartext")}`).data(chartData)
-            .text(function(d) {
-              return /(19|20)\d{2}/g.exec(d.name)[0];
-            });
-            
-    
           var barTexts = barTextSvg.selectAll(`.${className("bartext")}`).data(chartData);
           barTexts.exit()
             .transition()
@@ -245,6 +212,42 @@ export function Chart(container, width, height, className, options) {
             .attr("y", function (d) {
               return y(Number(options.yValue(d))) - 5;
             })
+          
+          var parties = [];
+          var partyIecIds = [];
+          groupChartData.forEach(({data: chartData}) => {
+            chartData.forEach(({partyInfo}) => {
+              var party = partyInfo.name;
+              if (partyIecIds.indexOf(partyInfo.iecId) == -1) {
+                  parties.push(party);
+                  partyIecIds.push(partyInfo.iecId);
+              }
+            })
+          })
+          
+          function getLegendXY(i) {
+              return [XaxisOffset + (i%5)*100, height + 30 + parseInt(i/5) * 40];
+          }
+          var legends = svg.selectAll(`.${className("legend")}`)
+              .data(parties)
+              .enter()
+              .append('g')
+              .attr("class", className("legend"))
+              .attr('transform', (d, i) => "translate(" + getLegendXY(i) + ")")
+          legends
+              .append("rect")
+              .attr('width', 10)
+              .attr('height', 10)
+              .attr('x', 0)
+              .attr('y', 0)
+              .attr("fill", (party, i) => {
+                  return getFillColorFromPartyName(party);
+              })
+          legends.append('text')
+              .attr('x', 30)
+              .attr('y', 10)
+              .style('font-size', '12px')
+              .text(party => partyAbbrByName[party])
       }
     }
     this.destroy = function() {

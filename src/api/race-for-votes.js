@@ -141,6 +141,167 @@ export function getVotesDataForComparison(options) {
   }
 }
 
+export function getVotesDataForAllEvents(options) {
+    if (options.regionType == "national") {
+      return client.query({
+        query: gql`
+        {
+          allBallots{
+            edges{
+              node{
+                event {
+                  description
+                  eventType {
+                    description
+                  }
+                }
+                partyResults {
+                  edges{
+                    node{
+                      validVotes
+                      percOfVotes
+                      party {
+                        id
+                        name
+                        abbreviation
+                        iecId
+                      }
+                    }
+                  }
+                  
+                }
+                location {
+                  id
+                  name
+                }
+              }
+            }
+          }
+        }
+        `
+      })
+    } else if (options.regionType == "province") {
+      return client.query({
+        query: gql`
+        {
+          allProvincialBallots(
+            location_Name:"${options.provinceName}"
+          ){
+            edges{
+              node{
+                event {
+                  description
+                  eventType {
+                    description
+                  }
+                }
+                partyResults {
+                  edges{
+                    node{
+                      validVotes
+                      percOfVotes
+                      party {
+                        id
+                        name
+                        abbreviation
+                        iecId
+                      }
+                    }
+                  }
+                }
+                location {
+                  id
+                  name
+                }
+              }
+            }
+          }
+        }
+        `
+      })
+    } else if (options.regionType == "municipality") {
+      var muniCode = options.muniCode || options.muniName.split(" - ")[0];
+  
+      return client.query({
+        query: gql`
+        {
+          allMunicipalBallots(
+            location_Province_Name:"${options.provinceName}", 
+            location_Code: "${muniCode}"
+          ) {
+            edges{
+              node {
+                event {
+                  description
+                  eventType {
+                    description
+                  }
+                }
+                partyResults {
+                  edges{
+                    node{
+                      party {               
+                        name
+                        abbreviation
+                        iecId
+                      }
+                      validVotes
+                      percOfVotes
+                    }
+                  }
+                  
+                }
+                location {
+                  code
+                  name
+                  longName
+                }
+              }
+            }
+          }
+        }
+        `
+      })
+    } else if (options.regionType == "municipality-vd") {
+      return client.query({
+        query: gql`
+        {
+          allVotingDistrictBallots(
+            location_IecId:"${options.iecId}"
+          ) {
+            edges{
+              node{
+                event {
+                  description
+                  eventType {
+                    description
+                  }
+                }
+                location {
+                  iecId
+                }
+                partyResults {
+                  edges{
+                    node{
+                      party{
+                        name
+                        abbreviation
+                        iecId
+                      }
+                      validVotes
+                      percOfVotes
+                    }
+                  }  
+                }
+              }
+            }
+          }
+        }
+        `
+      })
+    }
+  }
+
 export function getVotesDataM(options) {
     var eventDescription = options.eventDescription;
     if (!eventDescription)
@@ -263,6 +424,14 @@ export function getVotesDataM(options) {
               node{
                 location {
                   iecId
+                  ward {
+                    municipality {
+                      code
+                      province {
+                        name
+                      }
+                    }
+                  }
                 }
                 partyResults {
                   edges{

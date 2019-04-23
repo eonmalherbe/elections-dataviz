@@ -21,9 +21,8 @@ import {
     TVVoteSwingBarchart,
 
     SeatDonutChart,
+    SplitNatProv,
 } from "./components";
-
-// console.log("added babel-polyfill & react-app-polyfill/ie11");
 
 window.showBarChart = (element, options) => {
     ReactDOM.render(<BarChart 
@@ -127,6 +126,11 @@ window.showSeatDonutChart = (element, options) => {
         />, element);
 };
 
+window.showSplitNatProvChart = (element, options) => {
+    ReactDOM.render(<SplitNatProv 
+        {...options}
+        />, element);
+};
 
 
 

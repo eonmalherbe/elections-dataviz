@@ -17,3 +17,4 @@ export {default as TVVoteCompBarchartEmbed} from "./TVVoteCompBarchart/barchartE
 export {default as TVVoteSwingBarchartEmbed} from "./TVVoteSwingBarchart/barchartEmbed";
 
 export {default as SeatDonutChartEmbed} from "./RaceForSeatDonut/piechartEmbed";
+export {default as SplitNatProvEmbed} from "./SplitNatProv/barchartEmbed";

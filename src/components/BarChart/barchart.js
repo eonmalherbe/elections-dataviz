@@ -14,7 +14,9 @@ import {
   parseVotesData,
   getRegionName,
   fetchDataFromOBJ,
-  handleRegionChange
+  handleRegionChange,
+  triggerCustomEvent,
+  fetchLocationTrackFromVDdata
 } from "../../utils";
 
 var dataRefreshTime = 30 * 1000;
@@ -42,8 +44,8 @@ class BarChart extends Component {
 
     constructor(props) {
       super(props);
-      var self = this;
       this.state = {
+        comp: "votes-default",
         numParties: 5,
         eventDescription: "2014 National Election",
         regionType: "national",
@@ -158,6 +160,24 @@ class BarChart extends Component {
 
     drawGraph(container, props, data, partyColorsData) {
         var chartData = parseVotesData(data, props);
+
+        if (props.comp == "votes-myvd") {
+          var newState;
+          if (chartData) {
+            newState = fetchLocationTrackFromVDdata(data);
+          } else {
+            newState = {iecId: ""}
+          }
+          var needUpdate = false;
+          Object.keys(newState).forEach(key => {
+            if (props[key] != newState[key]) {
+              needUpdate = true;
+            }
+          })
+          if (needUpdate) {
+            triggerCustomEvent(events.REGION_CHANGE, newState);
+          }
+        }
        
         if (!this.chart)
           this.chart = new Chart(container, null, null, className, chartOptions);
