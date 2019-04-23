@@ -100,6 +100,7 @@ export function Chart(container, width, height, className, options) {
         data = value;
 
         if (options.chartType === 'Progress on Votes Count') {
+            labelSvg.selectAll('text').remove();
             labelSvg.append('text')
                 .attr('x', 0)
                 .attr('y', -15)

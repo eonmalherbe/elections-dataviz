@@ -67,8 +67,7 @@ export function getProgressVotesCount(options) {
         {
           allVotingDistrictBallots(
             event_Description:"${eventDescription}",
-            location_IecId:"${options.iecId}", 
-            location_Ward_Municipality_Code:"${options.muniCode}"
+            location_IecId:"${options.iecId}"
           ) {
             edges{
               node{

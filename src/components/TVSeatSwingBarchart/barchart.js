@@ -112,7 +112,6 @@ class BarChart extends Component {
       var targetState = event.detail;
       if (targetState.componentID != this.state.componentID)
         return;
-      console.log("targetState", targetState);
       svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-seats-swing-barchart(${getNationOrProvinceName(this.state)}).png`);
     }
 
@@ -134,11 +133,11 @@ class BarChart extends Component {
         stylesheetFor
       } = this.state;
       return (
-          <div className={className("barchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
+          <div className={cn("deltabarchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
             {/* <div className={cn("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div> */}
             <div 
               ref="vizcontainer" 
-              className={className("chart-body")} 
+              className={cn("chart-body")} 
               ></div>
           </div>
         )

@@ -41,7 +41,7 @@ class HorseShoeEmbed extends EmbedBase {
         var self = this;
         getElectionEvents()
             .then(function(data) {
-                var electionEvents = data["data"]["allEvents"].map(edge => edge["description"])
+                var electionEvents = data["data"]["allEvents"]
                 self.setState({electionEvents});
             }).catch(error => console.error(error));
     }
@@ -117,7 +117,7 @@ class HorseShoeEmbed extends EmbedBase {
                      onChange={this.onEventDescriptionChange.bind(this)}>
                         {
                             electionEvents.map(item => {
-                                return (<option key={item} value={item}>{item}</option>)
+                                return (<option key={item.description} value={item.description}>{item.description}</option>)
                             })
                         }
                   </select>

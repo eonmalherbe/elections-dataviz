@@ -258,7 +258,7 @@ export function getVotesDataM(options) {
           allVotingDistrictBallots(
             event:"${eventDescription}",
             iecId:"${options.iecId}", 
-            municipalCode:"${options.muniCode}"
+            municipalCode:"${options.muniCode}" // TODO he didn't have this need to check if anything breaks
           ) {
             edges{
               node{
@@ -273,6 +273,7 @@ export function getVotesDataM(options) {
                         abbreviation
                         iecId
                       }
+                      validVotes
                       percOfVotes
                     }
                   }  

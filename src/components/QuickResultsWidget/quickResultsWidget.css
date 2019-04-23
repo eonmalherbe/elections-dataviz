@@ -83,8 +83,8 @@
     float: left;
     position: relative;
     min-height: 1px;
-    padding-right: 15px;
-    padding-left: 15px;
+    padding-right: 10px;
+    padding-left: 10px;
   }
   
   .ELVIZ_col-md-8 {
@@ -95,4 +95,27 @@
     padding-right: 15px;
     padding-left: 15px;
   }
+}
+
+.ELVIZ_current-progress {
+  background: rgb(0, 32, 86);
+  width: 100%;
+  display: inline-block;
+  color: white;
+  text-align: center;
+}
+
+.ELVIZ_current-progress .ELVIZ_current-turnout {
+  width: 25%;
+  float: left;
+}
+
+.ELVIZ_current-progress .ELVIZ_current-counting-progress {
+  width: 50%;
+  float: left;
+}
+
+.ELVIZ_current-progress .ELVIZ_current-spoilt-votes {
+  width: 25%;
+  float: right;
 }

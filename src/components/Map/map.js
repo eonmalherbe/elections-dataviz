@@ -23,6 +23,8 @@ import {
   fetchDataFromOBJ
 } from "../../utils";
 
+var dataRefreshTime = 30 * 1000;
+
 var regionColor = "#9c9c9c";
 var regionBorderColor = "#eeeeee";
 var partyColorsData;
@@ -53,6 +55,7 @@ class Map extends Component {
 
         fetchDataFromOBJ(this.state, props);
 
+        this.refreshIntervalID = 0;
         this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
         this.exportAsPNG = this.exportAsPNG.bind(this);
         this.handlePreviewEvent = this.handlePreviewEvent.bind(this);
@@ -63,7 +66,12 @@ class Map extends Component {
     }
 
     componentDidMount() {
-        this.draw(this.getContainer(), this.state)
+        var self = this;
+        this.draw(this.getContainer(), this.state);
+        this.refreshIntervalID = setInterval(() => {
+          self.draw(self.getContainer(), self.state)
+        }, dataRefreshTime);
+
         document.addEventListener(events.EXPORT_PNG, this.exportAsPNG);
         document.addEventListener(events.MAP_PREVIEW, this.handlePreviewEvent);
     }

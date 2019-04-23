@@ -86,8 +86,8 @@ export function Chart(container, width, height, className, options) {
 
       var minMaxY = [-100, 100];
       if (options.dynamicYAxisFromValues) {
-        minMaxY[1] = d3.max(newGroupChartData.map(item => item.data[0].delta)) + 1
-        minMaxY[0] = d3.min(newGroupChartData.map(item => item.data[0].delta)) - 1
+        minMaxY[1] = d3.max(newGroupChartData.map(item => parseFloat(item.data[0].delta))) + 1
+        minMaxY[0] = d3.min(newGroupChartData.map(item => parseFloat(item.data[0].delta))) - 1
       }
       y.domain(minMaxY);
 

@@ -77,7 +77,6 @@ export function Chart(container, width, height, className, options) {
   
     this.draw = function(chartData, colorsData) {
 
-      console.log("draw Chart", options);
       if (!chartData) {
         errorText.text("chart data is not available");
         return;
@@ -121,15 +120,16 @@ export function Chart(container, width, height, className, options) {
         }	
       }
 
+      console.log("chartData", chartData);
+
       x.domain(chartData.map(function (d) {
           return d.name;
         }));
       var minMaxY = [0, 100];
       if (options.dynamicYAxisFromValues) {
-        var maxValue = d3.max(chartData, function(d) { return options.yValue(d); });
+        var maxValue = d3.max(chartData, function(d) { return parseFloat(options.yValue(d)); });
         if (options.customizeDynamicMaxValue) {
           minMaxY[1] = options.customizeDynamicMaxValue(maxValue);
-          console.log("maxValue -> minMaxY1", maxValue, minMaxY[1]);
         } else {
           minMaxY[1] = maxValue + 1;
         }
@@ -186,6 +186,10 @@ export function Chart(container, width, height, className, options) {
   
         barSvg.selectAll(`.${className("bar")}`).data(chartData)
           .attr("fill", (d, i) => getFillColor(d, i))
+          .attr("x", function (d) {
+            return x(d.name)+x.bandwidth()/20;
+          })
+          .attr("width", x.bandwidth()*9/10)
           .transition()
           .duration(300)
           .attr("y", function (d) {
@@ -217,6 +221,9 @@ export function Chart(container, width, height, className, options) {
             return y(0) - 5;
           })
         barTextSvg.selectAll(`.${className("bartext")}`).data(chartData)
+          .attr("x", function (d) {
+            return x(d.name)+x.bandwidth()/2;
+          })
           .text(function(d) {
             return options.yValueFormat(options.yValue(d));
           })

@@ -84,7 +84,7 @@ import {client} from "./config"
             allVotingDistrictBallots(
                 event:"${eventDescription}",
                 iecId:"${options.iecId}", 
-                municipalCode:"${options.muniCode}"
+                municipalCode:"${options.muniCode}" // TODO he didn't have this need to check if it breaks anything
             ) {
               edges{
                 node{
