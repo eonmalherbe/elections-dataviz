@@ -50,13 +50,14 @@ import {client} from "./config"
         `
       })
     } else { // municipality or municipality-vd
+      var muniRegName = options.muniName.split(" - ")[1];
+      var muniCode = options.muniCode || options.muniName.split(" - ")[0];
         return client.query({
           query: gql`
           {
             allVotingDistrictBallots( 
-<<<<<<< HEAD
             event:"${eventDescription}",
-            municipality:"${muniRegName}") {
+            municipalCode:"${muniCode}") {
               edges{
                 node{
                   location {
@@ -82,7 +83,7 @@ import {client} from "./config"
         query: gql`
         {
           allBallots(
-            event_Description:"${eventDescription}"
+            event:"${eventDescription}"
           ) {
             edges{
               node{
@@ -104,8 +105,8 @@ import {client} from "./config"
         query: gql`
         {
           allProvincialBallots(
-            event_Description:"${eventDescription}"
-            location_Name:"${options.provinceName}"
+            event:"${eventDescription}"
+            province:"${options.provinceName}"
           ) {
             edges{
               node {
@@ -129,9 +130,9 @@ import {client} from "./config"
           query: gql`
           {
             allMunicipalBallots( 
-              event_Description:"${eventDescription}"
-              location_Province_Name:"${options.provinceName}", 
-              location_Code: "${muniCode}"
+              event:"${eventDescription}"
+              province:"${options.provinceName}", 
+              municipalCode: "${muniCode}"
             ) {
               edges{
                 node{
@@ -153,8 +154,8 @@ import {client} from "./config"
           query: gql`
           {
             allVotingDistrictBallots(
-              event_Description:"${eventDescription}"
-              location_IecId:"${options.iecId}"
+              event:"${eventDescription}"
+              iecId:"${options.iecId}"
             ) {
               edges{
                 node{
