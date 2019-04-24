@@ -110,6 +110,7 @@ class NavBar extends Component {
     }
 
     handleNavBarSelection(e) {
+        console.log("handleNavBarSelection");
         if (e.target.className.indexOf("metismenu-link") == -1) {
             return;
         }
@@ -236,18 +237,18 @@ class NavBar extends Component {
         var newState;
         if (regionType == "national") {
             newState = {regionType: regionType};
-            if (this.state.regionType == newState.regionType 
-                && this.state.comp == chartType)
-                return;
+            // if (this.state.regionType == newState.regionType 
+            //     && this.state.comp == chartType)
+            //     return;
         } else if (regionType == "province") {
             newState = {
                 regionType: regionType,
                 provinceName: selectionData.name
             };
-            if (this.state.regionType == newState.regionType 
-                && this.state.provinceName == newState.provinceName 
-                && this.state.comp == chartType)
-                return;
+            // if (this.state.regionType == newState.regionType 
+            //     && this.state.provinceName == newState.provinceName 
+            //     && this.state.comp == chartType)
+            //     return;
         } else if (regionType == "municipality") {
             newState = {
                 regionType: regionType,
@@ -255,11 +256,11 @@ class NavBar extends Component {
                 muniName: selectionData.muniName,
                 muniCode: selectionData.muniCode,
             }; 
-            if (this.state.regionType == newState.regionType 
-                && this.state.provinceName == newState.provinceName
-                && this.state.muniName == newState.muniName
-                && this.state.comp == chartType)
-                return;
+            // if (this.state.regionType == newState.regionType 
+            //     && this.state.provinceName == newState.provinceName
+            //     && this.state.muniName == newState.muniName
+            //     && this.state.comp == chartType)
+            //     return;
         }
         newState.eventDescription = eventDescription;
         newState.comp = chartType;

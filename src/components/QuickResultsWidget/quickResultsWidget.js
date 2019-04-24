@@ -239,6 +239,10 @@ class QuickResultsWidget extends Component {
 
     handlePreviewEvent(event) {
         var newState = event.detail;
+        if (newState.regionType == "national" && this.state.comp == "votes-split") {
+            newState.regionType = "province";
+            newState.provinceName = this.state.provinceName || "Western Cape";
+        }
         this.setState(newState);
 
         var triggerState = JSON.parse(JSON.stringify(newState));

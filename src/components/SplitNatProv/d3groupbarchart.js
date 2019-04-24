@@ -97,6 +97,7 @@ export function Chart(container, width, height, className, options) {
         .tickFormat(function(d) { return options.yValueFormat(d); })
       )
 
+      svg.selectAll(`.bar-group`).remove();
       var groupSvgs = svg.selectAll(`.bar-group`).data(groupChartData);
       groupSvgs.exit()
         .transition()
@@ -228,6 +229,7 @@ export function Chart(container, width, height, className, options) {
           function getLegendXY(i) {
               return [XaxisOffset + (i%5)*100, height + 30 + parseInt(i/5) * 40];
           }
+          svg.selectAll(`.${className("legend")}`).remove();
           var legends = svg.selectAll(`.${className("legend")}`)
               .data(parties)
               .enter()

@@ -36,8 +36,22 @@ class QuickResultsWidgetEmbed extends EmbedBase {
             numParties: 5,
 
             electionYear: 2014,
+
             nationalEventDescription: "2014 National Election",
             provincialEventDescription: "2014 Provincial Election",
+            eventDescriptionsSplitNatProv: [
+                // "National Elections 1999",
+                // "Provincial Elections 1999",
+                // "14 Apr 2004 National Election",
+                // "14 Apr 2004 Provincial Election",
+                "22 Apr 2009 National Election",
+                "22 Apr 2009 Provincial Election",
+                "2014 National Election",
+                "2014 Provincial Election",
+                // "2019 NATIONAL ELECTION",
+                // "2019 PROVINCIAL ELECTION",
+            ],
+            electionYearsSplitNatProv: [2009, 2014],
 
             electionEvents: [],
             electionYears: [],
@@ -72,6 +86,23 @@ class QuickResultsWidgetEmbed extends EmbedBase {
 
     onProvEventDescriptionChange(e) {
         this.setState({provincialEventDescription: e.target.value });
+    }
+
+    onEventYearSplitNatProvChange(e) {
+        var {electionEvents} = this.state;
+        var options = e.target.options;
+        var values = [];
+        for (var i = 0, l = options.length; i < l; i++) {
+          if (options[i].selected) {
+            values.push(options[i].value);
+          }
+        }
+        var yearFilter = electionEvents.filter(item => values.indexOf(item.year) != -1);
+        this.setState({
+            electionYearsSplitNatProv: values,
+            eventDescriptionsSplitNatProv: yearFilter.map(item => item.description)
+        });
+        // console.log("yearFilter.map(item => item.description)", yearFilter.map(item => item.description));
     }
 
     onEventYearChange(e) {
@@ -134,7 +165,8 @@ class QuickResultsWidgetEmbed extends EmbedBase {
             numParties,
             electionEvents,
             electionYears,
-            electionYear
+            electionYear,
+            electionYearsSplitNatProv
         } = this.state;
         var curProvinceData = provincesData.filter(item => item.name == provinceName)[0];
         return (
@@ -252,6 +284,18 @@ class QuickResultsWidgetEmbed extends EmbedBase {
                     placeholder="5"
                     value={numParties}
                     onChange={e => this.setState({numParties: e.target.value})} />
+              </div>
+              <div className={className("form-group")}>
+                  <label>Election Year For Split (Nat/Prov)</label>
+                  <select multiple className={className("form-control")} 
+                     value={electionYearsSplitNatProv}
+                     onChange={this.onEventYearSplitNatProvChange.bind(this)}>
+                        {
+                            electionYears.map(item => {
+                                return (<option key={item} value={item}>{item}</option>)
+                            })
+                        }
+                  </select>
               </div>
               <div className={className("form-group")}>
                 <button type="button" onClick={this.onPreview.bind(this)} className={className("btn") + " " + className("btn-primary") }>Preview</button>
