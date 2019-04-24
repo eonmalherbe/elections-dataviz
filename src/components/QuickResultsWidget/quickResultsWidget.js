@@ -516,6 +516,10 @@ class QuickResultsWidget extends Component {
     }
 
     onShowVDResult() {
+        if (this.refs.vdInput.value.length == 0) {
+            alert("please enter valid vd number");
+            return;
+        }
         var newState = {
             regionType: "municipality-vd",
             iecId: this.refs.vdInput.value,
