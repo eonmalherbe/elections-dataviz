@@ -167,36 +167,43 @@ class QuickResultsWidget extends Component {
             var parsedTurnoutData = parseTurnoutDataForOneEvent(turnoutData, newProps);
             var parsedProgVotesData = parseProgressVotesCount(progVotesData, newProps);
 
+            var newState;
             if (parsedTurnoutData[0] && parsedProgVotesData[0] && parsedSpoiltData[1]) {
-                var newState = {            
+                newState = {            
                     currentTurnout: parsedTurnoutData[0].percVoterTurnout,
                     currentCountingProg: parsedProgVotesData[0].percent,
                     currentSpoiltVotes: parsedSpoiltData[1].percent
                 };
-    
-                if (comp == 'votes-comparisons') {
-                    var votesData = values[3];
-                    var parsedVotesData = parseVotesData(votesData, newProps);
-                    newState.partyAbbrs = parsedVotesData.map(voteItem => voteItem.name);
-                    newState.partyIecIds = parsedVotesData.map(voteItem => voteItem.iecId);
-                } else if (comp == 'seats-comparisons') {
-                    var seatsData = values[3];
-                    var parsedSeatsData = parseSeatsData(seatsData, newProps);
-                    newState.partyAbbrs = parsedSeatsData.map(seatItem => seatItem.name);
-                    newState.partyIecIds = parsedSeatsData.map(seatItem => seatItem.iecId);
-                }
-    
-                if (newState.partyIecIds && newState.partyIecIds.join(" ") != self.state.partyIecIds.join(" ")) {
-                    self.setState(newState);
-                } else {
-                    if (self.refs.currentTurnout && self.refs.currentCountingProg && self.refs.currentSpoiltVotes) {
-                        self.refs.currentTurnout.innerHTML = newState.currentTurnout + "%";
-                        self.refs.currentCountingProg.innerHTML = newState.currentCountingProg + "%";
-                        self.refs.currentSpoiltVotes.innerHTML = newState.currentSpoiltVotes + "%";
-                    }
+            } else {
+                newState = {            
+                    currentTurnout: 0,
+                    currentCountingProg: 0,
+                    currentSpoiltVotes: 0
+                };
+            }
+
+            if (comp == 'votes-comparisons') {
+                var votesData = values[3];
+                var parsedVotesData = parseVotesData(votesData, newProps);
+                newState.partyAbbrs = parsedVotesData.map(voteItem => voteItem.name);
+                newState.partyIecIds = parsedVotesData.map(voteItem => voteItem.iecId);
+            } else if (comp == 'seats-comparisons') {
+                var seatsData = values[3];
+                var parsedSeatsData = parseSeatsData(seatsData, newProps);
+                newState.partyAbbrs = parsedSeatsData.map(seatItem => seatItem.name);
+                newState.partyIecIds = parsedSeatsData.map(seatItem => seatItem.iecId);
+            }
+
+            if (newState.partyIecIds && newState.partyIecIds.join(" ") != self.state.partyIecIds.join(" ")) {
+                self.setState(newState);
+            } else {
+                if (self.refs.currentTurnout && self.refs.currentCountingProg && self.refs.currentSpoiltVotes) {
+                    self.refs.currentTurnout.innerHTML = newState.currentTurnout + "%";
+                    self.refs.currentCountingProg.innerHTML = newState.currentCountingProg + "%";
+                    self.refs.currentSpoiltVotes.innerHTML = newState.currentSpoiltVotes + "%";
                 }
             }
-        }).catch(error => console.error(error));
+        }).catch(error => console.error("catched error", error));
     }
 
     exportAsPNG(event) {
@@ -406,8 +413,9 @@ class QuickResultsWidget extends Component {
             comp,
             partyIecIds,
             partyAbbrs,
+            iecId
         } = this.state;
-        if (comp == 'votes-default' || comp == 'votes-myvd') {
+        if (comp == 'votes-default' || (comp == 'votes-myvd' && iecId && iecId.length)) {
             return (
                 <div className={className("barchart-container")}>
                     <BarChart 
@@ -516,6 +524,10 @@ class QuickResultsWidget extends Component {
     }
 
     onShowVDResult() {
+        if (this.refs.vdInput.value.length == 0) {
+            alert("please enter valid vd number");
+            return;
+        }
         var newState = {
             regionType: "municipality-vd",
             iecId: this.refs.vdInput.value,

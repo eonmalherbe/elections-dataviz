@@ -38,7 +38,7 @@ export function getVotesDataForComparison(options) {
       query: gql`
       {
         allProvincialBallots(
-          location_Name:"${options.provinceName}"
+          province:"${options.provinceName}"
         ){
           edges{
             node{
@@ -73,8 +73,8 @@ export function getVotesDataForComparison(options) {
       query: gql`
       {
         allMunicipalBallots(
-          location_Province_Name:"${options.provinceName}", 
-          location_Code: "${muniCode}"
+          province:"${options.provinceName}", 
+          municipalCode: "${muniCode}"
         ) {
           edges{
             node {
@@ -111,8 +111,7 @@ export function getVotesDataForComparison(options) {
       query: gql`
       {
         allVotingDistrictBallots(
-          location_IecId:"${options.iecId}", 
-          location_Ward_Municipality_Code:"${options.muniCode}"
+          iecId:"${options.iecId}", 
         ) {
           edges{
             node{
@@ -185,7 +184,7 @@ export function getVotesDataForAllEvents(options) {
         query: gql`
         {
           allProvincialBallots(
-            location_Name:"${options.provinceName}"
+            province:"${options.provinceName}"
           ){
             edges{
               node{
@@ -226,8 +225,8 @@ export function getVotesDataForAllEvents(options) {
         query: gql`
         {
           allMunicipalBallots(
-            location_Province_Name:"${options.provinceName}", 
-            location_Code: "${muniCode}"
+            province:"${options.provinceName}", 
+            municipalCode: "${muniCode}"
           ) {
             edges{
               node {
@@ -267,7 +266,7 @@ export function getVotesDataForAllEvents(options) {
         query: gql`
         {
           allVotingDistrictBallots(
-            location_IecId:"${options.iecId}"
+            iecId:"${options.iecId}"
           ) {
             edges{
               node{
@@ -311,7 +310,7 @@ export function getVotesDataM(options) {
         query: gql`
         {
           allBallots(
-            event_Description:"${eventDescription}"
+            event:"${eventDescription}"
           ){
             edges{
               node{
@@ -345,8 +344,8 @@ export function getVotesDataM(options) {
         query: gql`
         {
           allProvincialBallots(
-            event_Description:"${eventDescription}",
-            location_Name:"${options.provinceName}"
+            event:"${eventDescription}",
+            province:"${options.provinceName}"
           ){
             edges{
               node{
@@ -381,9 +380,9 @@ export function getVotesDataM(options) {
         query: gql`
         {
           allMunicipalBallots(
-            event_Description:"${eventDescription}",
-            location_Province_Name:"${options.provinceName}", 
-            location_Code: "${muniCode}"
+            event:"${eventDescription}",
+            province:"${options.provinceName}", 
+            municipalCode: "${muniCode}"
           ) {
             edges{
               node {
@@ -417,8 +416,8 @@ export function getVotesDataM(options) {
         query: gql`
         {
           allVotingDistrictBallots(
-            event_Description:"${eventDescription}",
-            location_IecId:"${options.iecId}"
+            event:"${eventDescription}",
+            iecId:"${options.iecId}"
           ) {
             edges{
               node{
@@ -463,7 +462,7 @@ export function getVotesDataM(options) {
       return client.query({
         query: gql`
         {
-          topPartiesByProvince(location_Country_Event_Description:"${eventDescription}") {
+          topPartiesByProvince(event:"${eventDescription}") {
             edges {
               node {
                 location{
@@ -492,8 +491,8 @@ export function getVotesDataM(options) {
         query: gql`
         {
           topPartiesByMunicipality(
-            location_Province_Country_Event_Description:"${eventDescription}", 
-            location_Province_Name:"${options.provinceName}") {
+            event:"${eventDescription}", 
+            province:"${options.provinceName}") {
             
             edges {
               node {
@@ -519,14 +518,13 @@ export function getVotesDataM(options) {
         `
       })
     } else { //if (options.regionType == "municipality") {
-      var muniRegName = options.muniName.split(" - ")[1];
         return client.query({
           query: gql`
           {
             topPartiesByVotingDistrict(
-              location_Ward_Municipality_Province_Country_Event_Description:"${eventDescription}", 
-              location_Ward_Municipality_Province_Name:"${options.provinceName}",
-              location_Ward_Municipality_Code: "${options.muniCode}"
+              event:"${eventDescription}", 
+              province:"${options.provinceName}",
+              municipalCode: "${options.muniCode}"
             ) {
               
               edges {

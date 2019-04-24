@@ -35,7 +35,10 @@ export function getSeatsDataForComparison(options) {
     return client.query({
       query: gql`
       {
-          allSeatCalculations(province_Name:"${options.provinceName}", orderBy:["-regional"]){
+          allSeatCalculations(
+            province:"${options.provinceName}", 
+            orderBy:["-regional"]
+          ) {
             edges{
               node
               {
@@ -70,7 +73,10 @@ export function getSeatsData(options) {
       return client.query({
         query: gql`
         {
-            allSeatCalculations(party_Event_Description:"${eventDescription}", orderBy:["-national_pr"]){
+            allSeatCalculations(
+              event:"${eventDescription}", 
+              orderBy:["-national_pr"]
+            ) {
               edges{
                 node
                 {
@@ -102,7 +108,11 @@ export function getSeatsData(options) {
       return client.query({
         query: gql`
         {
-            allSeatCalculations(province_Name:"${options.provinceName}", party_Event_Description:"${eventDescription}", orderBy:["-regional"]){
+            allSeatCalculations(
+              province:"${options.provinceName}", 
+              event:"${eventDescription}", 
+              orderBy:["-regional"]
+            ) {
               edges{
                 node
                 {

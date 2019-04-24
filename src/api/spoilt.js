@@ -10,7 +10,7 @@ import {client} from "./config"
         query: gql`
         {
           allBallots(
-            event_Description:"${eventDescription}"
+            event:"${eventDescription}"
           ){
             edges{
               node{
@@ -32,8 +32,8 @@ import {client} from "./config"
         query: gql`
         {
           allProvincialBallots(
-            event_Description:"${eventDescription}",
-            location_Name:"${options.provinceName}"
+            event:"${eventDescription}",
+            province:"${options.provinceName}"
           ) {
             edges{
               node {
@@ -57,9 +57,9 @@ import {client} from "./config"
           query: gql`
           {
             allMunicipalBallots( 
-                event_Description:"${eventDescription}",
-                location_Province_Name:"${options.provinceName}", 
-                location_Code: "${muniCode}"
+                event:"${eventDescription}",
+                province:"${options.provinceName}", 
+                municipalCode: "${muniCode}"
             ) {
               edges{
                 node{
@@ -82,8 +82,8 @@ import {client} from "./config"
           query: gql`
           {
             allVotingDistrictBallots(
-                event_Description:"${eventDescription}",
-                location_IecId:"${options.iecId}"
+              event:"${eventDescription}",
+              iecId:"${options.iecId}"
             ) {
               edges{
                 node{
