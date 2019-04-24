@@ -142,23 +142,9 @@ class QuickResultsWidget extends Component {
     fetchCurrentResultData() {
         var self = this;
         var newProps = JSON.parse(JSON.stringify(this.state));
-        var {comp} = this.state;
+        var {comp, iecId} = this.state;
 
-        // newProps.eventDescription = "2019_mock1";
-        var dataLoaders = [
-            getSpoiltData(newProps), 
-            getTurnoutDataForOneEvent(newProps),
-            getProgressVotesCount(newProps),
-        ];
-
-        if (comp == 'votes-comparisons') {
-            dataLoaders.push(getVotesDataM(newProps));
-        }
-        if (comp == 'seats-comparisons') {
-            dataLoaders.push(getSeatsData(newProps));
-        }
-
-        Promise.all(dataLoaders).then(function(values){ 
+        function dataLoadCallback(values) {
             var spoiltData = values[0];
             var turnoutData = values[1];
             var progVotesData = values[2];
@@ -203,7 +189,32 @@ class QuickResultsWidget extends Component {
                     self.refs.currentSpoiltVotes.innerHTML = newState.currentSpoiltVotes + "%";
                 }
             }
-        }).catch(error => console.error("catched error", error));
+        }
+
+        if (newProps.regionType == "municipality-vd" && (!iecId || !iecId.length)) {
+            self.refs.currentTurnout.innerHTML = "0%";
+            self.refs.currentCountingProg.innerHTML = "0%";
+            self.refs.currentSpoiltVotes.innerHTML = "0%";
+            return;
+        }
+
+        // newProps.eventDescription = "2019_mock1";
+        var dataLoaders = [
+            getSpoiltData(newProps), 
+            getTurnoutDataForOneEvent(newProps),
+            getProgressVotesCount(newProps),
+        ];
+
+        if (comp == 'votes-comparisons') {
+            dataLoaders.push(getVotesDataM(newProps));
+        }
+        if (comp == 'seats-comparisons') {
+            dataLoaders.push(getSeatsData(newProps));
+        }
+
+        Promise.all(dataLoaders)
+            .then(dataLoadCallback)
+            .catch(error => console.error("catched error", error));
     }
 
     exportAsPNG(event) {
