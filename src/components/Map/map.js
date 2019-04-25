@@ -206,303 +206,309 @@ class Map extends Component {
 
         var geoJsonLoader = d3.json(fullRouteGeoJsonFile);
         var mainPartiesDataLoader = getMainParties(props);
-        var dataLoaders = [geoJsonLoader, mainPartiesDataLoader];
+        // var dataLoaders = [geoJsonLoader, mainPartiesDataLoader];
+        var dataLoaders = [mainPartiesDataLoader];
 
         if (!partyColorsData) {
           var partyColorsLoader = getPartyColors();
           dataLoaders.push(partyColorsLoader);
         }
 
-        Promise.all(dataLoaders).then(function(values){ 
-            var geoJsonData = values[0];
-            var locationToMainParty = parseMainPartyData(values[1], props);
-            partyColorsData = partyColorsData || values[2];  
-
-            var partyColorByName = {};
-            var partyAbbrByName = {};
-            if (partyColorsData && partyColorsData["data"]["allParties"]["edges"]) {
-              partyColorsData["data"]["allParties"]["edges"].forEach(edge => {
-                partyColorByName[edge.node.name] = edge.node.colour;
-                partyAbbrByName[edge.node.name] = edge.node.abbreviation;
-              })
-            }            
-
-            function getFillColorFromPartyName(partyName) {
-              if (!partyName)
-                return regionColor;
-              return partyColorByName[partyName.split("/")[0]] || regionColor;
-            }
-
-            function getMainPartyName(d, i) {
-                var partyName;
-                var regionType = self.state.regionType;
-                if (regionType === "national") {
-                    var provinceName = d.properties.SPROVINCE;
-                    partyName = locationToMainParty[provinceName];
-                } else if (regionType === "province") {
-                    var muniCode = getMunicipalityCode(d.properties);
-                    partyName = locationToMainParty[muniCode];
-                } else if (regionType === "municipality"){// "municipality"
-                    var iecId = getMunicipalityiecId(d.properties);
-                    partyName = locationToMainParty[iecId];
-                } else {// "municipality-vd"
-                    var iecId = getMunicipalityiecId(d.properties);
-                    partyName = locationToMainParty[iecId];
+        geoJsonLoader.then(function(value) {
+            var geoJsonData = value;
+            Promise.all(dataLoaders).then(function(values){ 
+                var locationToMainParty = parseMainPartyData(values[0], props);
+                partyColorsData = partyColorsData || values[1];  
+    
+                var partyColorByName = {};
+                var partyAbbrByName = {};
+                if (partyColorsData && partyColorsData["data"]["allParties"]["edges"]) {
+                  partyColorsData["data"]["allParties"]["edges"].forEach(edge => {
+                    partyColorByName[edge.node.name] = edge.node.colour;
+                    partyAbbrByName[edge.node.name] = edge.node.abbreviation;
+                  })
+                }            
+    
+                function getFillColorFromPartyName(partyName) {
+                  if (!partyName)
+                    return regionColor;
+                  return partyColorByName[partyName.split("/")[0]] || regionColor;
                 }
-                return partyName;
-            }
-            function getMainPartyColorFromRegion(d, i) {
-                var partyName = getMainPartyName(d, i);
-                var partyColor = getFillColorFromPartyName(partyName);
-                return partyColor;
-            }
-
-            var jsonDataFeatures;
-            if (fullRouteGeoJsonFile.indexOf(".topojson") !== -1) {//topojson is used for munis and muni-vds
-                var regionType = self.state.regionType
-                if (regionType == "municipality") {
-                    if (!geoJsonData.objects[self.state.muniCode])
-                        return;
-                    geoJsonData = topojson.feature(geoJsonData, geoJsonData.objects[self.state.muniCode]);
-                } else { // "municipality-vd"
-                    if (!geoJsonData.objects[self.state.iecId])
-                        return;
-                    geoJsonData = topojson.feature(geoJsonData, geoJsonData.objects[self.state.iecId]);
-                }
-            }
-
-            jsonDataFeatures = geoJsonData.features;
-
-            var projection = d3.geoMercator().fitSize([w, h], geoJsonData);
-            var path = d3.geoPath().projection(projection);
-
-            // fill region with regionColor
-            svg.selectAll(`.${className("region")}`)
-                .data(jsonDataFeatures)
-                .enter()
-                .append("path")
-                .attr("class", className("region"))
-                .attr("stroke", regionBorderColor)
-                .attr("fill", getMainPartyColorFromRegion)
-                .attr("id", function(d, i) {
-                    return `region-${i}`;
-                })
-                .attr("d", path);
-            
-            var parties = [];
-            var availableCnt = [];
-            jsonDataFeatures.forEach((d, i) => {
-                var party = getMainPartyName(d, i);
-                if (parties.indexOf(party) == -1) {
-                    parties.push(party);
-                    availableCnt.push(1);
-                } else {
-                    availableCnt[parties.indexOf(party)] ++;
-                }
-            })
-
-            parties.sort(function(a, b){
-                return availableCnt[parties.indexOf(b)] - availableCnt[parties.indexOf(a)];
-            })
-
-            function getLegendXY(i) {
-                return [(i%5)*150, h + 10 + parseInt(i/5) * 40];
-            }
-            var legends = svg.selectAll(`.${className("legend")}`)
-                .data(parties)
-                .enter()
-                .append('g')
-                .attr("class", className("legend"))
-                .attr('transform', (d, i) => "translate(" + getLegendXY(i) + ")")
-            legends
-                .append("rect")
-                .attr('width', 20)
-                .attr('height', 20)
-                .attr('x', 0)
-                .attr('y', 0)
-                .attr("fill", (party, i) => {
-                    return getFillColorFromPartyName(party);
-                })
-            legends.append('text')
-                .attr('x', 30)
-                .attr('y', 16)
-                .text(party => partyAbbrByName[party])
-            
-            if (self.state.regionType.indexOf("municipality") == -1) {
-                svg.selectAll(".place-label")
-                    .data(jsonDataFeatures)
-                .enter().append("text")
-                    .attr("class", "place-label")
-                    .attr("font-size", "12px")
-                    .attr("transform", function(d) { 
-                        var center, projectionCenter;
-                        if (d.geometry.type === "Polygon") {
-                            center = polylabel(d.geometry.coordinates);
-                            projectionCenter = projection(center);
-                            projectionCenter[1] -= 12;
-                            return "translate(" + projectionCenter + ")"; 
-                        } else { //"MultiPolygon"
-                            center = polylabel(d.geometry.coordinates[0]);
-                            projectionCenter = projection(center);
-                            projectionCenter[1] -= 5;
-                            return "translate(" + projectionCenter + ")"; 
-                        }
-                    })
-                    .attr("dy", ".35em")
-                    .style("text-anchor", "middle")
-                    .text(d => getSubRegionName(d.properties, self.state))
-            }
-
-            if (self.state.regionType.indexOf("municipality") == -1) {
-                fixMapLabelIntersect();
-            }
-
-            //hidden area for catching events
-            svg.selectAll(".eventLayer")
-                .data(jsonDataFeatures)
-            .enter()
-                .append("path")
-                .attr("d", path)
-                .attr("class", "eventLayer")
-                .attr("id", function(d, i) {
-                    return `eventLayer-${i}`;
-                })
-                .attr("fill", "transparent")
-                .on("mouseover", function(d, i) {
-                    d3.select(`#region-${i}`)
-                        .attr("stroke-width", 3)
-                        .style("fill-opacity", 0.8);
-                })
-                .on("mousemove", function(d, i) {	
-                    // if (self.state.regionType === "municipality") return;
-                    tooltipDiv.transition()		
-                        .duration(200)		
-                        .style("opacity", 1);
-
-                    var undefinedText;
-                    if (self.state.regionType === "province") {
-                        undefinedText = "New municipality - no previous results available"
-                    } else {
-                        undefinedText = "New voting district - no previous results available"
-                    }
-                    var mainPartyName = getMainPartyName(d, i);
-                    var subRegionName = getSubRegionName(d.properties, self.state);
-                    var tooltipText = (typeof mainPartyName !== "undefined")? 
-                                (subRegionName + " : " + mainPartyName) : undefinedText;
-
-                    tooltipDiv.html(tooltipText)	
-                        .style("left", (d3.event.pageX) + "px")		
-                        .style("top", (d3.event.pageY - 28) + "px");	
-                })
-                .on("mouseout", function(d, i) {
-                    d3.select(`#region-${i}`)
-                        .attr("stroke-width", 1)
-                        .style("fill-opacity", 1);
-                    
-                    if (self.state.regionType === "municipality") return;
-
-                    tooltipDiv.transition()		
-                        .duration(200)		
-                        .style("opacity", 0);	
-                })
-                .on("click", function(d, i) {                  
-                    tooltipDiv.transition()		
-                        .duration(200)		
-                        .style("opacity", 0);	
-                    
+    
+                function getMainPartyName(d, i) {
+                    var partyName;
                     var regionType = self.state.regionType;
-                    var newState, event;
                     if (regionType === "national") {
-                        newState = {
-                            regionType: "province",
-                            provinceName: d.properties.SPROVINCE
-                        }
+                        var provinceName = d.properties.SPROVINCE;
+                        partyName = locationToMainParty[provinceName];
                     } else if (regionType === "province") {
-                        newState = {
-                            regionType: "municipality", 
-                            provinceName: self.state.provinceName,
-                            muniName: d.properties.smunicipal,
-                            muniCode: getMunicipalityCode(d.properties),
+                        var muniCode = getMunicipalityCode(d.properties);
+                        partyName = locationToMainParty[muniCode];
+                    } else if (regionType === "municipality"){// "municipality"
+                        var iecId = getMunicipalityiecId(d.properties);
+                        partyName = locationToMainParty[iecId];
+                    } else {// "municipality-vd"
+                        var iecId = getMunicipalityiecId(d.properties);
+                        partyName = locationToMainParty[iecId];
+                    }
+                    return partyName;
+                }
+                function getMainPartyColorFromRegion(d, i) {
+                    var partyName = getMainPartyName(d, i);
+                    var partyColor = getFillColorFromPartyName(partyName);
+                    return partyColor;
+                }
+    
+                var jsonDataFeatures;
+                if (fullRouteGeoJsonFile.indexOf(".topojson") !== -1) {//topojson is used for munis and muni-vds
+                    var regionType = self.state.regionType
+                    if (regionType == "municipality") {
+                        if (!geoJsonData.objects[self.state.muniCode])
+                            return;
+                        geoJsonData = topojson.feature(geoJsonData, geoJsonData.objects[self.state.muniCode]);
+                    } else { // "municipality-vd"
+                        if (!geoJsonData.objects[self.state.iecId])
+                            return;
+                        geoJsonData = topojson.feature(geoJsonData, geoJsonData.objects[self.state.iecId]);
+                    }
+                }
+    
+                jsonDataFeatures = geoJsonData.features;
+    
+                var projection = d3.geoMercator().fitSize([w, h], geoJsonData);
+                var path = d3.geoPath().projection(projection);
+    
+                // fill region with regionColor
+                svg.selectAll(`.${className("region")}`)
+                    .data(jsonDataFeatures)
+                    .enter()
+                    .append("path")
+                    .attr("class", className("region"))
+                    .attr("stroke", regionBorderColor)
+                    .attr("fill", getMainPartyColorFromRegion)
+                    .attr("id", function(d, i) {
+                        return `region-${i}`;
+                    })
+                    .attr("d", path);
+                
+                var parties = [];
+                var availableCnt = [];
+                jsonDataFeatures.forEach((d, i) => {
+                    var party = getMainPartyName(d, i);
+                    if (parties.indexOf(party) == -1) {
+                        parties.push(party);
+                        availableCnt.push(1);
+                    } else {
+                        availableCnt[parties.indexOf(party)] ++;
+                    }
+                })
+    
+                parties.sort(function(a, b){
+                    return availableCnt[parties.indexOf(b)] - availableCnt[parties.indexOf(a)];
+                })
+    
+                function getLegendXY(i) {
+                    return [(i%5)*150, h + 10 + parseInt(i/5) * 40];
+                }
+                var legends = svg.selectAll(`.${className("legend")}`)
+                    .data(parties)
+                    .enter()
+                    .append('g')
+                    .attr("class", className("legend"))
+                    .attr('transform', (d, i) => "translate(" + getLegendXY(i) + ")")
+                legends
+                    .append("rect")
+                    .attr('width', 20)
+                    .attr('height', 20)
+                    .attr('x', 0)
+                    .attr('y', 0)
+                    .attr("fill", (party, i) => {
+                        return getFillColorFromPartyName(party);
+                    })
+                legends.append('text')
+                    .attr('x', 30)
+                    .attr('y', 16)
+                    .text(party => partyAbbrByName[party])
+                
+                if (self.state.regionType.indexOf("municipality") == -1) {
+                    svg.selectAll(".place-label")
+                        .data(jsonDataFeatures)
+                    .enter().append("text")
+                        .attr("class", "place-label")
+                        .attr("font-size", "12px")
+                        .attr("transform", function(d) { 
+                            var center, projectionCenter;
+                            if (d.geometry.type === "Polygon") {
+                                center = polylabel(d.geometry.coordinates);
+                                projectionCenter = projection(center);
+                                projectionCenter[1] -= 12;
+                                return "translate(" + projectionCenter + ")"; 
+                            } else { //"MultiPolygon"
+                                center = polylabel(d.geometry.coordinates[0]);
+                                projectionCenter = projection(center);
+                                projectionCenter[1] -= 5;
+                                return "translate(" + projectionCenter + ")"; 
+                            }
+                        })
+                        .attr("dy", ".35em")
+                        .style("text-anchor", "middle")
+                        .text(d => getSubRegionName(d.properties, self.state))
+                }
+    
+                if (self.state.regionType.indexOf("municipality") == -1) {
+                    fixMapLabelIntersect();
+                }
+    
+                //hidden area for catching events
+                svg.selectAll(".eventLayer")
+                    .data(jsonDataFeatures)
+                .enter()
+                    .append("path")
+                    .attr("d", path)
+                    .attr("class", "eventLayer")
+                    .attr("id", function(d, i) {
+                        return `eventLayer-${i}`;
+                    })
+                    .attr("fill", "transparent")
+                    .on("mouseover", function(d, i) {
+                        d3.select(`#region-${i}`)
+                            .attr("stroke-width", 3)
+                            .style("fill-opacity", 0.8);
+                    })
+                    .on("mousemove", function(d, i) {	
+                        // if (self.state.regionType === "municipality") return;
+                        tooltipDiv.transition()		
+                            .duration(200)		
+                            .style("opacity", 1);
+    
+                        var undefinedText;
+                        if (self.state.regionType === "province") {
+                            undefinedText = "New municipality - no previous results available"
+                        } else {
+                            undefinedText = "New voting district - no previous results available"
                         }
-                    } else if (regionType === "municipality"){ // "municipality"
+                        var mainPartyName = getMainPartyName(d, i);
+                        var subRegionName = getSubRegionName(d.properties, self.state);
+                        var tooltipText = (typeof mainPartyName !== "undefined")? 
+                                    (subRegionName + " : " + mainPartyName) : undefinedText;
+    
+                        tooltipDiv.html(tooltipText)	
+                            .style("left", (d3.event.pageX) + "px")		
+                            .style("top", (d3.event.pageY - 28) + "px");	
+                    })
+                    .on("mouseout", function(d, i) {
+                        d3.select(`#region-${i}`)
+                            .attr("stroke-width", 1)
+                            .style("fill-opacity", 1);
+                        
+                        if (self.state.regionType === "municipality") return;
+    
+                        tooltipDiv.transition()		
+                            .duration(200)		
+                            .style("opacity", 0);	
+                    })
+                    .on("click", function(d, i) {                  
+                        tooltipDiv.transition()		
+                            .duration(200)		
+                            .style("opacity", 0);	
+                        
+                        var regionType = self.state.regionType;
+                        var newState, event;
+                        if (regionType === "national") {
+                            newState = {
+                                regionType: "province",
+                                provinceName: d.properties.SPROVINCE
+                            }
+                        } else if (regionType === "province") {
+                            newState = {
+                                regionType: "municipality", 
+                                provinceName: self.state.provinceName,
+                                muniName: d.properties.smunicipal,
+                                muniCode: getMunicipalityCode(d.properties),
+                            }
+                        } else if (regionType === "municipality"){ // "municipality"
+                            var newState = {
+                                regionType: "municipality-vd", 
+                                provinceName: self.state.provinceName,
+                                muniName: self.state.muniName,
+                                muniCode: self.state.muniCode,
+                                iecId: getMunicipalityiecId(d.properties),
+                            }
+                        } else { // "municipality-vd"
+                            return;
+                        }
+                        triggerCustomEvent(events.REGION_CHANGE, newState);
+                        if (self.state.disableNavigation) {
+                            return;
+                        }
+                        self.setState(newState);
+                    })
+                if (!self.state.disableNavigation) {
+                    var fo = svg.append("foreignObject")
+                        .attr("x", 0)
+                        .attr("y", 10)
+                        .attr("width", 500)
+                        .attr("height", 30)
+                        .attr("class", "map-controls")
+                    
+                    function setRegionType(regionType) {
+                        var newState;
                         var newState = {
-                            regionType: "municipality-vd", 
+                            regionType: self.state.regionType, 
                             provinceName: self.state.provinceName,
                             muniName: self.state.muniName,
                             muniCode: self.state.muniCode,
-                            iecId: getMunicipalityiecId(d.properties),
+                            iecId: self.state.iecId,
                         }
-                    } else { // "municipality-vd"
-                        return;
+                        newState.regionType = regionType;
+                        triggerCustomEvent(events.REGION_CHANGE, newState);
+                        self.setState(newState);
                     }
-                    triggerCustomEvent(events.REGION_CHANGE, newState);
-                    if (self.state.disableNavigation) {
-                        return;
+    
+                    function appendSpan(foDiv, regionName, addSub) {
+                        if (addSub) foDiv.append("span").html(" > ");
+                        foDiv.append("span")
+                            .style("height", "30px")
+                            .style("cursor", "default")
+                            .html(regionName);
                     }
-                    self.setState(newState);
-                })
-            if (!self.state.disableNavigation) {
-                var fo = svg.append("foreignObject")
-                    .attr("x", 0)
-                    .attr("y", 10)
-                    .attr("width", 500)
-                    .attr("height", 30)
-                    .attr("class", "map-controls")
-                
-                function setRegionType(regionType) {
-                    var newState;
-                    var newState = {
-                        regionType: self.state.regionType, 
-                        provinceName: self.state.provinceName,
-                        muniName: self.state.muniName,
-                        muniCode: self.state.muniCode,
-                        iecId: self.state.iecId,
+    
+                    function appendLink(foDiv, regionName, regionType, addSub) {
+                        if (addSub) foDiv.append("span").html(" > ");
+                        foDiv.append("a")
+                            .style("height", "30px")
+                            .style("cursor", "pointer")
+                            .html(regionName)
+                            .on("click", function() {
+                                setRegionType(regionType);
+                            });
                     }
-                    newState.regionType = regionType;
-                    triggerCustomEvent(events.REGION_CHANGE, newState);
-                    self.setState(newState);
-                }
-
-                function appendSpan(foDiv, regionName, addSub) {
-                    if (addSub) foDiv.append("span").html(" > ");
-                    foDiv.append("span")
-                        .style("height", "30px")
-                        .style("cursor", "default")
-                        .html(regionName);
-                }
-
-                function appendLink(foDiv, regionName, regionType, addSub) {
-                    if (addSub) foDiv.append("span").html(" > ");
-                    foDiv.append("a")
-                        .style("height", "30px")
-                        .style("cursor", "pointer")
-                        .html(regionName)
-                        .on("click", function() {
-                            setRegionType(regionType);
-                        });
-                }
-                
-                var foDiv = fo.append("xhtml:div");
-                var regionType = self.state.regionType;
-                if (regionType == "national") {
-                    appendSpan(foDiv, "South Africa", false);
-                } else {
-                    appendLink(foDiv, "South Africa", "national", false);
-                    if (regionType == "province") {
-                        appendSpan(foDiv, self.state.provinceName, true);
+                    
+                    var foDiv = fo.append("xhtml:div");
+                    var regionType = self.state.regionType;
+                    if (regionType == "national") {
+                        appendSpan(foDiv, "South Africa", false);
                     } else {
-                        appendLink(foDiv, self.state.provinceName, "province", true);
-                        if (regionType == "municipality") {
-                            appendSpan(foDiv, self.state.muniCode, true);
+                        appendLink(foDiv, "South Africa", "national", false);
+                        if (regionType == "province") {
+                            appendSpan(foDiv, self.state.provinceName, true);
                         } else {
-                            appendLink(foDiv, self.state.muniCode, "municipality", true);
-                            appendSpan(foDiv, self.state.iecId, true);
+                            appendLink(foDiv, self.state.provinceName, "province", true);
+                            if (regionType == "municipality") {
+                                appendSpan(foDiv, self.state.muniCode, true);
+                            } else {
+                                appendLink(foDiv, self.state.muniCode, "municipality", true);
+                                appendSpan(foDiv, self.state.iecId, true);
+                            }
                         }
                     }
                 }
-            }
-            self.getLoadingSpinner()
-                .style("display", "none");
+                self.getLoadingSpinner()
+                    .style("display", "none");
+            }).catch(error => {
+                console.error(error);
+                alert(`failed to get data from server`);
+            })
         }).catch(error => {
             console.error(error);
 
@@ -536,7 +542,11 @@ class Map extends Component {
             triggerCustomEvent(events.REGION_CHANGE, newState);
             self.setState(newState);
             setTimeout(() => {
-                alert(`${currentRegionName} has been disestablished`); 
+                if (regionType == "national" || regionType == "province") {
+                    alert(`Can't get map data for ${currentRegionName}`); 
+                } else {
+                    alert(`${currentRegionName} has been disestablished`); 
+                }
             }, 300);    
         })
     }

@@ -36,7 +36,8 @@ var chartOptions = {
   chartType: "Race For Votes Comparison",
   yAxisLabel: "PERCENTAGE VOTES",
   yValue: d => d.percOfVotes,
-  yValueFormat: value => value + '%'
+  yValueFormat: value => value + '%',
+  showLegend: true
 }
 
 class BarChart extends Component {
@@ -124,7 +125,7 @@ class BarChart extends Component {
       var newState = event.detail;
       if (this.chart)
         this.chart.destroy();
-      this.chart = new Chart(this.getContainer(), null, null, className);
+      this.chart = new Chart(this.getContainer(), null, null, className, chartOptions);
       this.setState(newState)
     }
 
@@ -171,7 +172,7 @@ class BarChart extends Component {
         var chartData = parseVotesComparisonData(data, props);
 
         if (!this.chart)
-          this.chart = new Chart(container, null, null, className);
+          this.chart = new Chart(container, null, null, className, chartOptions);
         this.chart.draw(chartData, partyColorsData);
     }
 }

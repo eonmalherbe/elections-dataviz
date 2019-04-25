@@ -39,7 +39,7 @@ export function Chart(container, width, height, className, options) {
 
     var svg = container.append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 " + (width+XaxisOffset) + " " + (height+YaxisOffset))
+        .attr("viewBox", "0 0 " + (width+XaxisOffset) + " " + (height+YaxisOffset+(options.showLegend? 50: 0)))
         .classed("svg-content", true);
         
     var tooltipDiv = createTooltip(className);
@@ -86,14 +86,15 @@ export function Chart(container, width, height, className, options) {
         errorText.text("");
       }
       var partyColorByName = {};
+      var partyAbbrByName = {};
 
       if (options.noXaxisByParty) {
 
       } else {
-        var partyColorsData = colorsData;
-        if (partyColorsData && partyColorsData["data"]["allParties"]["edges"]) {
-          partyColorsData["data"]["allParties"]["edges"].forEach(edge => {
+        if (colorsData && colorsData["data"]["allParties"]["edges"]) {
+          colorsData["data"]["allParties"]["edges"].forEach(edge => {
             partyColorByName[edge.node.name] = edge.node.colour;
+            partyAbbrByName[edge.node.name] = edge.node.abbreviation;
           })
         }
       }
@@ -232,6 +233,50 @@ export function Chart(container, width, height, className, options) {
           .attr("y", function (d) {
             return y(Number(options.yValue(d))) - 5;
           })
+        
+        if (options.showLegend) {
+          var parties = [];
+          var partyIecIds = [];
+          chartData.forEach(({partyInfo}) => {
+            var party = partyInfo.name;
+            if (partyIecIds.indexOf(partyInfo.iecId) == -1 && partyInfo.iecId) {
+                parties.push(party);
+                partyIecIds.push(partyInfo.iecId);
+            }
+          })
+          console.log("parties", parties, chartData);
+          
+          function getLegendXY(i) {
+            
+            var xydata = [XaxisOffset + (i%5)*100, height + 30 + parseInt(i/5) * 40];
+            if (parties.length < 6) {
+              xydata[0] += 100 * ( 6 - parties.length) / 2;
+            }
+            return xydata;
+          }
+          svg.selectAll(`.${className("legend")}`).remove();
+          var legends = svg.selectAll(`.${className("legend")}`)
+              .data(parties)
+              .enter()
+              .append('g')
+              .attr("class", className("legend"))
+              .attr('transform', (d, i) => "translate(" + getLegendXY(i) + ")")
+          legends
+              .append("rect")
+              .attr('width', 10)
+              .attr('height', 10)
+              .attr('x', 0)
+              .attr('y', 0)
+              .attr("fill", (party, i) => {
+                  return getFillColorFromPartyName(party);
+              })
+          legends.append('text')
+              .attr('x', 30)
+              .attr('y', 10)
+              .style('font-size', '12px')
+              .text(party => partyAbbrByName[party])
+        }
+        
     }
     this.destroy = function() {
       svg.remove();
