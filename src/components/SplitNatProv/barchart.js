@@ -171,6 +171,9 @@ class BarChart extends Component {
 
     drawGraph(container, props, data, partyColorsData) {
         var chartData = parseVotesDataForAllEvents(data, props);
+        // console.log("SplitNatProvProps", props);
+        // console.log("SplitNatProvData", data);
+        // console.log("SplitNatProvParsed", chartData);
 
         if (!this.chart)
           this.chart = new Chart(container, null, null, className, chartOptions);

@@ -11,6 +11,7 @@ import ProgressVotesPieChart from '../ProgVotesCountPiechart/piechart';
 import RaceForSeatDonut from '../RaceForSeatDonut/piechart';
 import VoteCompBarchart from '../VoteCompBarchart/barchart';
 import SeatCompBarchart from '../SeatCompBarchart/barchart';
+import SeatHorseShoeChart from "../SeatHorseShoeChart/horseshoe";
 
 import SpoiltBarChart from '../SpoiltBarchart/barchart';
 import SplitNatProvChart from '../SplitNatProv/barchart';
@@ -142,7 +143,61 @@ class QuickResultsWidget extends Component {
     fetchCurrentResultData() {
         var self = this;
         var newProps = JSON.parse(JSON.stringify(this.state));
-        var {comp} = this.state;
+        var {comp, iecId} = this.state;
+
+        function dataLoadCallback(values) {
+            var spoiltData = values[0];
+            var turnoutData = values[1];
+            var progVotesData = values[2];
+
+            var parsedSpoiltData = parseSpoiltVotesData(spoiltData, newProps);
+            var parsedTurnoutData = parseTurnoutDataForOneEvent(turnoutData, newProps);
+            var parsedProgVotesData = parseProgressVotesCount(progVotesData, newProps);
+
+            var newState;
+            if (parsedTurnoutData[0] && parsedProgVotesData[0] && parsedSpoiltData[1]) {
+                newState = {            
+                    currentTurnout: parsedTurnoutData[0].percVoterTurnout,
+                    currentCountingProg: parsedProgVotesData[0].percent,
+                    currentSpoiltVotes: parsedSpoiltData[1].percent
+                };
+            } else {
+                newState = {            
+                    currentTurnout: 0,
+                    currentCountingProg: 0,
+                    currentSpoiltVotes: 0
+                };
+            }
+
+            if (comp == 'votes-comparisons') {
+                var votesData = values[3];
+                var parsedVotesData = parseVotesData(votesData, newProps);
+                newState.partyAbbrs = parsedVotesData.map(voteItem => voteItem.name);
+                newState.partyIecIds = parsedVotesData.map(voteItem => voteItem.iecId);
+            } else if (comp == 'seats-comparisons') {
+                var seatsData = values[3];
+                var parsedSeatsData = parseSeatsData(seatsData, newProps);
+                newState.partyAbbrs = parsedSeatsData.map(seatItem => seatItem.name);
+                newState.partyIecIds = parsedSeatsData.map(seatItem => seatItem.iecId);
+            }
+
+            if (newState.partyIecIds && newState.partyIecIds.join(" ") != self.state.partyIecIds.join(" ")) {
+                self.setState(newState);
+            } else {
+                if (self.refs.currentTurnout && self.refs.currentCountingProg && self.refs.currentSpoiltVotes) {
+                    self.refs.currentTurnout.innerHTML = newState.currentTurnout + "%";
+                    self.refs.currentCountingProg.innerHTML = newState.currentCountingProg + "%";
+                    self.refs.currentSpoiltVotes.innerHTML = newState.currentSpoiltVotes + "%";
+                }
+            }
+        }
+
+        if (newProps.regionType == "municipality-vd" && (!iecId || !iecId.length)) {
+            self.refs.currentTurnout.innerHTML = "0%";
+            self.refs.currentCountingProg.innerHTML = "0%";
+            self.refs.currentSpoiltVotes.innerHTML = "0%";
+            return;
+        }
 
         // newProps.eventDescription = "2019_mock1";
         var dataLoaders = [
@@ -158,45 +213,9 @@ class QuickResultsWidget extends Component {
             dataLoaders.push(getSeatsData(newProps));
         }
 
-        Promise.all(dataLoaders).then(function(values){ 
-            var spoiltData = values[0];
-            var turnoutData = values[1];
-            var progVotesData = values[2];
-
-            var parsedSpoiltData = parseSpoiltVotesData(spoiltData, newProps);
-            var parsedTurnoutData = parseTurnoutDataForOneEvent(turnoutData, newProps);
-            var parsedProgVotesData = parseProgressVotesCount(progVotesData, newProps);
-
-            if (parsedTurnoutData[0] && parsedProgVotesData[0] && parsedSpoiltData[1]) {
-                var newState = {            
-                    currentTurnout: parsedTurnoutData[0].percVoterTurnout,
-                    currentCountingProg: parsedProgVotesData[0].percent,
-                    currentSpoiltVotes: parsedSpoiltData[1].percent
-                };
-    
-                if (comp == 'votes-comparisons') {
-                    var votesData = values[3];
-                    var parsedVotesData = parseVotesData(votesData, newProps);
-                    newState.partyAbbrs = parsedVotesData.map(voteItem => voteItem.name);
-                    newState.partyIecIds = parsedVotesData.map(voteItem => voteItem.iecId);
-                } else if (comp == 'seats-comparisons') {
-                    var seatsData = values[3];
-                    var parsedSeatsData = parseSeatsData(seatsData, newProps);
-                    newState.partyAbbrs = parsedSeatsData.map(seatItem => seatItem.name);
-                    newState.partyIecIds = parsedSeatsData.map(seatItem => seatItem.iecId);
-                }
-    
-                if (newState.partyIecIds && newState.partyIecIds.join(" ") != self.state.partyIecIds.join(" ")) {
-                    self.setState(newState);
-                } else {
-                    if (self.refs.currentTurnout && self.refs.currentCountingProg && self.refs.currentSpoiltVotes) {
-                        self.refs.currentTurnout.innerHTML = newState.currentTurnout + "%";
-                        self.refs.currentCountingProg.innerHTML = newState.currentCountingProg + "%";
-                        self.refs.currentSpoiltVotes.innerHTML = newState.currentSpoiltVotes + "%";
-                    }
-                }
-            }
-        }).catch(error => console.error(error));
+        Promise.all(dataLoaders)
+            .then(dataLoadCallback)
+            .catch(error => console.error("catched error", error));
     }
 
     exportAsPNG(event) {
@@ -406,8 +425,9 @@ class QuickResultsWidget extends Component {
             comp,
             partyIecIds,
             partyAbbrs,
+            iecId
         } = this.state;
-        if (comp == 'votes-default' || comp == 'votes-myvd') {
+        if (comp == 'votes-default' || (comp == 'votes-myvd' && iecId && iecId.length)) {
             return (
                 <div className={className("barchart-container")}>
                     <BarChart 
@@ -421,7 +441,7 @@ class QuickResultsWidget extends Component {
         if (comp == 'seats-default') {
             return (
                 <div className={className("barchart-container")}>
-                    <RaceForSeatDonut 
+                    <SeatHorseShoeChart
                         ref={instance => { this.barchartInstance = instance; }} 
                         {...this.state}
                         componentID={-1000} />

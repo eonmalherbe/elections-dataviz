@@ -24,7 +24,7 @@ class HorseShoeEmbed extends EmbedBase {
         super(props);
         this.state = {
             elementId: "root",
-            eventDescription: "2014 National Election",
+            eventDescription: "2019 National Election",
             regionType: "national",
             provinceName: "",
             muniName: "",

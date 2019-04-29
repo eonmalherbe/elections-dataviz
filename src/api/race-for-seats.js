@@ -8,7 +8,7 @@ export function getSeatsDataForComparison(options) {
       {
           allSeatCalculations(
             party_Event_Description_Icontains:"national",
-            orderBy:["-national_pr"]){
+            orderBy:["-seats"]){
             edges{
               node
               {
@@ -37,7 +37,7 @@ export function getSeatsDataForComparison(options) {
       {
           allSeatCalculations(
             province:"${options.provinceName}", 
-            orderBy:["-regional"]
+            orderBy:["-seats"]
           ) {
             edges{
               node
@@ -75,7 +75,7 @@ export function getSeatsData(options) {
         {
             allSeatCalculations(
               event:"${eventDescription}", 
-              orderBy:["-national_pr"]
+              orderBy:["-seats"]
             ) {
               edges{
                 node
@@ -111,7 +111,7 @@ export function getSeatsData(options) {
             allSeatCalculations(
               province:"${options.provinceName}", 
               event:"${eventDescription}", 
-              orderBy:["-regional"]
+              orderBy:["-seats"]
             ) {
               edges{
                 node

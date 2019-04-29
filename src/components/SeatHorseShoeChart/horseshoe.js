@@ -50,6 +50,7 @@ class HorseShoeChart extends Component {
       }
 
       fetchDataFromOBJ(this.state, props);
+      this.state["numParties"] = 100;
 
       this.chart = null;
       this.refreshIntervalID = 0;
