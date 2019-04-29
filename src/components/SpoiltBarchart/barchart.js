@@ -41,7 +41,7 @@ class BarChart extends Component {
       var self = this;
       this.state = {
         numParties: 5,
-        eventDescription: "2014 National Election",
+        eventDescription: "2019 National Election",
         regionType: "national",
         provinceName: "",
         muniName: "",

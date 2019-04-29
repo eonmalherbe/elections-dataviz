@@ -61,9 +61,9 @@ class QuickResultsWidget extends Component {
         super(props);
         this.state = {
             numParties: 5,
-            eventDescription: "2014 National Election",
-            nationalEventDescription: "2014 National Election",
-            provincialEventDescription: "2014 Provincial Election",
+            eventDescription: "2019 National Election",
+            nationalEventDescription: "2019 National Election",
+            provincialEventDescription: "2019 Provincial Election",
             regionType: "national",
             provinceName: "",
             muniName: "",

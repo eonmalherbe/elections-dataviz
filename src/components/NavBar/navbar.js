@@ -56,9 +56,9 @@ class NavBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            eventDescription: "2014 National Election",
-            nationalEventDescription: "2014 National Election",
-            provincialEventDescription: "2014 Provincial Election",
+            eventDescription: "2019 National Election",
+            nationalEventDescription: "2019 National Election",
+            provincialEventDescription: "2019 Provincial Election",
             regionType: "national",
             provinceName: "",
             muniName: "",

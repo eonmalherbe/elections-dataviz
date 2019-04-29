@@ -42,7 +42,7 @@ class Map extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            eventDescription: "2014 National Election",
+            eventDescription: "2019 National Election",
             regionType: "national",
             provinceName: "",
             muniName: "",

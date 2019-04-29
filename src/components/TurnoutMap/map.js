@@ -45,7 +45,7 @@ class Map extends Component {
         super(props);
         this.state = {
             disableNavigation: false,
-            eventDescription: "2014 National Election",
+            eventDescription: "2019 National Election",
             regionType: "national",
             provinceName: "",
             muniName: "",

@@ -42,7 +42,7 @@ class DonutChart extends Component {
       super(props);
       this.state = {
         numParties: 100,
-        eventDescription: "2014 National Election",
+        eventDescription: "2019 National Election",
         regionType: "national",
         provinceName: "",
         muniName: "",
