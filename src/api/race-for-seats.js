@@ -7,7 +7,7 @@ export function getSeatsDataForComparison(options) {
       query: gql`
       {
           allSeatCalculations(
-            party_Event_Description_Icontains:"national",
+            eventType:"National Election" 
             orderBy:["-seats"]){
             edges{
               node
