@@ -116,7 +116,7 @@ class PieChart extends Component {
         componentID
       } = this.state;
       return (
-          <div className={className("piechart")+" "+cn(`stylesheet-${stylesheetFor}`)}>
+          <div className={className("piechart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
             {
               componentID != -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
             }
