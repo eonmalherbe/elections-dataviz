@@ -546,9 +546,20 @@ export function getRegionName(state) {
 }
 
 export function getRegionName2(state) {
-  if (state.regionType == "national")
-    return "National Assembly";
-  return getRegionName(state);
+  if (state.regionType == "national") {
+    var event = state.eventDescription.toLocaleLowerCase()
+
+    if (event.indexOf("national election") >= 0) {
+      return "National Assembly"
+    }
+    else if (event.indexOf("provincial election") >= 0) {
+      return "Results for Provincial Legislatures"
+    }
+    else
+      return ""
+  }
+  else
+      return getRegionName(state);
 }
 
 export function getRegionName3(state) {

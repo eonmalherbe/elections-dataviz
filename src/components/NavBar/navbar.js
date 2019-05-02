@@ -168,6 +168,10 @@ class NavBar extends Component {
                     default:
                         return;
                 }
+            } else if (passInfo[3] == '4') {
+                // Main page for National Assembly
+                regionType = "national";
+                chartType = "votes-default";
             } else {
                 return;
             }
@@ -218,6 +222,11 @@ class NavBar extends Component {
                     default:
                         return;
                 }
+
+            } else if (passInfo[3] == '4') {
+                // Main page for National Legislature
+                regionType = "national";
+                chartType = "votes-default";
             } else {
                 return;
             }
@@ -287,6 +296,7 @@ class NavBar extends Component {
         var content = [
             {
                 label: 'National Assembly',
+                icon: `1-3-4-1`,
                 content: [
                     {
                         label: "Race for votes",
@@ -367,6 +377,7 @@ class NavBar extends Component {
             },
             {
                 label: 'Provincial Legislature',
+                icon: `2-3-4-1`,
                 content: provincesData.map((province, i) => {
                     return {
                         label: province.name,
