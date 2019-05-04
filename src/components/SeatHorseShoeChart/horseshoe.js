@@ -72,7 +72,13 @@ class HorseShoeChart extends Component {
     }
 
     componentDidUpdate() {
-      this.draw(this.getContainer(), this.state)
+      if (this.has_drawn === undefined) {
+        this.draw(this.getContainer(), this.state)
+        this.has_drawn = true;
+      } else {
+        // Hack to prevent drawing horseshoe twice
+        this.has_drawn = undefined;
+      }
     }
 
     componentWillUnmount() {
