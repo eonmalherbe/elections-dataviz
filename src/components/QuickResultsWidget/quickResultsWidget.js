@@ -76,18 +76,22 @@ class QuickResultsWidget extends Component {
 
             partyAbbrs: ["ANC", "DA", "EFF", "ID"],
             partyIecIds: [null, null, null, null],        
-            eventDescriptions: [
-                // "National Elections 1999",
-                // "Provincial Elections 1999",
-                "14 Apr 2004 National Election",
-                // "14 Apr 2004 Provincial Election",
-                "22 Apr 2009 National Election",
-                // "22 Apr 2009 Provincial Election",
-                "2014 National Election",
-                // "2014 Provincial Election",
-                "2019 NATIONAL ELECTION",
-                // "2019 PROVINCIAL ELECTION",
-            ],
+            eventDescriptions: {
+                national : [
+                    //"National Elections 1999",
+                    "14 Apr 2004 National Election",
+                    "22 Apr 2009 National Election",
+                    "2014 National Election",
+                    "2019 NATIONAL ELECTION",
+                ],
+                provincial : [
+                    // "Provincial Elections 1999",
+                    "14 Apr 2004 Provincial Election",
+                    "22 Apr 2009 Provincial Election",
+                    "2014 Provincial Election",
+                    "2019 PROVINCIAL ELECTION",
+                ]
+            },
             eventDescriptionsSplitNatProv: [
                 // "National Elections 1999",
                 // "Provincial Elections 1999",
