@@ -119,7 +119,7 @@ class NavBar extends Component {
         var lastClass = classList[classList.length - 1];
         var passInfo = lastClass.split('-');
 
-        var eventDescription, regionType, selectionData = {}, chartType = "";
+        var eventDescription, electionType, regionType, selectionData = {}, chartType = "";
         var activeLinkId = passInfo.slice(1, passInfo.length).join('-');
 
         if (passInfo[1] == '1') {
@@ -170,7 +170,6 @@ class NavBar extends Component {
                 }
             } else if (passInfo[3] == '4') {
                 // Main page for National Assembly
-                regionType = "national";
                 chartType = "votes-default";
             } else {
                 return;
@@ -241,11 +240,21 @@ class NavBar extends Component {
 
         if (!chartType)
             return;
-        
+
+        if (eventDescription)
+            if (eventDescription.toLowerCase().indexOf("provincial") > 0) {
+                electionType = "provincial"
+            }
+        else {
+            electionType = "national"
+        }
+
         e.preventDefault();
         var newState;
         if (regionType == "national") {
-            newState = {regionType: regionType};
+            newState = {
+                regionType: regionType
+            };
             // if (this.state.regionType == newState.regionType 
             //     && this.state.comp == chartType)
             //     return;
@@ -272,6 +281,7 @@ class NavBar extends Component {
             //     return;
         }
         newState.eventDescription = eventDescription;
+        newState.electionType = electionType
         newState.comp = chartType;
 
         if (newState.comp == "votes-myvd") {
