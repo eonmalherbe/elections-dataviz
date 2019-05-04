@@ -117,7 +117,12 @@ export function fetchLocationTrackFromVDdata(data) {
 
 export function parseVotesComparisonData(data, props) {
   var results, edges;
+
   var regionType = props.regionType;
+  var eventDescriptions = props.eventDescriptions["national"]
+  if (props.electionType === "provincial")
+    eventDescriptions = props.eventDescriptions["provincial"]
+
   if (regionType == "national") {
     edges = data["data"]["allBallots"].edges;
   } else if (regionType == "province") {
@@ -153,13 +158,13 @@ export function parseVotesComparisonData(data, props) {
       }
     }
   });
-  var results = partyfilter_edges.filter(edge => props.eventDescriptions.indexOf(edge.name) != -1).reverse();
+  var results = partyfilter_edges.filter(edge => eventDescriptions.indexOf(edge.name) != -1).reverse();
 
   var new_results = [];
-  for(var i = 0; i < props.eventDescriptions.length; i ++) {
+  for(var i = 0; i < eventDescriptions.length; i ++) {
     var available = false;
     for (var j = 0; j < results.length; j ++) {
-      if (results[j].name == props.eventDescriptions[i]) {
+      if (results[j].name == eventDescriptions[i]) {
         var available = true;
         new_results.push(results[j]);
         break;
@@ -167,7 +172,7 @@ export function parseVotesComparisonData(data, props) {
     }
     if (!available) {
       new_results.push({
-        name: props.eventDescriptions[i],
+        name: eventDescriptions[i],
         percOfVotes: 0,
         partyInfo: {
           name: props.partyAbbr,
@@ -335,6 +340,9 @@ export function parseSeatsComparisonData(data, props) {
   if (!data)  return null;
   var edges = data["data"]["allSeatCalculations"].edges;
   var regionType = props.regionType;
+  var eventDescriptions = props.eventDescriptions["national"]
+  if (props.electionType === "provincial")
+    eventDescriptions = props.eventDescriptions["provincial"]
 
   var results = edges.map(edge => {
     var node = edge.node;
@@ -349,7 +357,7 @@ export function parseSeatsComparisonData(data, props) {
       name: node["party"]["event"]["description"],
       partyInfo: node["party"]
     }
-  }).filter(result => props.eventDescriptions.indexOf(result.name) != -1)
+  }).filter(result => eventDescriptions.indexOf(result.name) != -1)
   .filter(result => 
     props.partyIecId
     ? (result.partyInfo["iecId"] == props.partyIecId)
@@ -357,10 +365,10 @@ export function parseSeatsComparisonData(data, props) {
   )
 
   var new_results = [];
-  for(var i = 0; i < props.eventDescriptions.length; i ++) {
+  for(var i = 0; i < eventDescriptions.length; i ++) {
     var available = false;
     for (var j = 0; j < results.length; j ++) {
-      if (results[j].name == props.eventDescriptions[i]) {
+      if (results[j].name == eventDescriptions[i]) {
         var available = true;
         new_results.push(results[j]);
         break;
