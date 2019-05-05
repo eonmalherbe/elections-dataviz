@@ -323,7 +323,7 @@ class NavBar extends Component {
                             },
                             {
                                 icon: `1-1-3`,
-                                label: `Vote Prediction`,
+                                label: `CSIR predictions`,
                                 to: `1-1-3`,
                             },
                             {
