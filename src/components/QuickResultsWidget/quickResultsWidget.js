@@ -12,6 +12,7 @@ import RaceForSeatDonut from '../RaceForSeatDonut/piechart';
 import VoteCompBarchart from '../VoteCompBarchart/barchart';
 import SeatCompBarchart from '../SeatCompBarchart/barchart';
 import SeatHorseShoeChart from "../SeatHorseShoeChart/horseshoe";
+import VotePredictionLineChart from "../VotePredictionLineChart/voteprediction";
 
 import SpoiltBarChart from '../SpoiltBarchart/barchart';
 import SplitNatProvChart from '../SplitNatProv/barchart';
@@ -467,6 +468,16 @@ class QuickResultsWidget extends Component {
                 <div className={className("barchart-container")}>
                     <ProgressVotesPieChart 
                         ref={instance => { this.barchartInstance = instance; }} 
+                        {...this.state}
+                        componentID={-1000} />
+                </div>
+            );
+        }
+        if (comp == 'votes-predictions') {
+            return (
+                <div className={className("barchart-container")}>
+                    <VotePredictionLineChart
+                        ref={instance => { this.barchartInstance = instance; }}
                         {...this.state}
                         componentID={-1000} />
                 </div>

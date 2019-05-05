@@ -336,6 +336,18 @@ export function parseSeatsData(data, props) {
   return results.slice(0, props.numParties);
 }
 
+export function parseVotesPredictionData(data, props) {
+    var lineData = [
+        {'x': 1, 'y': 5},
+        {'x': 20, 'y': 20},
+        {'x': 40, 'y': 10},
+        {'x': 60, 'y': 40},
+        {'x': 80, 'y': 5},
+        {'x': 100, 'y': 60}
+    ];
+    return lineData;
+}
+
 export function parseSeatsComparisonData(data, props) {
   if (!data)  return null;
   var edges = data["data"]["allSeatCalculations"].edges;

@@ -134,7 +134,7 @@ class NavBar extends Component {
                         chartType = "votes-comparisons";
                         break;
                     case '3':
-                        chartType = "votes-CSIR";
+                        chartType = "votes-predictions";
                         break;
                     case '4':
                         chartType = "votes-progress";
@@ -321,11 +321,11 @@ class NavBar extends Component {
                                 label: `Comparisons`,
                                 to: `1-1-2`,
                             },
-                            // {
-                            //     icon: `1-1-3`,
-                            //     label: `CSIR Predictions`,
-                            //     to: `1-1-3`,
-                            // },
+                            {
+                                icon: `1-1-3`,
+                                label: `Vote Prediction`,
+                                to: `1-1-3`,
+                            },
                             {
                                 icon: `1-1-4`,
                                 label: `Counting progress`,
@@ -350,7 +350,7 @@ class NavBar extends Component {
                                         to: `3-${i}`,
                                     }
                                 })
-                            }
+                            },
                         ]
                     },
                     {
