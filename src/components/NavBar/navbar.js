@@ -125,6 +125,7 @@ class NavBar extends Component {
         var classList = iconClass.split(' ');
         var lastClass = classList[classList.length - 1];
         var passInfo = lastClass.split('-');
+        var enableMap = true;
 
         var eventDescription, electionType, regionType, selectionData = {}, chartType = "";
         var activeLinkId = passInfo.slice(1, passInfo.length).join('-');
@@ -159,6 +160,7 @@ class NavBar extends Component {
                 switch (passInfo[3]) {
                     case '1':
                         chartType = "seats-default";
+                        enableMap = false;
                         break;
                     case '2':
                         chartType = "seats-comparisons";
@@ -290,6 +292,7 @@ class NavBar extends Component {
         newState.eventDescription = eventDescription;
         newState.electionType = electionType
         newState.comp = chartType;
+        newState.enableMap = enableMap;
 
         if (newState.comp == "votes-myvd") {
             newState.regionType = "municipality-vd";
@@ -328,11 +331,13 @@ class NavBar extends Component {
                                 label: `Comparisons`,
                                 to: `1-1-2`,
                             },
+                            /*
                             {
                                 icon: `1-1-3`,
                                 label: `CSIR predictions`,
                                 to: `1-1-3`,
                             },
+                            */
                             {
                                 icon: `1-1-4`,
                                 label: `Counting progress`,
