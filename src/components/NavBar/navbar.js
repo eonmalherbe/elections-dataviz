@@ -239,7 +239,7 @@ class NavBar extends Component {
             } else if (passInfo[3] == '4') {
                 // Main page for National Legislature
                 regionType = "national";
-                enableBarChart = true;
+                enableBarChart = false;
                 chartType = "votes-default";
             } else {
                 return;

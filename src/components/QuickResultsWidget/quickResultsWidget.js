@@ -74,6 +74,8 @@ class QuickResultsWidget extends Component {
             comp: "votes-default",
             stylesheetFor: "web",
             componentID: 5,
+            enableBarChart: true,
+            enableMap: true,
 
             partyAbbrs: ["ANC", "DA", "EFF", "ID"],
             partyIecIds: [null, null, null, null],        
@@ -574,7 +576,7 @@ class QuickResultsWidget extends Component {
         components.push(this.renderTurnoutProgressSpoilt())
         components.push(this.renderMyVDEnterForm())
 
-        //if (this.state.enableBarChart)
+        if (this.state.enableBarChart)
           components.push(this.renderBarchart())
 
         if (this.state.enableMap)
