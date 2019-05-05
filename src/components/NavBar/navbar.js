@@ -43,11 +43,18 @@ class CustomLink extends React.Component {
     }
   
     render() {
-      return (
-        <div className="metismenu-link" onClick={this.onClick}>
-          {this.props.children}
-        </div>
-      );
+      if (this.props.hasSubMenu) {
+        return (
+          <div className="metismenu-link" onClick={this.onClick}>
+            {this.props.children}
+          </div>
+      )} else {
+        return (
+          <div className="metismenu-link metismenu-end" onClick={this.onClick}>
+            {this.props.children}
+          </div>
+        );
+      }
     }
   };
 
@@ -481,6 +488,7 @@ class NavBar extends Component {
                 // })
             // }
         ];
+
         
         return (
             <div className={[className(cssPrefix("menu-widget")), cssPrefix("menu-widget")].join(" ")} ref="navbar">
