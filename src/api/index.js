@@ -2,7 +2,7 @@ import gql from "graphql-tag"
 import {client} from "./config"
 
 export {getSeatsData, getSeatsDataForComparison} from "./race-for-seats"
-export {getVotesDataM, getVotesDataForAllEvents, getVotesDataForComparison, getMainParties} from "./race-for-votes"
+export {getVotesPredictionData, getVotesDataM, getVotesDataForAllEvents, getVotesDataForComparison, getMainParties} from "./race-for-votes"
 export {getTurnoutData, getTurnoutDataForOneEvent, getTurnoutDataForAllEvents} from "./turnout"
 export {getSpoiltData} from "./spoilt"
 export {getProgressVotesCount} from "./prog-votescount"
