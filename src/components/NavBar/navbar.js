@@ -343,6 +343,7 @@ class NavBar extends Component {
                             },
                             {
                                 label: `Metros`,
+                                icon: `3-2`, // Setting default metros view to JHB
                                 content: metrosData.map((metro, i) => {
                                     return {
                                         icon: `3-${i}`,
