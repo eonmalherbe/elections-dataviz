@@ -58,7 +58,7 @@ function cn(originName) {
     return className(config.CSS_PREFIX + originName);
 }
 
-class QuickResultsWidget extends Component {    
+class QuickResultsWidget extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -351,7 +351,7 @@ class QuickResultsWidget extends Component {
         if (comp == 'votes-myvd') {
             return (
                 <div className={className("quick-results-title")}>
-                    My Voting District {getRegionName(self.state)}
+                    Voting District //{getRegionName(self.state)}
                 </div>
             );
         }
@@ -378,8 +378,8 @@ class QuickResultsWidget extends Component {
                 mapState.disableNavigation = true;
                 return (
                     <div className={className("map-container")}>
-                        <Map 
-                            ref={instance => { this.mapInstance = instance; }} 
+                        <Map
+                            ref={instance => { this.mapInstance = instance; }}
                             key={comp}
                             {...mapState}
                             componentID={-1000}
@@ -394,19 +394,19 @@ class QuickResultsWidget extends Component {
             mapState.regionType = "national";
             return (
                 <div className={className("map-container")}>
-                    <Map 
-                        ref={instance => { this.mapInstance = instance; }} 
+                    <Map
+                        ref={instance => { this.mapInstance = instance; }}
                         key={comp}
                         {...mapState}
                         componentID={-1000}
                     />
                 </div>
-            ); 
+            );
         } else if (comp == 'votes-turnout') {
             return (
                 <div className={className("map-container")}>
-                    <TurnoutMap 
-                        ref={instance => { this.mapInstance = instance; }} 
+                    <TurnoutMap
+                        ref={instance => { this.mapInstance = instance; }}
                         key={comp}
                         {...this.state}
                         componentID={-1000} />
@@ -415,8 +415,8 @@ class QuickResultsWidget extends Component {
         } else {
             return (
                 <div className={className("map-container")}>
-                    <Map 
-                        ref={instance => { this.mapInstance = instance; }} 
+                    <Map
+                        ref={instance => { this.mapInstance = instance; }}
                         key={comp}
                         {...this.state}
                         componentID={-1000} />
@@ -544,8 +544,9 @@ class QuickResultsWidget extends Component {
         }
         return (
             <div className="voting-district-enter-form">
-                <input ref="vdInput" type="text" placeholder="65010035 or 86550385"/>
+                <input ref="vdInput" type="text" placeholder="Enter your VD number"/>
                 <button onClick={this.onShowVDResult.bind(this)}> Show Result</button>
+                <p className="iec-link">Look up your voting district number at the <a href="http://maps.elections.org.za/vsfinder/">IEC</a>.</p>
             </div>
         )
     }
@@ -567,6 +568,17 @@ class QuickResultsWidget extends Component {
         var {
             stylesheetFor,
         } = this.state;
+
+        var components = [];
+        components.push(this.renderQuickResultsTitle())
+        components.push(this.renderTurnoutProgressSpoilt())
+        components.push(this.renderMyVDEnterForm())
+        components.push(this.renderBarchart())
+        console.log(this.state)
+
+        if (this.state.enableMap)
+          components.push(this.renderMap())
+
         return (
             <div className={className("quickresultswidget") + " " + cn(`stylesheet-${stylesheetFor}`)}>
                 <div className={cn("row")}>
@@ -574,11 +586,7 @@ class QuickResultsWidget extends Component {
                         <NavBar {...this.state}/>
                     </div>
                     <div className={cn("col-md-8")+" "+className("main-right-part")}>
-                        {this.renderQuickResultsTitle()}
-                        {this.renderTurnoutProgressSpoilt()}
-                        {this.renderMyVDEnterForm()}
-                        {this.renderBarchart()}
-                        {this.renderMap()}
+                        {components}
                     </div>
                 </div>
             </div>

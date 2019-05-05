@@ -140,6 +140,7 @@ class NavBar extends Component {
                         break;
                     case '2':
                         chartType = "votes-comparisons";
+                        enableMap = false;
                         break;
                     case '3':
                         chartType = "votes-predictions";
@@ -164,6 +165,7 @@ class NavBar extends Component {
                         break;
                     case '2':
                         chartType = "seats-comparisons";
+                        enableMap = false;
                         break;
                     case '3':
                         chartType = "seats-electeds";
@@ -194,6 +196,7 @@ class NavBar extends Component {
                         break;
                     case '2':
                         chartType = "votes-comparisons";
+                        enableMap = false;
                         break;
                     case '3':
                         chartType = "votes-progress"; // done
@@ -217,6 +220,7 @@ class NavBar extends Component {
                         break;
                     case '2':
                         chartType = "seats-comparisons";
+                        enableMap = false;
                         break;
                     case '3':
                         chartType = "seats-electeds";
