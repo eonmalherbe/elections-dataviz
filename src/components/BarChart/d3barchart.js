@@ -239,7 +239,7 @@ export function Chart(container, width, height, className, options) {
           var partyIecIds = [];
           chartData.forEach(({partyInfo}) => {
             var party = partyInfo.name;
-            if (partyIecIds.indexOf(partyInfo.iecId) == -1 && partyInfo.iecId) {
+            if (partyIecIds.indexOf(partyInfo.iecId) === -1 && partyInfo.iecId) {
                 parties.push(party);
                 partyIecIds.push(partyInfo.iecId);
             }

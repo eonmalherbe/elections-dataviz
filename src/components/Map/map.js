@@ -112,7 +112,7 @@ class Map extends Component {
 
     exportAsPNG(event) {
         var targetState = event.detail;
-        if (targetState.componentID != this.state.componentID)
+        if (targetState.componentID !== this.state.componentID)
           return;
         var rect = {width: 950, height: 890};
         var rendercanvas = document.createElement('canvas');
@@ -169,7 +169,7 @@ class Map extends Component {
         return (
             <div className={className("map-widget")+" "+cn(`stylesheet-${stylesheetFor}`)}>
                 {
-                    componentID != -1000 && <div className={cn("map-title")}>{getRegionName(this.state)}</div>
+                    componentID !== -1000 && <div className={cn("map-title")}>{getRegionName(this.state)}</div>
                 }
 
                 <div ref="vizcontainer" className={className("map")}></div>

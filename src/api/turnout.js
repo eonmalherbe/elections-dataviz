@@ -7,7 +7,7 @@ import {client} from "./config"
     var eventDescription = options.eventDescription;
     if (!eventDescription)
       return;
-    if (options.regionType == "national") {
+    if (options.regionType === "national") {
       return client.query({
         query: gql`
         {
@@ -27,7 +27,7 @@ import {client} from "./config"
         }
         `
       })
-    } else if (options.regionType == "province") {
+    } else if (options.regionType === "province") {
       return client.query({
         query: gql`
         {
@@ -77,7 +77,7 @@ import {client} from "./config"
     if (!eventDescription)
       return;
 
-    if (options.regionType == "national") {
+    if (options.regionType === "national") {
       return client.query({
         query: gql`
         {
@@ -99,7 +99,7 @@ import {client} from "./config"
         }
         `
       })
-    } else if (options.regionType == "province") {
+    } else if (options.regionType === "province") {
       return client.query({
         query: gql`
         {
@@ -122,7 +122,7 @@ import {client} from "./config"
         }
         `
       })
-    } else if (options.regionType == "municipality") {
+    } else if (options.regionType === "municipality") {
         var muniCode = options.muniCode || options.muniName.split(" - ")[0];
 
         return client.query({
@@ -148,7 +148,7 @@ import {client} from "./config"
           }
           `
         })
-    } else if (options.regionType == "municipality-vd") {
+    } else if (options.regionType === "municipality-vd") {
         return client.query({
           query: gql`
           {
@@ -175,7 +175,7 @@ import {client} from "./config"
   }
 
   export function getTurnoutDataForAllEvents(options) {
-    if (options.regionType == "national") {
+    if (options.regionType === "national") {
       return client.query({
         query: gql`
         {
@@ -195,7 +195,7 @@ import {client} from "./config"
         }
         `
       })
-    } else if (options.regionType == "province") {
+    } else if (options.regionType === "province") {
       return client.query({
         query: gql`
         {
@@ -217,7 +217,7 @@ import {client} from "./config"
         }
         `
       })
-    } else if (options.regionType == "municipality") {
+    } else if (options.regionType === "municipality") {
         var muniCode = options.muniCode || options.muniName.split(" - ")[0];
 
         return client.query({
@@ -242,7 +242,7 @@ import {client} from "./config"
           }
           `
         })
-    } else if (options.regionType == "municipality-vd") {
+    } else if (options.regionType === "municipality-vd") {
         return client.query({
           query: gql`
           {

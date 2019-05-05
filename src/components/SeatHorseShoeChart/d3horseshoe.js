@@ -96,7 +96,7 @@ export function Chart(container, width, height, className, options) {
             J = parseInt((totalSeats)/Totals[rows-1]*Math.PI/(2*Math.asin(2.0/(3.0*rows+4.0*i-2.0))));
             // The radius of the ith row in an N-row diagram (Ri) is (3*N+4*i-2)/(4*N)
             R = (3.0*rows+4.0*i-2.0)/(4.0*rows);
-            if (J == 1) {
+            if (J === 1) {
               poslist.push({
                 angle: Math.PI/2.0,
                 x: 1.75*R,
@@ -118,7 +118,7 @@ export function Chart(container, width, height, className, options) {
           }
           J=totalSeats-poslist.length
           R=(7.0*rows-2.0)/(4.0*rows)
-          if (J==1) {
+          if (J===1) {
               poslist.push({
                 angle: Math.PI/2.0,
                 x: 1.75*R,

@@ -96,7 +96,7 @@ class BarChart extends Component {
 
     exportAsPNG(event) {
       var targetState = event.detail;
-      if (targetState.componentID != this.state.componentID)
+      if (targetState.componentID !== this.state.componentID)
         return;
       svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-votes-barchart(${getRegionName(this.state)}).png`);
     }
@@ -119,6 +119,7 @@ class BarChart extends Component {
     }
 
     getContainer() {
+        console.log(d3);
       return d3.select(this.refs.vizcontainer)
     }
       
@@ -131,7 +132,7 @@ class BarChart extends Component {
       return (
           <div className={cn("barchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
             {
-              componentID != -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
+              componentID !== -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
             }
             <div 
               ref="vizcontainer" 
@@ -161,7 +162,7 @@ class BarChart extends Component {
     drawGraph(container, props, data, partyColorsData) {
         var chartData = parseVotesData(data, props);
 
-        if (props.comp == "votes-myvd") {
+        if (props.comp === "votes-myvd") {
           var newState;
           if (chartData) {
             newState = fetchLocationTrackFromVDdata(data);
@@ -170,7 +171,7 @@ class BarChart extends Component {
           }
           var needUpdate = false;
           Object.keys(newState).forEach(key => {
-            if (props[key] != newState[key]) {
+            if (props[key] !== newState[key]) {
               needUpdate = true;
             }
           })

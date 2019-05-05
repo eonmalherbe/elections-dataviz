@@ -100,7 +100,7 @@ class HorseShoeChart extends Component {
 
     exportAsPNG(event) {
       var targetState = event.detail;
-      if (targetState.componentID != this.state.componentID)
+      if (targetState.componentID !== this.state.componentID)
         return;
       svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `race-for-seats-horseshoe-chart(${getNationOrProvinceName(this.state)}).png`);
     }
@@ -126,7 +126,7 @@ class HorseShoeChart extends Component {
       return (
           <div className={className("horseshoechart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
             {
-                componentID != -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>
+                componentID !== -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>
             }
             <div 
               ref="vizcontainer" 

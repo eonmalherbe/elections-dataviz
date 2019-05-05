@@ -6,7 +6,7 @@ export function getVotesPredictionData(options) {
 }
 
 export function getVotesDataForComparison(options) {
-  if (options.regionType == "national") {
+  if (options.regionType === "national") {
     return client.query({
       query: gql`
       {
@@ -37,7 +37,7 @@ export function getVotesDataForComparison(options) {
       }
       `
     })
-  } else if (options.regionType == "province") {
+  } else if (options.regionType === "province") {
     return client.query({
       query: gql`
       {
@@ -70,7 +70,7 @@ export function getVotesDataForComparison(options) {
       }
       `
     })
-  } else if (options.regionType == "municipality") {
+  } else if (options.regionType === "municipality") {
     var muniCode = options.muniCode || options.muniName.split(" - ")[0];
 
     return client.query({
@@ -110,7 +110,7 @@ export function getVotesDataForComparison(options) {
       }
       `
     })
-  } else if (options.regionType == "municipality-vd") {
+  } else if (options.regionType === "municipality-vd") {
     return client.query({
       query: gql`
       {
@@ -145,7 +145,7 @@ export function getVotesDataForComparison(options) {
 }
 
 export function getVotesDataForAllEvents(options) {
-    if (options.regionType == "national") {
+    if (options.regionType === "national") {
       return client.query({
         query: gql`
         {
@@ -183,7 +183,7 @@ export function getVotesDataForAllEvents(options) {
         }
         `
       })
-    } else if (options.regionType == "province") {
+    } else if (options.regionType === "province") {
       return client.query({
         query: gql`
         {
@@ -222,7 +222,7 @@ export function getVotesDataForAllEvents(options) {
         }
         `
       })
-    } else if (options.regionType == "municipality") {
+    } else if (options.regionType === "municipality") {
       var muniCode = options.muniCode || options.muniName.split(" - ")[0];
   
       return client.query({
@@ -265,7 +265,7 @@ export function getVotesDataForAllEvents(options) {
         }
         `
       })
-    } else if (options.regionType == "municipality-vd") {
+    } else if (options.regionType === "municipality-vd") {
       return client.query({
         query: gql`
         {
@@ -309,7 +309,7 @@ export function getVotesDataM(options) {
     var eventDescription = options.eventDescription;
     if (!eventDescription)
     return;
-    if (options.regionType == "national") {
+    if (options.regionType === "national") {
       return client.query({
         query: gql`
         {
@@ -343,7 +343,7 @@ export function getVotesDataM(options) {
         }
         `
       })
-    } else if (options.regionType == "province") {
+    } else if (options.regionType === "province") {
       return client.query({
         query: gql`
         {
@@ -377,7 +377,7 @@ export function getVotesDataM(options) {
         }
         `
       })
-    } else if (options.regionType == "municipality") {
+    } else if (options.regionType === "municipality") {
       var muniCode = options.muniCode || options.muniName.split(" - ")[0];
   
       return client.query({
@@ -415,7 +415,7 @@ export function getVotesDataM(options) {
         }
         `
       })
-    } else if (options.regionType == "municipality-vd") {
+    } else if (options.regionType === "municipality-vd") {
       return client.query({
         query: gql`
         {
@@ -462,7 +462,7 @@ export function getVotesDataM(options) {
     var eventDescription = options.eventDescription;
     if (!eventDescription)
       return;
-    if (options.regionType == "national") {
+    if (options.regionType === "national") {
       return client.query({
         query: gql`
         {
@@ -490,7 +490,7 @@ export function getVotesDataM(options) {
         }
         `
       })
-    } else if (options.regionType == "province") {
+    } else if (options.regionType === "province") {
       return client.query({
         query: gql`
         {
@@ -521,7 +521,7 @@ export function getVotesDataM(options) {
         }
         `
       })
-    } else { //if (options.regionType == "municipality") {
+    } else { //if (options.regionType === "municipality") {
         return client.query({
           query: gql`
           {

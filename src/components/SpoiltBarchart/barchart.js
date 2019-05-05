@@ -94,7 +94,7 @@ class BarChart extends Component {
 
     exportAsPNG(event) {
       var targetState = event.detail;
-      if (targetState.componentID != this.state.componentID)
+      if (targetState.componentID !== this.state.componentID)
         return;
       svgToPng.saveSvgAsPng(this.refs.vizcontainer.childNodes[0], `spoilt-barchart(${getRegionName(this.state)}).png`);
     }
@@ -119,7 +119,7 @@ class BarChart extends Component {
       return (
           <div className={cn("barchart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
             {
-                componentID != -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
+                componentID !== -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getRegionName(this.state)}): </div>
             }
             <div 
               ref="vizcontainer" 

@@ -2,7 +2,7 @@ import gql from "graphql-tag"
 import {client} from "./config"
 
 export function getSeatsDataForComparison(options) {
-  if (options.regionType == "national") {
+  if (options.regionType === "national") {
     return client.query({
       query: gql`
       {
@@ -31,7 +31,7 @@ export function getSeatsDataForComparison(options) {
       }
       `
     })
-  } else { //  if (options.regionType == "province")
+  } else { //  if (options.regionType === "province")
     return client.query({
       query: gql`
       {
@@ -69,7 +69,7 @@ export function getSeatsData(options) {
     var eventDescription = options.eventDescription;
     if (!eventDescription)
       return;
-    if (options.regionType == "national") {
+    if (options.regionType === "national") {
       return client.query({
         query: gql`
         {
@@ -101,7 +101,7 @@ export function getSeatsData(options) {
         }
         `
       })
-    } else { //  if (options.regionType == "province")
+    } else { //  if (options.regionType === "province")
       eventDescription = eventDescription.replace("National", "Provincial");
       eventDescription = eventDescription.replace("NATIONAL", "PROVINCIAL");
       eventDescription = eventDescription.replace("national", "provincial");
