@@ -126,6 +126,7 @@ class NavBar extends Component {
         var lastClass = classList[classList.length - 1];
         var passInfo = lastClass.split('-');
         var enableMap = true;
+        var enableBarChart = true;
 
         var eventDescription, electionType, regionType, selectionData = {}, chartType = "";
         var activeLinkId = passInfo.slice(1, passInfo.length).join('-');
@@ -238,6 +239,7 @@ class NavBar extends Component {
             } else if (passInfo[3] == '4') {
                 // Main page for National Legislature
                 regionType = "national";
+                enableBarChart = false;
                 chartType = "votes-default";
             } else {
                 return;
@@ -297,6 +299,7 @@ class NavBar extends Component {
         newState.electionType = electionType
         newState.comp = chartType;
         newState.enableMap = enableMap;
+        newState.enableBarChart = enableBarChart;
 
         if (newState.comp == "votes-myvd") {
             newState.regionType = "municipality-vd";
