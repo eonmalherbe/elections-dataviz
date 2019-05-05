@@ -564,7 +564,7 @@ class Map extends Component {
                     .style("display", "none");
             }).catch(error => {
                 console.error(error);
-                alert(`failed to get data from server`);
+                console.log(`failed to get data from server`);
             })
         }).catch(error => {
             console.error(error);       
@@ -594,7 +594,7 @@ class Map extends Component {
             self.setState(newState);
             setTimeout(() => {
                 if (regionType == "national" || regionType == "province") {
-                    alert(`Can't get map data for ${currentRegionName}`); 
+                  console.log(`Can't get map data for ${currentRegionName}`);
                 } else {
                     alert(`${currentRegionName} has been disestablished`); 
                 }
