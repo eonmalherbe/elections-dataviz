@@ -574,7 +574,7 @@ class QuickResultsWidget extends Component {
         components.push(this.renderTurnoutProgressSpoilt())
         components.push(this.renderMyVDEnterForm())
 
-        if (this.state.enableBarChart)
+        //if (this.state.enableBarChart)
           components.push(this.renderBarchart())
 
         if (this.state.enableMap)
