@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {createTooltip, formatPartyName, formatClassNameFromString} from "../../utils";
+import {createTooltip, createSvg, formatPartyName, formatClassNameFromString} from "../../utils";
 import config from "../../config"
 
 export function Chart(container, width, height, className, options) {
@@ -14,10 +14,15 @@ export function Chart(container, width, height, className, options) {
     var YaxisOffset = 50;
     var predefColors = ["blue", "yellow", "red"];
 
+    // TODO not sure what options.viewBox is below - don't see it being used anywhere
+    /*
     var svg = container.append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet")
         .attr("viewBox", options.viewBox || ("0 0 " + (width+XaxisOffset) + " " + (height+YaxisOffset)))
         .classed("svg-content", true);
+    */
+
+    var svg = createSvg(container, width + XaxisOffset, height + YaxisOffset);
         
     var tooltipDiv = createTooltip(className);
   

@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {createTooltip} from "../../utils";
+import {createTooltip, createSvg} from "../../utils";
 
 export function Chart(container, width, height, className, options) {
   if (!options) {
@@ -12,11 +12,9 @@ export function Chart(container, width, height, className, options) {
 
     var predefColors = ["blue", "yellow", "red"];
 
-    var svg = container.append("svg")
-        .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 " + (width) + " " + (height))
-        .classed("svg-content", true);
-        
+    var svg = createSvg(container, width, height);
+
+
     var tooltipDiv = createTooltip(className);
 
     var mainSvg = svg.append("g");

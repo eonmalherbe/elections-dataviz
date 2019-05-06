@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {createTooltip} from "../../utils";
+import {createTooltip, createSvg} from "../../utils";
 
 export function Chart(container, width, height, className, options) {
     var data = [],
@@ -38,10 +38,7 @@ export function Chart(container, width, height, className, options) {
         .cornerRadius(cornerRadius)
         .padAngle(padAngle);
 
-    var totalSvg = container.append("svg")
-        .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", options.viewBox || ("0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom)))
-        .classed("svg-content", true);
+    var totalSvg = createSvg(container, width + margin.left + margin.right, height + margin.top + margin.bottom);
     
     
     var transformX = height / 2, transformY = height / 2;
