@@ -90,23 +90,25 @@ class NavBar extends Component {
     }
 
     componentDidMount() {
-        if(!document.getElementById('navbarcss')) {
-            var link = document.createElement('link');
-            link.id = 'navbarcss';
-            link.rel = 'stylesheet';
-            link.href = config.DOMAIN + '/navbar.css';
-            document.head.appendChild(link);
-        }
+      var link = null;
 
-        if(!document.getElementById('font-awesome')) {
-            var link = document.createElement('link');
-            link.id = 'font-awesome';
-            link.rel = 'stylesheet';
-            link.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
-            document.head.appendChild(link);
-        }
+      if(!document.getElementById('navbarcss')) {
+          link = document.createElement('link');
+          link.id = 'navbarcss';
+          link.rel = 'stylesheet';
+          link.href = config.DOMAIN + '/navbar.css';
+          document.head.appendChild(link);
+      }
 
-        this.refs.navbar.addEventListener("click", this.handleNavBarSelection);
+      if(!document.getElementById('font-awesome')) {
+          link = document.createElement('link');
+          link.id = 'font-awesome';
+          link.rel = 'stylesheet';
+          link.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
+          document.head.appendChild(link);
+      }
+
+      this.refs.navbar.addEventListener("click", this.handleNavBarSelection);
     }
 
     componentWillUnmount() {
@@ -118,7 +120,7 @@ class NavBar extends Component {
 
     handleNavBarSelection(e) {
         console.log("handleNavBarSelection");
-        if (e.target.className.indexOf("metismenu-link") == -1) {
+        if (e.target.className.indexOf("metismenu-link") === -1) {
             return;
         }
         var iconClass = e.target.childNodes[0].className;
@@ -131,10 +133,10 @@ class NavBar extends Component {
         var eventDescription, electionType, regionType, selectionData = {}, chartType = "";
         var activeLinkId = passInfo.slice(1, passInfo.length).join('-');
 
-        if (passInfo[1] == '1') {
+        if (passInfo[1] === '1') {
             eventDescription = this.state.nationalEventDescription;
             regionType = "national";
-            if (passInfo[2] == '1') {
+            if (passInfo[2] === '1') {
                 switch (passInfo[3]) {
                     case '1':
                         chartType = "votes-default";
@@ -145,6 +147,7 @@ class NavBar extends Component {
                         break;
                     case '3':
                         chartType = "votes-predictions";
+                        enableMap = false;
                         break;
                     case '4':
                         chartType = "votes-progress";
@@ -158,7 +161,7 @@ class NavBar extends Component {
                     default:
                         return;
                 }
-            } else if (passInfo[2] == '2') {
+            } else if (passInfo[2] === '2') {
                 switch (passInfo[3]) {
                     case '1':
                         chartType = "seats-default";
@@ -180,17 +183,17 @@ class NavBar extends Component {
                     default:
                         return;
                 }
-            } else if (passInfo[3] == '4') {
+            } else if (passInfo[3] === '4') {
                 // Main page for National Assembly
                 chartType = "votes-default";
             } else {
                 return;
             }
-        } else if (passInfo[1] == '2') {
+        } else if (passInfo[1] === '2') {
             eventDescription = this.state.provincialEventDescription;
             regionType = "province";
             selectionData = provincesData[passInfo[2]];
-            if (passInfo[3] == '1') {
+            if (passInfo[3] === '1') {
                 switch (passInfo[4]) {
                     case '1':
                         chartType = "votes-default"; // done
@@ -214,7 +217,7 @@ class NavBar extends Component {
                     default:
                         return;
                 }
-            } else if (passInfo[3] == '2') {
+            } else if (passInfo[3] === '2') {
                 switch (passInfo[4]) {
                     case '1':
                         chartType = "seats-default"; // done
@@ -236,7 +239,7 @@ class NavBar extends Component {
                         return;
                 }
 
-            } else if (passInfo[3] == '4') {
+            } else if (passInfo[3] === '4') {
                 // Main page for National Legislature
                 regionType = "national";
                 enableBarChart = false;
@@ -244,7 +247,7 @@ class NavBar extends Component {
             } else {
                 return;
             }
-        } else if (passInfo[1] == '3') { // metros
+        } else if (passInfo[1] === '3') { // metros
             eventDescription = this.state.nationalEventDescription;
             regionType = "municipality"
             selectionData = metrosData[passInfo[2]];
@@ -266,33 +269,33 @@ class NavBar extends Component {
 
         e.preventDefault();
         var newState;
-        if (regionType == "national") {
+        if (regionType === "national") {
             newState = {
                 regionType: regionType
             };
-            // if (this.state.regionType == newState.regionType 
-            //     && this.state.comp == chartType)
+            // if (this.state.regionType === newState.regionType
+            //     && this.state.comp === chartType)
             //     return;
-        } else if (regionType == "province") {
+        } else if (regionType === "province") {
             newState = {
                 regionType: regionType,
                 provinceName: selectionData.name
             };
-            // if (this.state.regionType == newState.regionType 
-            //     && this.state.provinceName == newState.provinceName 
-            //     && this.state.comp == chartType)
+            // if (this.state.regionType === newState.regionType
+            //     && this.state.provinceName === newState.provinceName
+            //     && this.state.comp === chartType)
             //     return;
-        } else if (regionType == "municipality") {
+        } else if (regionType === "municipality") {
             newState = {
                 regionType: regionType,
                 provinceName: selectionData.provinceName,
                 muniName: selectionData.muniName,
                 muniCode: selectionData.muniCode,
             }; 
-            // if (this.state.regionType == newState.regionType 
-            //     && this.state.provinceName == newState.provinceName
-            //     && this.state.muniName == newState.muniName
-            //     && this.state.comp == chartType)
+            // if (this.state.regionType === newState.regionType
+            //     && this.state.provinceName === newState.provinceName
+            //     && this.state.muniName === newState.muniName
+            //     && this.state.comp === chartType)
             //     return;
         }
         newState.eventDescription = eventDescription;
@@ -301,12 +304,12 @@ class NavBar extends Component {
         newState.enableMap = enableMap;
         newState.enableBarChart = enableBarChart;
 
-        if (newState.comp == "votes-myvd") {
+        if (newState.comp === "votes-myvd") {
             newState.regionType = "municipality-vd";
             newState.iecId = "";
         }
 
-        if (newState.comp == "seats-electeds" || newState.comp == "seats-women" || newState.comp == "seats-age") {
+        if (newState.comp === "seats-electeds" || newState.comp === "seats-women" || newState.comp === "seats-age") {
             triggerCustomEvent(events.SEATS_ELECTEDS_EVENT, newState);
             return;
         }
@@ -338,13 +341,11 @@ class NavBar extends Component {
                                 label: `Comparisons`,
                                 to: `1-1-2`,
                             },
-                            /*
                             {
                                 icon: `1-1-3`,
                                 label: `CSIR predictions`,
                                 to: `1-1-3`,
                             },
-                            */
                             {
                                 icon: `1-1-4`,
                                 label: `Counting progress`,
