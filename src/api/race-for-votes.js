@@ -1,6 +1,7 @@
 import gql from "graphql-tag"
 import {client} from "./config"
 
+
 export function getVotesPredictionData(options) {
     return [[1, 3], [5,7], [7, 9]]
 }

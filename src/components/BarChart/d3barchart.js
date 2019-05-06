@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {createTooltip, createSvg} from "../../utils";
+import {createTooltip, createSvg, createErrorText} from "../../utils";
 import { type } from "os";
 import config from "../../config";
 import {
@@ -68,11 +68,9 @@ export function Chart(container, width, height, className, options) {
       .attr("class", className("bar-container"));
     var barTextSvg = svg.append("g")
       .attr("class", className("bartext-container"));
-    var errorText = svg.append("g")
-      .attr("transform", "translate("+(width/2)+","+(height/2)+")")
-      .append("text")
-      .attr("text-anchor", "middle");
-  
+
+    var errorText = createErrorText(svg, width / 2, height / 2);
+
     this.draw = function(chartData, colorsData) {
 
       if (!chartData) {

@@ -336,18 +336,6 @@ export function parseSeatsData(data, props) {
   return results.slice(0, props.numParties);
 }
 
-export function parseVotesPredictionData(data, props) {
-  var lineData = [
-      {'x': 1, 'y': 5},
-      {'x': 20, 'y': 20},
-      {'x': 40, 'y': 10},
-      {'x': 60, 'y': 40},
-      {'x': 80, 'y': 5},
-      {'x': 100, 'y': 60}
-  ];
-
-  return lineData;
-}
 
 export function parseSeatsComparisonData(data, props) {
   if (!data)  return null;
@@ -797,3 +785,36 @@ export function createSvg(container, width, height) {
 
   return svg;
 }
+
+export function createErrorText(container, xOffset, yOffset) {
+  if (xOffset === undefined) xOffset = 0;
+  if (yOffset === undefined) yOffset = 0;
+
+  var errorText = container.append("g")
+    .attr("transform", "translate("+ xOffset + "," + yOffset + ")")
+    .append("text")
+    .attr("text-anchor", "middle");
+
+  return errorText;
+}
+
+export function PartyColours(partyColours) {
+  var partyColourByName = {};
+
+  if (partyColours && partyColours["data"]["allParties"]["edges"]) {
+      partyColours["data"]["allParties"]["edges"].forEach(edge => {
+        partyColourByName[edge.node.name] = edge.node.colour;
+      })
+  }
+
+  // TODO should used cleaned name
+  function getFillColourFromPartyName(partyName, i) {
+    console.log(partyColourByName[partyName])
+    console.log(partyColourByName)
+    return partyColourByName[partyName];
+    //return partyColourByName[partyName.split("/")[0]] || predefColours[i%predefColours.length];
+  }
+
+  return getFillColourFromPartyName;
+}
+

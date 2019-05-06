@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {createTooltip, createSvg} from "../../utils";
+import {createTooltip, createSvg, createErrorText} from "../../utils";
 
 export function Chart(container, width, height, className, options) {
     var data = [],
@@ -62,10 +62,8 @@ export function Chart(container, width, height, className, options) {
         .attr('fill', function(d) { return colour(d.data[category]); })
         .attr('d', arc);
 
-    var errorText = svg.append("g")
-        .append("text")
-        .attr("text-anchor", "middle");
-      
+    var errorText = createErrorText(svg);
+
     this.destroy = function() {
         container.selectAll("svg").remove();
     }
