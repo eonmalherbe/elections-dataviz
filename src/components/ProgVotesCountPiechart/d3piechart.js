@@ -24,8 +24,6 @@ export function Chart(container, width, height, className, options) {
         return 'rgb(' + Math.random()*250 + ',' + Math.random()*250 + ',' + Math.random()*250 + ')';
     }
 
-    container.selectAll("svg").remove();
-
     var radius = Math.min(width, height) / 2;
 
     var pie = d3.pie()

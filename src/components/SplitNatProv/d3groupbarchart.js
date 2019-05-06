@@ -8,7 +8,6 @@ export function Chart(container, width, height, className, options) {
   }
   width = 700;
   height = 250;
-  container.selectAll("svg").remove();
 
     var XaxisOffset = 70;
     var YaxisOffset = 50;

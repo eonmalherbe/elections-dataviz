@@ -36,18 +36,17 @@ export function Chart(container, width, height, className, options) {
 
   width = 700;
   height = 200;
-  container.selectAll("svg").remove();
 
-    var predefColors = ["blue", "yellow", "red"];
+  var predefColors = ["blue", "yellow", "red"];
 
-    var svg = createSvg(container, width + offset.width, height + offset.height + (options.showLegend ? 50 : 0))
-    var tooltipDiv = createTooltip(className);
-  
-    var x = d3.scaleBand()
-      .rangeRound([offset.width, width])
-  
-    var y = d3.scaleLinear()
-      .rangeRound([height, offset.height]);
+  var svg = createSvg(container, width + offset.width, height + offset.height + (options.showLegend ? 50 : 0))
+  var tooltipDiv = createTooltip(className);
+
+  var x = d3.scaleBand()
+    .rangeRound([offset.width, width])
+
+  var y = d3.scaleLinear()
+    .rangeRound([height, offset.height]);
   
     svg.append("g")
       .attr("transform", "translate(20,"+(height/2+offset.height/2)+")")

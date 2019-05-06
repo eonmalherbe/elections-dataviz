@@ -8,7 +8,6 @@ export function Chart(container, width, height, className, options) {
 
   width = 360;
   height = 185;
-  container.selectAll("svg").remove();
 
     var predefColors = ["blue", "yellow", "red"];
 
