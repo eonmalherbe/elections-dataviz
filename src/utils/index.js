@@ -336,6 +336,60 @@ export function parseSeatsData(data, props) {
   return results.slice(0, props.numParties);
 }
 
+export function parseVotesPredictionData(data, props) {
+  // TODO actually implement a function that removes hypens and .s
+  var lineData = [{
+      name : "AFRICAN NATIONAL CONGRESS",
+      cleaned_name : "anc",
+      data : [
+        {'x': 3, 'y': 51.6},
+        {'x': 6, 'y': 59.3},
+        {'x': 12, 'y': 55.4},
+        {'x': 20, 'y': 56},
+        {'x': 27, 'y': 59.5},
+        {'x': 33, 'y': 59.8},
+        {'x': 39, 'y': 61.2},
+        {'x': 45, 'y': 61.8},
+        {'x': 51, 'y': 62.7},
+        {'x': 57, 'y': 63.1},
+        {'x': 63, 'y': 63.6},
+        {'x': 69, 'y': 62.7},
+        {'x': 69, 'y': 62.7},
+        {'x': 75, 'y': 62.3},
+        {'x': 81, 'y': 62.9},
+        {'x': 87, 'y': 63},
+        {'x': 93, 'y': 62.8},
+        {'x': 100, 'y': 62.8},
+      ]
+    },
+    {
+      name : "DEMOCRATIC ALLIANCE",
+      cleaned_name: "da",
+      data : [
+        {'x': 3, 'y': 31.6},
+        {'x': 6, 'y': 39.3},
+        {'x': 12, 'y': 35.4},
+        {'x': 20, 'y': 36},
+        {'x': 27, 'y': 39.6},
+        {'x': 33, 'y': 39.8},
+        {'x': 39, 'y': 31.2},
+        {'x': 45, 'y': 31.4},
+        {'x': 51, 'y': 22.7},
+        {'x': 57, 'y': 33.1},
+        {'x': 63, 'y': 23.6},
+        {'x': 69, 'y': 32.7},
+        {'x': 69, 'y': 32.7},
+        {'x': 75, 'y': 22.3},
+        {'x': 81, 'y': 32.9},
+        {'x': 87, 'y': 33},
+        {'x': 93, 'y': 22.8},
+        {'x': 100, 'y': 22.8},
+      ]
+    }
+  ];
+
+  return lineData;
+}
 
 export function parseSeatsComparisonData(data, props) {
   if (!data)  return null;

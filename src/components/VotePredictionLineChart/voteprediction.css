@@ -16,6 +16,24 @@
   pointer-events: none;			
 }
 
+.votepredictionlinechart .line-container .graph-points {
+}
+
+.votepredictionlinechart .axes .axis-text {
+  font-size: 8px;
+}
+
+.votepredictionlinechart .line-container .graph-labels {
+  font-size: 8px;
+  fill: white;
+  stroke: none;
+}
+
+.votepredictionlinechart .line-container .line {
+  fill: none;
+  stroke: white;
+}
+
 .votepredictionlinechart.ELVIZ_stylesheet-tv {
   background: #1a1917;
   color: white;
@@ -30,3 +48,4 @@
   fill: white;
   color: white;
 }
+

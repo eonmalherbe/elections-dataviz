@@ -135,6 +135,7 @@ class VotePredictionLineChart extends Component {
     draw(container, props) {
       var self = this;
       var predictionDataLoader = getVotesPredictionData(props);
+      var predictionDataLoader = null;
       var dataLoaders = [predictionDataLoader];
 
       if (!partyColorsData) {

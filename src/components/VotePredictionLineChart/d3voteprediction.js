@@ -1,100 +1,151 @@
 import * as d3 from "d3";
-import {createTooltip} from "../../utils";
+import {createTooltip, createSvg, createErrorText, PartyColours} from "../../utils";
 
 export function Chart(container, width, height, className, options) {
   if (!options) {
     options = {};
-  } 
-
-  var width = 360;
-  var height = 185;
-  var margins = {
-      top: 20,
-      right: 20,
-      bottom: 20,
-      left: 50
   }
 
-  // TODO see if this can be reomved
-  container.selectAll("svg").remove();
+  var showPoints = options.showPoints || true;
+  var pointRadius = options.pointRadius || 2;
+  var showPointLabels = options.showPointLabels || true;
+  var pointLabelOffset = options.pointLabelOffset || 4;
+  var showCurrentLine = options.showCurrentLine || true;
+
+  width = 600;
+  height = 400;
+
+  var margin = {
+      top: 20,
+      right: 20,
+      bottom: 50,
+      left: 40
+  }
+
+  var canvas = {
+    top : margin.top,
+    bottom : height - margin.bottom - margin.top,
+    left : margin.left,
+    right : width - margin.right - margin.left
+  }
 
   //var predefColors = ["blue", "yellow", "red"];
 
-  var svg = container.append("svg")
-      .attr("preserveAspectRatio", "xMinYMin meet")
-      .attr("viewBox", "0 0 " + (width) + " " + (height))
-      .classed("svg-content", true);
+  var svg = createSvg(container, width, height);
 
   var tooltipDiv = createTooltip(className);
 
-  var mainSvg = svg.append("g");
+  var mainSvg = svg
+    .append("g")
 
-  var errorText = svg.append("g")
-    .attr("transform", "translate("+(width/2)+","+(height/2)+")")
-    .append("text")
-    .attr("text-anchor", "middle");
-
+  var errorText = createErrorText(svg, width / 2, height / 2);
 
   this.draw = function(originChartData, colorsData) {
     var chartData = [];
+    var getPartyColour = PartyColours(colorsData);
+
     if (!originChartData) {
       errorText.text("chart data is not available");
       return;
-    } else {
-      errorText.text("");
     }
 
     var x = d3.scaleLinear()
-      .domain([0, 1000])   // TODO This should be the number of VDs
-      .range([margins.left, width - margins.right]);
+      .domain([0, 100])
+      .range([canvas.left, canvas.right]);
 
     var y = d3.scaleLinear()
       .domain([0, 100])
-      .range([height - margins.top, margins.bottom]);
+      .range([canvas.bottom, canvas.top]);
 
-    var xAxis = d3.axisBottom()
-      .scale(x)
-      .tickSize(5)
-      .tickSubdivide(true)
+    var radiusScale = d3.scaleLinear()
+      .domain([0, 100])
+      .range([0, 100]);
 
-    var yAxis = d3.axisLeft()
-      .scale(y)
-      .tickSize(5)
-      .tickSubdivide(true);
+    var axisContainer = mainSvg
+      .append("g")
+        .classed("axes", true)
 
-    mainSvg.append('g')
-      .attr('class', 'x axis')
-      .attr('transform', 'translate(0,' + (height - margins.bottom) + ')')
-      .call(xAxis);
+    axisContainer.append("g")
+      .attr("transform", "translate(0, " + canvas.bottom + ")")
+      .classed("x-axis", true)
+      .call(d3.axisBottom(x));
 
-    mainSvg.append('g')
-      .attr('class', 'y axis')
-      .attr('transform', 'translate(' + (margins.left) + ',0)')
-      .call(yAxis);
+    axisContainer.append("g")
+      .attr("transform", "translate(" + canvas.left + ", 0)")
+      .classed("y-axis", true)
+      .call(d3.axisLeft(y));
 
-    mainSvg.append("circle").attr("r", 200).attr("cx", 50).attr("cy", 50).style("fill", "red")
+    axisContainer.append("text")
+      .text("% VDs declared")
+      .attr("transform", "translate(" + x(50) + ", " + y(-10) + ")")
+      .style("fill", "white")
+      .attr("text-anchor", "middle")
+      .classed("x-axis-text", "true")
+      .classed("axis-text", "true")
+
+    axisContainer.append("text")
+      .text("% Party support")
+      .attr("text-anchor", "middle")
+      .attr("transform", "rotate(-90) translate(-180, 10)")
+      .style("fill", "white")
+      .classed("y-axis-text", "true")
+      .classed("axis-text", "true")
+
+    var data = null;
+    var party = null;
+    var lineContainer = null;
+    var cleaned_party_name = null;
+    var valueline = null;
+
+    originChartData.map(function(party) {
+      valueline = d3.line()
+        .x(function(d) { return x(d.x); })
+        .y(function(d) { return y(d.y); });
+
+      data = party.data;
+      var colour = getPartyColour(party.name);
+
+      lineContainer = mainSvg.append("g")
+        .classed("line-container", true)
+        .classed(party.cleaned_name, true);
+
+      lineContainer.append("path")
+        .data([data])
+          .attr("class", "line")
+          .attr("d", valueline)
+          .style("stroke", colour)
+
+      if (showPoints) {
+        lineContainer.selectAll("circle")
+          .data(data)
+          .enter()
+          .append("circle")
+            .attr("cx", function(d) { return x(d.x) })
+            .attr("cy", function(d) { return y(d.y) })
+            .attr("r", function(d) { return radiusScale(pointRadius) })
+            .style("fill", colour)
+            .classed("graph-points", true)
+      }
+
+      if (showPointLabels) {
+        lineContainer.selectAll("text")
+          .data(data)
+          .enter()
+          .append("text")
+            .text(function(d) { return d.y})
+            .attr("transform", function(d) {
+              return "translate(" +  x(d.x - radiusScale(pointRadius / 2)) + ", " + y(d.y + pointLabelOffset) + ")"
+            })
+            .classed("graph-labels", true)
+      }
+
+    })
+
+
+
+
 
      /*
-    for(var i = originChartData.length - 1; i >= 0 ; i -=2) {
-      chartData.push(originChartData[i]);
-    }
-    for (i= -1 - i; i < originChartData.length; i += 2) {
-      chartData.push(originChartData[i]);
-    }
-
-
-      var partyColorByName = {};
-
-      var partyColorsData = colorsData;
-      if (partyColorsData && partyColorsData["data"]["allParties"]["edges"]) {
-          partyColorsData["data"]["allParties"]["edges"].forEach(edge => {
-          partyColorByName[edge.node.name] = edge.node.colour;
-          })
-      }
-
-      function getFillColorFromPartyName(partyName, i) {
-        return partyColorByName[partyName.split("/")[0]] || predefColors[i%predefColors.length];
-      }
 
       function getTooltipText(d, i) {
           return d.name;
