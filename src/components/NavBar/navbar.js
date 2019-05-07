@@ -126,6 +126,7 @@ class NavBar extends Component {
         var lastClass = classList[classList.length - 1];
         var passInfo = lastClass.split('-');
         var enableMap = true;
+        var enableBarChart = true;
 
         var eventDescription, electionType, regionType, selectionData = {}, chartType = "";
         var activeLinkId = passInfo.slice(1, passInfo.length).join('-');
@@ -140,6 +141,7 @@ class NavBar extends Component {
                         break;
                     case '2':
                         chartType = "votes-comparisons";
+                        enableMap = false;
                         break;
                     case '3':
                         chartType = "votes-predictions";
@@ -164,6 +166,7 @@ class NavBar extends Component {
                         break;
                     case '2':
                         chartType = "seats-comparisons";
+                        enableMap = false;
                         break;
                     case '3':
                         chartType = "seats-electeds";
@@ -194,6 +197,7 @@ class NavBar extends Component {
                         break;
                     case '2':
                         chartType = "votes-comparisons";
+                        enableMap = false;
                         break;
                     case '3':
                         chartType = "votes-progress"; // done
@@ -217,6 +221,7 @@ class NavBar extends Component {
                         break;
                     case '2':
                         chartType = "seats-comparisons";
+                        enableMap = false;
                         break;
                     case '3':
                         chartType = "seats-electeds";
@@ -234,6 +239,7 @@ class NavBar extends Component {
             } else if (passInfo[3] == '4') {
                 // Main page for National Legislature
                 regionType = "national";
+                enableBarChart = false;
                 chartType = "votes-default";
             } else {
                 return;
@@ -293,6 +299,7 @@ class NavBar extends Component {
         newState.electionType = electionType
         newState.comp = chartType;
         newState.enableMap = enableMap;
+        newState.enableBarChart = enableBarChart;
 
         if (newState.comp == "votes-myvd") {
             newState.regionType = "municipality-vd";
@@ -331,13 +338,11 @@ class NavBar extends Component {
                                 label: `Comparisons`,
                                 to: `1-1-2`,
                             },
-                            /*
                             {
                                 icon: `1-1-3`,
                                 label: `CSIR predictions`,
                                 to: `1-1-3`,
                             },
-                            */
                             {
                                 icon: `1-1-4`,
                                 label: `Counting progress`,

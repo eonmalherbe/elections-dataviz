@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {createTooltip} from "../../utils";
+import {createTooltip, createSvg, createErrorText} from "../../utils";
 import { type } from "os";
 import config from "../../config";
 import {
@@ -29,29 +29,27 @@ export function Chart(container, width, height, className, options) {
     }
   }
 
+  var offset = {
+    width: 70,
+    height: 20
+  }
+
   width = 700;
   height = 200;
-  container.selectAll("svg").remove();
 
-    var XaxisOffset = 70;
-    var YaxisOffset = 20;
-    var predefColors = ["blue", "yellow", "red"];
+  var predefColors = ["blue", "yellow", "red"];
 
-    var svg = container.append("svg")
-        .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 " + (width+XaxisOffset) + " " + (height+YaxisOffset+(options.showLegend? 50: 0)))
-        .classed("svg-content", true);
-        
-    var tooltipDiv = createTooltip(className);
-  
-    var x = d3.scaleBand()
-      .rangeRound([XaxisOffset, width])
-  
-    var y = d3.scaleLinear()
-      .rangeRound([height, YaxisOffset]);
+  var svg = createSvg(container, width + offset.width, height + offset.height + (options.showLegend ? 50 : 0))
+  var tooltipDiv = createTooltip(className);
+
+  var x = d3.scaleBand()
+    .rangeRound([offset.width, width])
+
+  var y = d3.scaleLinear()
+    .rangeRound([height, offset.height]);
   
     svg.append("g")
-      .attr("transform", "translate(20,"+(height/2+YaxisOffset/2)+")")
+      .attr("transform", "translate(20,"+(height/2+offset.height/2)+")")
       .append("text")
       .attr("class", className(config.CSS_PREFIX + "percentage-label"))
       .attr("transform", "rotate(-90)")
@@ -64,17 +62,15 @@ export function Chart(container, width, height, className, options) {
   
     svg.append("g")
       .attr("class", "y axis")
-      .attr("transform", "translate(" + XaxisOffset +", 0)")
+      .attr("transform", "translate(" + offset.width +", 0)")
   
     var barSvg = svg.append("g")
       .attr("class", className("bar-container"));
     var barTextSvg = svg.append("g")
       .attr("class", className("bartext-container"));
-    var errorText = svg.append("g")
-      .attr("transform", "translate("+(width/2)+","+(height/2)+")")
-      .append("text")
-      .attr("text-anchor", "middle");
-  
+
+    var errorText = createErrorText(svg, width / 2, height / 2);
+
     this.draw = function(chartData, colorsData) {
 
       if (!chartData) {
@@ -248,7 +244,7 @@ export function Chart(container, width, height, className, options) {
           
           function getLegendXY(i) {
             
-            var xydata = [XaxisOffset + (i%5)*100, height + 30 + parseInt(i/5) * 40];
+            var xydata = [offset.width + (i%5)*100, height + 30 + parseInt(i/5) * 40];
             if (parties.length < 6) {
               xydata[0] += 100 * ( 6 - parties.length) / 2;
             }

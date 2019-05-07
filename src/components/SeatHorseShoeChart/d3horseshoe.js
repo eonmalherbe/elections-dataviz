@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {createTooltip} from "../../utils";
+import {createTooltip, createSvg, createErrorText} from "../../utils";
 
 export function Chart(container, width, height, className, options) {
   if (!options) {
@@ -8,24 +8,17 @@ export function Chart(container, width, height, className, options) {
 
   width = 360;
   height = 185;
-  container.selectAll("svg").remove();
 
     var predefColors = ["blue", "yellow", "red"];
 
-    var svg = container.append("svg")
-        .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 " + (width) + " " + (height))
-        .classed("svg-content", true);
-        
+    var svg = createSvg(container, width, height);
+
+
     var tooltipDiv = createTooltip(className);
 
     var mainSvg = svg.append("g");
+    var errorText = createErrorText(svg, width / 2, height / 2);
 
-    var errorText = svg.append("g")
-      .attr("transform", "translate("+(width/2)+","+(height/2)+")")
-      .append("text")
-      .attr("text-anchor", "middle");
-  
     this.draw = function(originChartData, colorsData) {
       var chartData = [];
       if (!originChartData) {
@@ -35,13 +28,13 @@ export function Chart(container, width, height, className, options) {
         errorText.text("");
       }
 
-      for(var i = originChartData.length - 1; i >= 0 ; i -=2) {
-        chartData.push(originChartData[i]);
-      }
-      for (i= -1 - i; i < originChartData.length; i += 2) {
-        chartData.push(originChartData[i]);
-      }
+      chartData = originChartData;
+      var largest = chartData[0];
+      var rest = chartData.slice(1);
 
+
+      rest.push(largest);
+      chartData = rest;
 
       var partyColorByName = {};
 
@@ -66,7 +59,15 @@ export function Chart(container, width, height, className, options) {
       }
 
       function pythonConvertedCode(totalSeats, mainSvg) {
-        var Totals=[ 3, 15, 33, 61, 95, 138, 189, 247, 313, 388, 469, 559, 657, 762, 876, 997, 1126, 1263, 1408, 1560, 1722, 1889, 2066, 2250, 2442, 2641, 2850, 3064, 3289, 3519, 3759, 4005, 4261, 4522, 4794, 5071, 5358, 5652, 5953, 6263, 6581, 6906, 7239, 7581, 7929, 8287, 8650, 9024, 9404, 9793, 10187, 10594, 11003, 11425, 11850, 12288, 12729, 13183, 13638, 14109, 14580, 15066, 15553, 16055, 16557, 17075, 17592, 18126, 18660, 19208, 19758, 20323, 20888, 21468, 22050, 22645, 23243, 23853, 24467, 25094, 25723, 26364, 27011, 27667, 28329, 29001, 29679, 30367, 31061]
+        var Totals=[
+              3, 15, 33, 61, 95, 138, 189, 247, 313, 388, 469, 559, 657, 762, 876, 997,
+              1126, 1263, 1408, 1560, 1722, 1889, 2066, 2250, 2442, 2641, 2850, 3064, 3289, 3519,
+              3759, 4005, 4261, 4522, 4794, 5071, 5358, 5652, 5953, 6263, 6581, 6906, 7239, 7581,
+              7929, 8287, 8650, 9024, 9404, 9793, 10187, 10594, 11003, 11425, 11850, 12288, 12729,
+              13183, 13638, 14109, 14580, 15066, 15553, 16055, 16557, 17075, 17592, 18126, 18660,
+              19208, 19758, 20323, 20888, 21468, 22050, 22645, 23243, 23853, 24467, 25094, 25723,
+              26364, 27011, 27667, 28329, 29001, 29679, 30367, 31061
+        ]
     
         if (totalSeats > Totals[Totals.length-1]){
             console.error("total seats >", Totals[Totals.length-1]);
@@ -80,7 +81,7 @@ export function Chart(container, width, height, className, options) {
         var poslist;
         var J, R, angle;
           // Figure out how many rows are needed:
-          for (var i = 0; i < Totals.length; i ++ ){
+          for (var i = 0; i < Totals.length; i++) {
               if (Totals[i] >= totalSeats) {
                   rows = i + 1;
                   break
@@ -90,8 +91,9 @@ export function Chart(container, width, height, className, options) {
           radius = 0.4/rows;
     
           // Create list of centre spots
-          poslist=[]
-          for( var i = 1; i < rows; i ++){
+          poslist = []
+
+          for (var i = 1; i < rows; i ++) {
             // Each row can contain pi/(2asin(2/(3n+4i-2))) spots, where n is the number of rows and i is the number of the current row.
             J = parseInt((totalSeats)/Totals[rows-1]*Math.PI/(2*Math.asin(2.0/(3.0*rows+4.0*i-2.0))));
             // The radius of the ith row in an N-row diagram (Ri) is (3*N+4*i-2)/(4*N)
@@ -177,7 +179,7 @@ export function Chart(container, width, height, className, options) {
             partySvg.on("mousemove", onMouseMove.bind(this, partySvg, i))					
               .on("mouseout", onMouseOut.bind(this, partySvg))
             
-            for (var j = 0; j < chartData[i].seats; j ++, Counter ++){
+            for (var j = 0; j < chartData[i].seats; j++, Counter++) {
               partySvg.append('circle')
                 .attr('cx', poslist[Counter].x*100.0+5.0)
                 .attr('cy', 100.0*(1.75-poslist[Counter].y)+5.0)

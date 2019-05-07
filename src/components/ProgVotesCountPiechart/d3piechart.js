@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {createTooltip} from "../../utils";
+import {createTooltip, createSvg, createErrorText} from "../../utils";
 
 export function Chart(container, width, height, className, options) {
     var data = [],
@@ -24,8 +24,6 @@ export function Chart(container, width, height, className, options) {
         return 'rgb(' + Math.random()*250 + ',' + Math.random()*250 + ',' + Math.random()*250 + ')';
     }
 
-    container.selectAll("svg").remove();
-
     var radius = Math.min(width, height) / 2;
 
     var pie = d3.pie()
@@ -38,10 +36,7 @@ export function Chart(container, width, height, className, options) {
         .cornerRadius(cornerRadius)
         .padAngle(padAngle);
 
-    var totalSvg = container.append("svg")
-        .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", options.viewBox || ("0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom)))
-        .classed("svg-content", true);
+    var totalSvg = createSvg(container, width + margin.left + margin.right, height + margin.top + margin.bottom);
     
     
     var transformX = height / 2, transformY = height / 2;
@@ -67,10 +62,8 @@ export function Chart(container, width, height, className, options) {
         .attr('fill', function(d) { return colour(d.data[category]); })
         .attr('d', arc);
 
-    var errorText = svg.append("g")
-        .append("text")
-        .attr("text-anchor", "middle");
-      
+    var errorText = createErrorText(svg);
+
     this.destroy = function() {
         container.selectAll("svg").remove();
     }

@@ -337,15 +337,58 @@ export function parseSeatsData(data, props) {
 }
 
 export function parseVotesPredictionData(data, props) {
-    var lineData = [
-        {'x': 1, 'y': 5},
-        {'x': 20, 'y': 20},
-        {'x': 40, 'y': 10},
-        {'x': 60, 'y': 40},
-        {'x': 80, 'y': 5},
-        {'x': 100, 'y': 60}
-    ];
-    return lineData;
+  // TODO actually implement a function that removes hypens and .s
+  var lineData = [{
+      name : "AFRICAN NATIONAL CONGRESS",
+      cleaned_name : "anc",
+      data : [
+        {'x': 3, 'y': 51.6},
+        {'x': 6, 'y': 59.3},
+        {'x': 12, 'y': 55.4},
+        {'x': 20, 'y': 56},
+        {'x': 27, 'y': 59.5},
+        {'x': 33, 'y': 59.8},
+        {'x': 39, 'y': 61.2},
+        {'x': 45, 'y': 61.8},
+        {'x': 51, 'y': 62.7},
+        {'x': 57, 'y': 63.1},
+        {'x': 63, 'y': 63.6},
+        {'x': 69, 'y': 62.7},
+        {'x': 69, 'y': 62.7},
+        {'x': 75, 'y': 62.3},
+        {'x': 81, 'y': 62.9},
+        {'x': 87, 'y': 63},
+        {'x': 93, 'y': 62.8},
+        {'x': 100, 'y': 62.8},
+      ]
+    },
+    {
+      name : "DEMOCRATIC ALLIANCE",
+      cleaned_name: "da",
+      data : [
+        {'x': 3, 'y': 31.6},
+        {'x': 6, 'y': 39.3},
+        {'x': 12, 'y': 35.4},
+        {'x': 20, 'y': 36},
+        {'x': 27, 'y': 39.6},
+        {'x': 33, 'y': 39.8},
+        {'x': 39, 'y': 31.2},
+        {'x': 45, 'y': 31.4},
+        {'x': 51, 'y': 22.7},
+        {'x': 57, 'y': 33.1},
+        {'x': 63, 'y': 23.6},
+        {'x': 69, 'y': 32.7},
+        {'x': 69, 'y': 32.7},
+        {'x': 75, 'y': 22.3},
+        {'x': 81, 'y': 32.9},
+        {'x': 87, 'y': 33},
+        {'x': 93, 'y': 22.8},
+        {'x': 100, 'y': 22.8},
+      ]
+    }
+  ];
+
+  return lineData;
 }
 
 export function parseSeatsComparisonData(data, props) {
@@ -786,3 +829,46 @@ export function nationalEventSelected(state) {
   }
   return false;
 }
+
+export function createSvg(container, width, height) {
+  container.selectAll("svg").remove();
+  var svg = container.append("svg")
+      .attr("preserveAspectRatio", "xMinYMin meet")
+      .attr("viewBox", "0 0 " + (width) + " " + (height))
+      .classed("svg-content", true);
+
+  return svg;
+}
+
+export function createErrorText(container, xOffset, yOffset) {
+  if (xOffset === undefined) xOffset = 0;
+  if (yOffset === undefined) yOffset = 0;
+
+  var errorText = container.append("g")
+    .attr("transform", "translate("+ xOffset + "," + yOffset + ")")
+    .append("text")
+    .attr("text-anchor", "middle");
+
+  return errorText;
+}
+
+export function PartyColours(partyColours) {
+  var partyColourByName = {};
+
+  if (partyColours && partyColours["data"]["allParties"]["edges"]) {
+      partyColours["data"]["allParties"]["edges"].forEach(edge => {
+        partyColourByName[edge.node.name] = edge.node.colour;
+      })
+  }
+
+  // TODO should used cleaned name
+  function getFillColourFromPartyName(partyName, i) {
+    console.log(partyColourByName[partyName])
+    console.log(partyColourByName)
+    return partyColourByName[partyName];
+    //return partyColourByName[partyName.split("/")[0]] || predefColours[i%predefColours.length];
+  }
+
+  return getFillColourFromPartyName;
+}
+
