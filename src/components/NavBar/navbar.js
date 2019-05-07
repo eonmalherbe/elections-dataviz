@@ -338,13 +338,11 @@ class NavBar extends Component {
                                 label: `Comparisons`,
                                 to: `1-1-2`,
                             },
-                            /*
                             {
                                 icon: `1-1-3`,
                                 label: `CSIR predictions`,
                                 to: `1-1-3`,
                             },
-                            */
                             {
                                 icon: `1-1-4`,
                                 label: `Counting progress`,
