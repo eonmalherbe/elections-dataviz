@@ -76,6 +76,7 @@ class QuickResultsWidget extends Component {
             componentID: 5,
             enableBarChart: true,
             enableMap: true,
+            enableTurnoutProgressSpoilt: true,
 
             partyAbbrs: ["ANC", "DA", "EFF", "ID"],
             partyIecIds: [null, null, null, null],        
@@ -362,7 +363,13 @@ class QuickResultsWidget extends Component {
                 <div className={className("quick-results-title")}>
                     {getRegionName(self.state)} Race for Votes - Split (Nat/Prov)
                 </div>
-                
+            )
+        }
+        if (comp == 'votes-predictions') {
+            return (
+                <div className={className("quick-results-title")}>
+                    CSIR Vote and Turnout Predictions
+                </div>
             )
         }
         return null;
@@ -573,7 +580,9 @@ class QuickResultsWidget extends Component {
 
         var components = [];
         components.push(this.renderQuickResultsTitle())
-        components.push(this.renderTurnoutProgressSpoilt())
+        if (this.state.enableTurnoutProgressSpoilt) {
+            components.push(this.renderTurnoutProgressSpoilt())
+        }
         components.push(this.renderMyVDEnterForm())
 
         if (this.state.enableBarChart)

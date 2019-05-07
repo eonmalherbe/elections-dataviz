@@ -8,7 +8,7 @@ export function Chart(container, width, height, className, options) {
 
   var showPoints = options.showPoints || true;
   var pointRadius = options.pointRadius || 2;
-  var showPointLabels = options.showPointLabels || true;
+  var showPointLabels = options.showPointLabels || false;
   var pointLabelOffset = options.pointLabelOffset || 4;
   var showCurrentLine = options.showCurrentLine || true;
 
@@ -94,6 +94,7 @@ export function Chart(container, width, height, className, options) {
     var data = null;
     var party = null;
     var lineContainer = null;
+    var eventCaptureContainer = null;
     var cleaned_party_name = null;
     var valueline = null;
 
@@ -107,6 +108,10 @@ export function Chart(container, width, height, className, options) {
 
       lineContainer = mainSvg.append("g")
         .classed("line-container", true)
+        .classed(party.cleaned_name, true);
+
+      eventCaptureContainer = mainSvg.append("g")
+        .classed("event-capture-container", true)
         .classed(party.cleaned_name, true);
 
       lineContainer.append("path")
@@ -125,6 +130,35 @@ export function Chart(container, width, height, className, options) {
             .attr("r", function(d) { return radiusScale(pointRadius) })
             .style("fill", colour)
             .classed("graph-points", true)
+        
+        eventCaptureContainer.selectAll("circle")
+          .data(data)
+          .enter()
+          .append("circle")
+            .attr("cx", function(d) { return x(d.x) })
+            .attr("cy", function(d) { return y(d.y) })
+            .attr("r", function(d) { return radiusScale(pointRadius) * 3 })
+            .style("fill", "transparent")
+            .classed("graph-points", true)
+            .on("mousemove", function(d, i) {		
+              console.log("tooltip mousemove");
+              d3.select(this)
+                .attr("opacity", 0.8);
+              tooltipDiv.transition()		
+                  .duration(200)		
+                  .style("opacity", .9);		
+              tooltipDiv.html(d.y + "%")
+                  .style("left", (d3.event.pageX) + "px")		
+                  .style("top", (d3.event.pageY - 28) + "px");	
+            })					
+            .on("mouseout", function(d) {		
+              console.log("tooltip mouseout");
+              d3.select(this)
+                .attr("opacity", 1);
+              tooltipDiv.transition()		
+                .duration(200)		
+                .style("opacity", 0);	
+            })
       }
 
       if (showPointLabels) {

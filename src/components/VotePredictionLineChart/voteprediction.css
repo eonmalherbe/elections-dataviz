@@ -15,7 +15,12 @@
   border-radius: 3px;			
   pointer-events: none;			
 }
-
+.ELVIZ_prediction-time {
+  text-align: center;
+}
+.ELVIZ_CSIR-bottom-label {
+  text-align: center;
+}
 .votepredictionlinechart .line-container .graph-points {
 }
 

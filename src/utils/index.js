@@ -863,8 +863,8 @@ export function PartyColours(partyColours) {
 
   // TODO should used cleaned name
   function getFillColourFromPartyName(partyName, i) {
-    console.log(partyColourByName[partyName])
-    console.log(partyColourByName)
+    // console.log(partyColourByName[partyName])
+    // console.log(partyColourByName)
     return partyColourByName[partyName];
     //return partyColourByName[partyName.split("/")[0]] || predefColours[i%predefColours.length];
   }

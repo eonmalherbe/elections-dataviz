@@ -119,15 +119,34 @@ class VotePredictionLineChart extends Component {
         stylesheetFor,
         componentID
       } = this.state;
+
+      var d = new Date();
+      var hr = d.getHours();
+      var min = d.getMinutes();
+      if (min < 10) {
+          min = "0" + min;
+      }
+
+      var date = d.getDate();
+      var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      var month = months[d.getMonth()];
+      var year = d.getFullYear();
+
+      var currentTimeText = hr + ":" + min + " on " + date + " " + month + " " + year;
+
       return (
           <div className={className("votepredictionlinechart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
             {
                 componentID != -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>
             }
+            <div className={cn("prediction-time")}> 
+              Predictions at {currentTimeText}
+            </div>
             <div 
               ref="vizcontainer" 
               className={cn("chart-body")} 
               ></div>
+              <div className={cn("CSIR-bottom-label")}><b>CSIR's election prediction  model</b></div>
           </div>
         )
     }
