@@ -60,6 +60,8 @@ export function Chart(container, width, height, className, options) {
     var radiusScale = d3.scaleLinear()
       .domain([0, 100])
       .range([0, 100]);
+    
+    mainSvg.selectAll("g").remove();
 
     var axisContainer = mainSvg
       .append("g")
@@ -94,6 +96,7 @@ export function Chart(container, width, height, className, options) {
     var data = null;
     var party = null;
     var lineContainer = null;
+    var legendContainer = null;
     var eventCaptureContainer = null;
     var cleaned_party_name = null;
     var valueline = null;
@@ -109,6 +112,9 @@ export function Chart(container, width, height, className, options) {
       lineContainer = mainSvg.append("g")
         .classed("line-container", true)
         .classed(party.cleaned_name, true);
+      
+      legendContainer = mainSvg.append("g")
+        .classed("ledgends", true)
 
       eventCaptureContainer = mainSvg.append("g")
         .classed("event-capture-container", true)
@@ -171,6 +177,51 @@ export function Chart(container, width, height, className, options) {
               return "translate(" +  x(d.x - radiusScale(pointRadius / 2)) + ", " + y(d.y + pointLabelOffset) + ")"
             })
             .classed("graph-labels", true)
+      }
+
+      // if (options.showLegend) 
+      {
+        var parties = [];
+        var partyAbbrs = [];
+        var partyIecIds = [];
+        originChartData.forEach((partyInfo) => {
+          var party = partyInfo.name;
+          if (partyIecIds.indexOf(partyInfo.iecId) === -1 && partyInfo.iecId) {
+              parties.push(party);
+              partyAbbrs.push(partyInfo.abbreviation)
+              partyIecIds.push(partyInfo.iecId);
+          }
+        })
+        
+        function getLegendXY(i) {
+          
+          var xydata = [30 + (i%5)*100, height - 30 + parseInt(i/5) * 40];
+          if (parties.length < 6) {
+            xydata[0] += 100 * ( 6 - parties.length) / 2;
+          }
+          return xydata;
+        }
+        legendContainer.selectAll(`.${className("legend")}`).remove();
+        var legends = legendContainer.selectAll(`.${className("legend")}`)
+            .data(parties)
+            .enter()
+            .append('g')
+            .attr("class", className("legend"))
+            .attr('transform', (d, i) => "translate(" + getLegendXY(i) + ")")
+        legends
+            .append("rect")
+            .attr('width', 10)
+            .attr('height', 10)
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr("fill", (party, i) => {
+                return getPartyColour(party);
+            })
+        legends.append('text')
+            .attr('x', 30)
+            .attr('y', 10)
+            .style('font-size', '12px')
+            .text((party, idx) => partyAbbrs[idx])
       }
 
     })

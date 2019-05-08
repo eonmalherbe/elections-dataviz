@@ -34,6 +34,7 @@ function cn(originName) {
 var partyColorsData;
 
 class VotePredictionLineChart extends Component {
+    _isMounted = false;
 
     constructor(props) {
       super(props);
@@ -61,6 +62,7 @@ class VotePredictionLineChart extends Component {
     }
   
     componentDidMount() {
+      this._isMounted = true;
       var self = this;
       this.draw(this.getContainer(), this.state);
       this.refreshIntervalID = setInterval(() => {
@@ -76,6 +78,7 @@ class VotePredictionLineChart extends Component {
     }
 
     componentWillUnmount() {
+      this._isMounted = false;
       this.chart = null;
       document.removeEventListener(events.EXPORT_PNG, this.exportAsPNG);
       document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
@@ -102,11 +105,13 @@ class VotePredictionLineChart extends Component {
     }
 
     handlePreviewEvent(event) {
-      var newState = event.detail;
-      if (this.chart)
-        this.chart.destroy();
-      this.chart = new Chart(this.getContainer(), null, null, className, chartOptions);
-      this.setState(newState)
+      if (this._isMounted) {
+        var newState = event.detail;
+        if (this.chart)
+          this.chart.destroy();
+        this.chart = new Chart(this.getContainer(), null, null, className, chartOptions);
+        this.setState(newState)
+      }
     }
 
     getContainer() {
@@ -139,14 +144,19 @@ class VotePredictionLineChart extends Component {
             {
                 componentID != -1000 && <div className={cn("chart-title")}>{chartOptions.chartType} ({getNationOrProvinceName(this.state)}): </div>
             }
-            <div className={cn("prediction-time")}> 
-              Predictions at {currentTimeText}
+            <div className={cn("vote-prediction-title")}>
+              <div className={cn("projected-turnout")}> 
+                Projected turnout: <span ref="currentCountingProg">10%</span>
+              </div>
+              <div className={cn("prediction-time")}> 
+                Predictions at <span ref="currentCountingProg">{currentTimeText}</span>
+              </div>
             </div>
             <div 
               ref="vizcontainer" 
               className={cn("chart-body")} 
               ></div>
-              <div className={cn("CSIR-bottom-label")}><b>CSIR's election prediction  model</b></div>
+              <div className={cn("CSIR-bottom-label")}><b>CSIR's election prediction  model</b><br/>The CSIR produces predictions of the final results of the election based on a statistical model. The model can provide scientific predictions even if only a small number of voting districts have been declared and therefore can give a reliable early indication of what the final percentages for each party and the voter turnout rates would be.</div>
           </div>
         )
     }
@@ -154,7 +164,6 @@ class VotePredictionLineChart extends Component {
     draw(container, props) {
       var self = this;
       var predictionDataLoader = getVotesPredictionData(props);
-      var predictionDataLoader = null;
       var dataLoaders = [predictionDataLoader];
 
       if (!partyColorsData) {

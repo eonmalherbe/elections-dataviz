@@ -3,7 +3,60 @@ import {client} from "./config"
 
 
 export function getVotesPredictionData(options) {
-    return [[1, 3], [5,7], [7, 9]]
+    // return [[1, 3], [5,7], [7, 9]]
+    if (options.regionType === "national") {
+      return client.query({
+        query: gql`
+        {
+          predictedResults(areaType:"National") {
+            edges{
+              node{
+                percVds
+                prediction{
+                  edges{
+                    node{
+                      party{           
+                        name
+                        abbreviation
+                        iecId
+                      }
+                      predictedPercent
+                      actualPercent
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }`
+      })
+    } else { // regionType == "province"
+      return client.query({
+        query: gql`
+        {
+          predictedResults(areaType:"Provincial", province: "Western Cape") {
+            edges{
+              node{
+                percVds
+                prediction{
+                  edges{
+                    node{
+                      party{              
+                        name
+                        abbreviation
+                        iecId
+                      }
+                      predictedPercent
+                      actualPercent
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }`
+      })
+    }
 }
 
 export function getVotesDataForComparison(options) {

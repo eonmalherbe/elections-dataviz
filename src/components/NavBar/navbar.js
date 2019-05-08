@@ -117,13 +117,13 @@ class NavBar extends Component {
     }
 
     handleNavBarSelection(e) {
-        console.log("handleNavBarSelection");
         if (e.target.className.indexOf("metismenu-link") == -1) {
             return;
         }
         var iconClass = e.target.childNodes[0].className;
         var classList = iconClass.split(' ');
         var lastClass = classList[classList.length - 1];
+        console.log("handleNavBarSelection", lastClass);
         var passInfo = lastClass.split('-');
         var enableMap = true;
         var enableTurnoutProgressSpoilt = true;
@@ -212,7 +212,9 @@ class NavBar extends Component {
                         chartType = "votes-split";
                         break;
                     case '6':
-                        chartType = "votes-CSIR";
+                        chartType = "votes-predictions";
+                        enableMap = false;
+                        enableTurnoutProgressSpoilt = false;
                         break;
                     default:
                         return;
@@ -453,11 +455,11 @@ class NavBar extends Component {
                                         label: `Split (Nat/Prov)`,
                                         to: `2-${i}-1-5`,
                                     },
-                                    // {
-                                    //     icon: `2-${i}-1-6`,
-                                    //     label: `CSIR Predictions`,
-                                    //     to: `2-${i}-1-6`,
-                                    // },
+                                    {
+                                        icon: `2-${i}-1-6`,
+                                        label: `CSIR Predictions`,
+                                        to: `2-${i}-1-6`,
+                                    },
                                 ]
                             },
                             {

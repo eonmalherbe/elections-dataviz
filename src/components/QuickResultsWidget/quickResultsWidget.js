@@ -59,6 +59,7 @@ function cn(originName) {
 }
 
 class QuickResultsWidget extends Component {
+    _isMounted = false;
     constructor(props) {
         super(props);
         this.state = {
@@ -121,6 +122,7 @@ class QuickResultsWidget extends Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         var self = this;
         this.refreshIntervalID = setInterval(() => {
             self.fetchCurrentResultData();
@@ -136,6 +138,7 @@ class QuickResultsWidget extends Component {
     }
   
     componentWillUnmount() {
+        this._isMounted = false;
         document.removeEventListener(events.EXPORT_SUPERWIDGET_PNG, this.exportAsPNG);
         document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
         document.removeEventListener(events.QUICK_RESULTS_PREVIEW, this.handlePreviewEvent);
@@ -192,9 +195,17 @@ class QuickResultsWidget extends Component {
             if (newState.partyIecIds && newState.partyIecIds.join(" ") != self.state.partyIecIds.join(" ")) {
                 self.setState(newState);
             } else {
-                if (self.refs.currentTurnout && self.refs.currentCountingProg && self.refs.currentSpoiltVotes) {
+                if (self.refs.currentTurnout) {
                     self.refs.currentTurnout.innerHTML = newState.currentTurnout + "%";
+                }
+                if(self.refs.currentCountingProg) {
                     self.refs.currentCountingProg.innerHTML = newState.currentCountingProg + "%";
+                } 
+                if (self.refs.curCountingProg && self.refs.curCountingProg.innerHTML  && self._isMounted) {
+                    console.log("self.refs.curCountingProg", self.refs.curCountingProg, self._isMounted);
+                    // self.refs.curCountingProg.innerHTML = newState.currentCountingProg + "%";
+                }
+                if (self.refs.currentSpoiltVotes) {
                     self.refs.currentSpoiltVotes.innerHTML = newState.currentSpoiltVotes + "%";
                 }
             }
@@ -265,6 +276,8 @@ class QuickResultsWidget extends Component {
     }
 
     handlePreviewEvent(event) {
+
+      if (this._isMounted) {
         var newState = event.detail;
         if (newState.regionType == "national" && this.state.comp == "votes-split") {
             newState.regionType = "province";
@@ -277,6 +290,7 @@ class QuickResultsWidget extends Component {
 
         triggerCustomEvent(events.CHART_PREVIEW, triggerState);
         triggerCustomEvent(events.MAP_PREVIEW, triggerState);
+      }
     };
 
     renderTurnoutProgressSpoilt() {
@@ -306,7 +320,8 @@ class QuickResultsWidget extends Component {
 
     renderQuickResultsTitle() {
         var {
-            comp
+            comp,
+            currentCountingProg
         } = this.state;
         var self = this;
         if (comp == 'votes-default') {
@@ -368,7 +383,7 @@ class QuickResultsWidget extends Component {
         if (comp == 'votes-predictions') {
             return (
                 <div className={className("quick-results-title")}>
-                    CSIR Vote and Turnout Predictions
+                     CSIR predictions for final results, with <span ref="curCountingProg">{currentCountingProg}%</span> VDs counted
                 </div>
             )
         }
