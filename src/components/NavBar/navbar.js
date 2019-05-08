@@ -141,15 +141,16 @@ class NavBar extends Component {
                         break;
                     case '2':
                         chartType = "votes-comparisons";
+                        enableMap = false;
                         break;
                     case '3':
                         chartType = "votes-predictions";
                         enableMap = false;
                         enableTurnoutProgressSpoilt = false;
-                        if (passInfo[4] > 0) {
-                            regionType = "province";
-                            selectionData = provincesData[passInfo[4]-1];
-                        }
+                        // if (passInfo[4] > 0) {
+                        //     regionType = "province";
+                        //     selectionData = provincesData[passInfo[4]-1];
+                        // }
                         break;
                     case '4':
                         chartType = "votes-progress";
@@ -171,6 +172,7 @@ class NavBar extends Component {
                         break;
                     case '2':
                         chartType = "seats-comparisons";
+                        enableMap = false;
                         break;
                     case '3':
                         chartType = "seats-electeds";
@@ -201,6 +203,7 @@ class NavBar extends Component {
                         break;
                     case '2':
                         chartType = "votes-comparisons";
+                        enableMap = false;
                         break;
                     case '3':
                         chartType = "votes-progress"; // done
@@ -223,9 +226,11 @@ class NavBar extends Component {
                 switch (passInfo[4]) {
                     case '1':
                         chartType = "seats-default"; // done
+                        enableMap = false;
                         break;
                     case '2':
                         chartType = "seats-comparisons";
+                        enableMap = false;
                         break;
                     case '3':
                         chartType = "seats-electeds";
@@ -260,7 +265,7 @@ class NavBar extends Component {
             return;
 
         if (eventDescription)
-            if (eventDescription.toLowerCase().indexOf("provincial") > 0) {
+            if (eventDescription.toLowerCase().indexOf("provincial") >= 0) {
                 electionType = "provincial"
             }
         else {
@@ -344,21 +349,23 @@ class NavBar extends Component {
                                 to: `1-1-2`,
                             },
                             {
+                                icon: `1-1-3`,
                                 label: `CSIR predictions`,
-                                content: [
-                                    {
-                                        icon: `1-1-3-0`,
-                                        label: `National Assembly`,
-                                        to: `1-1-3-0`,
-                                    },
-                                    ...provincesData.map((province, i) => {
-                                        return {
-                                            icon: `1-1-3-${i+1}`,
-                                            label: province.name,
-                                            to: `1-1-3-${i+1}`,
-                                        }
-                                    })
-                                ]
+                                to: `1-1-3`,
+                                // content: [
+                                //     {
+                                //         icon: `1-1-3-0`,
+                                //         label: `National Assembly`,
+                                //         to: `1-1-3-0`,
+                                //     },
+                                //     ...provincesData.map((province, i) => {
+                                //         return {
+                                //             icon: `1-1-3-${i+1}`,
+                                //             label: province.name,
+                                //             to: `1-1-3-${i+1}`,
+                                //         }
+                                //     })
+                                // ]
                             },
                             {
                                 icon: `1-1-4`,

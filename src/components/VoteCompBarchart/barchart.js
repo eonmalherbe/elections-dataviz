@@ -170,6 +170,7 @@ class BarChart extends Component {
 
     drawGraph(container, props, data, partyColorsData) {
         var chartData = parseVotesComparisonData(data, props);
+        console.log("comparison data fetch", data, chartData);
 
         if (!this.chart)
           this.chart = new Chart(container, null, null, className, chartOptions);

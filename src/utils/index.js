@@ -15,6 +15,10 @@ export function getShortenedEventDescription(event) {
   return `${year} ${shortenedNatProv}`;
 }
 
+export function getYear(desc) {
+  return /(19|20)\d{2}/g.exec(desc)[0];
+}
+
 export function parseVotesDataForAllEvents(data, props) {
     var results, edges;
     var regionType = props.regionType;
@@ -166,13 +170,16 @@ export function parseVotesComparisonData(data, props) {
     for (var j = 0; j < results.length; j ++) {
       if (results[j].name == eventDescriptions[i]) {
         var available = true;
-        new_results.push(results[j]);
+        new_results.push({
+          ...results[j],
+          name: getYear(results[j].name)
+        });
         break;
       }
     }
     if (!available) {
       new_results.push({
-        name: eventDescriptions[i],
+        name: getYear(eventDescriptions[i]),
         percOfVotes: 0,
         partyInfo: {
           name: props.partyAbbr,
@@ -181,6 +188,9 @@ export function parseVotesComparisonData(data, props) {
       })
     }
   }
+  new_results.sort(function(a, b) {
+    return a.name - b.name;
+  })
   return new_results;
 }
 
@@ -338,7 +348,7 @@ export function parseSeatsData(data, props) {
 
 export function parseVotesPredictionData(data, props) {
   // TODO actually implement a function that removes hypens and .s
-  var edges = data["data"]["predictedResults"].edges;
+  var edges = data["data"]["CSIRPrediction"]["results"].edges;
   var partyIecIds = [];
   var lineData = [];
   edges.forEach(function(edge) {
@@ -433,6 +443,18 @@ export function parseVotesPredictionData(data, props) {
   return lineData;
 }
 
+export function parseCSIRTurnoutTimestamp(data) {
+  var predictionData = data["data"]["CSIRPrediction"];
+  var {
+    turnout,
+    timestamp
+  } = predictionData;
+  return {
+    turnout: turnout.toFixed(2),
+    timestamp
+  }
+}
+
 export function parseSeatsComparisonData(data, props) {
   if (!data)  return null;
   var edges = data["data"]["allSeatCalculations"].edges;
@@ -467,13 +489,16 @@ export function parseSeatsComparisonData(data, props) {
     for (var j = 0; j < results.length; j ++) {
       if (results[j].name == eventDescriptions[i]) {
         var available = true;
-        new_results.push(results[j]);
+        new_results.push({
+          ...results[j],
+          name: getYear(results[j].name)
+        });
         break;
       }
     }
     if (!available) {
       new_results.push({
-        name: props.eventDescriptions[i],
+        name: getYear(props.eventDescriptions[i]),
         seats: 0,
         partyInfo: {
           name: props.partyAbbr,
@@ -559,7 +584,7 @@ export function parseTurnoutDataForAllEvents(data, props) {
     var eventType = node["event"]["eventType"]["description"];
     var percVoterTurnout = node["percVoterTurnout"].toFixed(2); 
     return {
-      name: event,
+      name: getYear(event),
       eventType: eventType,
       percVoterTurnout
     }
@@ -567,7 +592,7 @@ export function parseTurnoutDataForAllEvents(data, props) {
   .sort(function(edge1, edge2) {
     var edge1Year = parseInt(/(19|20)\d{2}/g.exec(edge1.name)[0]);
     var edge2Year = parseInt(/(19|20)\d{2}/g.exec(edge2.name)[0]);
-    return edge2Year - edge1Year;
+    return edge1Year - edge2Year;
   })
 }
 
@@ -590,7 +615,7 @@ export function parseTurnoutDataForOneEvent(data, props) {
     var event = node["event"]["description"];
     var percVoterTurnout = node["percVoterTurnout"].toFixed(2); 
     return {
-      name: event,
+      name: getYear(event),
       percVoterTurnout
     }
   })
@@ -673,7 +698,13 @@ export function getRegionName3(state) {
   return getRegionName(state);
 }
 
-
+export function getRegionName4(state) {
+  if (state.regionType == "national") {
+    return "National Assembly";
+  } else { // province
+    return state.provinceName + " Legislature";
+  }
+}
 
 export function getNationOrProvinceName(state) {
   if (state.regionType == "national") {

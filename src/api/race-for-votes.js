@@ -3,25 +3,31 @@ import {client} from "./config"
 
 
 export function getVotesPredictionData(options) {
-    // return [[1, 3], [5,7], [7, 9]]
+    console.log("getVotesPredictionData", options);
+    var eventType = (options.electionType == "national"? "National Election": "Provincial Election");
+
     if (options.regionType === "national") {
       return client.query({
         query: gql`
         {
-          predictedResults(areaType:"National") {
-            edges{
-              node{
-                percVds
-                prediction{
-                  edges{
-                    node{
-                      party{           
-                        name
-                        abbreviation
-                        iecId
+          CSIRPrediction(eventType: "${eventType}", areaType:"National") {
+            turnout
+            timestamp
+            results{
+              edges{
+                node{
+                  percVds
+                  prediction{
+                    edges{
+                      node{
+                        party{
+                          name
+                          abbreviation
+                          iecId
+                        }
+                        actualPercent
+                        predictedPercent
                       }
-                      predictedPercent
-                      actualPercent
                     }
                   }
                 }
@@ -34,20 +40,24 @@ export function getVotesPredictionData(options) {
       return client.query({
         query: gql`
         {
-          predictedResults(areaType:"Provincial", province: "Western Cape") {
-            edges{
-              node{
-                percVds
-                prediction{
-                  edges{
-                    node{
-                      party{              
-                        name
-                        abbreviation
-                        iecId
+          CSIRPrediction(eventType: "${eventType}", areaType:"Provincial", province: "${options.provinceName}") {
+            turnout
+            timestamp
+            results{
+              edges{
+                node{
+                  percVds
+                  prediction{
+                    edges{
+                      node{
+                        party{
+                          name
+                          abbreviation
+                          iecId
+                        }
+                        actualPercent
+                        predictedPercent
                       }
-                      predictedPercent
-                      actualPercent
                     }
                   }
                 }

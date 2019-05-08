@@ -37,6 +37,7 @@ import {
     getRegionName,
     getRegionName2,
     getRegionName3,
+    getRegionName4,
     triggerCustomEvent,
     fetchDataFromOBJ,
     handleRegionChange,
@@ -64,6 +65,7 @@ class QuickResultsWidget extends Component {
         this._isMounted = false;
         this.state = {
             numParties: 5,
+            electionType: "national",
             eventDescription: "2019 National Election",
             nationalEventDescription: "2019 National Election",
             provincialEventDescription: "2019 Provincial Election",
@@ -381,9 +383,10 @@ class QuickResultsWidget extends Component {
             )
         }
         if (comp == 'votes-predictions') {
+            
             return (
                 <div className={className("quick-results-title")}>
-                     CSIR predictions for final results, with <span ref="curCountingProg">{currentCountingProg}%</span> VDs counted
+                     CSIR predictions for final results, with <span ref="curCountingProg">{currentCountingProg}%</span> VDs counted: {getRegionName4(self.state)}
                 </div>
             )
         }

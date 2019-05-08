@@ -12,6 +12,7 @@ import {
 } from "../../api";
 import {
   parseVotesPredictionData,
+  parseCSIRTurnoutTimestamp,
   getNationOrProvinceName,
   fetchDataFromOBJ,
   handleRegionChange
@@ -31,14 +32,30 @@ function cn(originName) {
   return className(config.CSS_PREFIX + originName);
 }
 
+function formatDate(d) {
+  var hr = d.getHours();
+  var min = d.getMinutes();
+  if (min < 10) {
+      min = "0" + min;
+  }
+
+  var date = d.getDate();
+  var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var month = months[d.getMonth()];
+  var year = d.getFullYear();
+
+  var currentTimeText = hr + ":" + min + " on " + date + " " + month + " " + year;
+  return currentTimeText;
+}
+
 var partyColorsData;
 
 class VotePredictionLineChart extends Component {
     constructor(props) {
-      this._isMounted = false;
       super(props);
       this.state = {
         numParties: 100,
+        electionType: "national",
         eventDescription: "2019 National Election",
         regionType: "national",
         provinceName: "",
@@ -48,6 +65,7 @@ class VotePredictionLineChart extends Component {
         stylesheetFor: "web",
         componentID: 8
       }
+      this._isMounted = false;
 
       fetchDataFromOBJ(this.state, props);
       this.state["numParties"] = 100;
@@ -124,19 +142,7 @@ class VotePredictionLineChart extends Component {
         componentID
       } = this.state;
 
-      var d = new Date();
-      var hr = d.getHours();
-      var min = d.getMinutes();
-      if (min < 10) {
-          min = "0" + min;
-      }
-
-      var date = d.getDate();
-      var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      var month = months[d.getMonth()];
-      var year = d.getFullYear();
-
-      var currentTimeText = hr + ":" + min + " on " + date + " " + month + " " + year;
+      var currentTimeText = formatDate(new Date());
 
       return (
           <div className={className("votepredictionlinechart") + " " + cn(`stylesheet-${stylesheetFor}`)}>
@@ -145,10 +151,10 @@ class VotePredictionLineChart extends Component {
             }
             <div className={cn("vote-prediction-title")}>
               <div className={cn("projected-turnout")}> 
-                Projected turnout: <span ref="currentCountingProg">10%</span>
+                Projected turnout: <span ref="projectedTurnout">10%</span>
               </div>
               <div className={cn("prediction-time")}> 
-                Predictions at <span ref="currentCountingProg">{currentTimeText}</span>
+                Predictions at <span ref="lastTimestamp">{currentTimeText}</span>
               </div>
             </div>
             <div 
@@ -179,6 +185,18 @@ class VotePredictionLineChart extends Component {
 
     drawGraph(container, props, data, partyColorsData) {
         var chartData = parseVotesPredictionData(data, props);
+        var {
+          turnout,
+          timestamp
+        } = parseCSIRTurnoutTimestamp(data, props);
+        if (this.refs.projectedTurnout && this.refs.projectedTurnout.innerHTML) {
+          this.refs.projectedTurnout.innerHTML = turnout + "%";
+        }
+        if (this.refs.lastTimestamp && this.refs.lastTimestamp.innerHTML) {
+          var lastTimeStampText = formatDate(new Date(timestamp));
+          console.log("timestamp", new Date(timestamp), timestamp, lastTimeStampText);
+          this.refs.lastTimestamp.innerHTML = lastTimeStampText;
+        }
         if (!this.chart)
           this.chart = new Chart(container, null, null, className, chartOptions);
         

@@ -240,7 +240,6 @@ export function Chart(container, width, height, className, options) {
                 partyIecIds.push(partyInfo.iecId);
             }
           })
-          console.log("parties", parties, chartData);
           
           function getLegendXY(i) {
             
