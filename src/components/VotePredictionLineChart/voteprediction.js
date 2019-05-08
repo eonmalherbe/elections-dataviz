@@ -34,9 +34,8 @@ function cn(originName) {
 var partyColorsData;
 
 class VotePredictionLineChart extends Component {
-    _isMounted = false;
-
     constructor(props) {
+      this._isMounted = false;
       super(props);
       this.state = {
         numParties: 100,
