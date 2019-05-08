@@ -40,7 +40,7 @@ export function Chart(container, width, height, className, options) {
 
   var errorText = createErrorText(svg, width / 2, height / 2);
 
-  this.draw = function(originChartData, colorsData) {
+  this.draw = function(originChartData, colorsData, minMaxData) {
     var chartData = [];
     var getPartyColour = PartyColours(colorsData);
 
@@ -49,8 +49,19 @@ export function Chart(container, width, height, className, options) {
       return;
     }
 
+    if (!minMaxData.minX) {
+      minMaxData.minX = 0;
+    }
+    if (!minMaxData.maxX) {
+      var maxValue = d3.max(originChartData.map(partyInfo => {
+        return d3.max(partyInfo.data.map(it => it.x));
+      }));
+
+      minMaxData.maxX = Math.min(100, maxValue * 3);
+    }
+
     var x = d3.scaleLinear()
-      .domain([0, 100])
+      .domain([minMaxData.minX, minMaxData.maxX])
       .range([canvas.left, canvas.right]);
 
     var y = d3.scaleLinear()

@@ -455,6 +455,18 @@ export function parseCSIRTurnoutTimestamp(data) {
   }
 }
 
+export function parseCSIRMinMax(data) {
+  var predictionData = data["data"]["CSIRPrediction"];
+  var {
+    minX,
+    maxX
+  } = predictionData;
+  return {
+    minX,
+    maxX
+  }
+}
+
 export function parseSeatsComparisonData(data, props) {
   if (!data)  return null;
   var edges = data["data"]["allSeatCalculations"].edges;
@@ -753,6 +765,26 @@ export function getNationalProvincialStr4(state) {
       nationalProvincialStr = state.provinceName + " Legislature";
   }
   return nationalProvincialStr;
+}
+
+export function getSeatsCount(state) {
+  if (state.regionType == "national") {
+    return 400;
+  } else {
+    var seatsTable = {
+      "Eastern Cape": 63,
+      "Free State": 30,
+      "Gauteng": 73,
+      "KwaZulu-Natal": 80,
+      "Limpopo": 49,
+      "Mpumalanga": 30,
+      "North West": 33,
+      "Northern Cape": 30,
+      "Western Cape": 42,
+    }
+    return seatsTable[state.provinceName];
+  }
+  
 }
 
 export function getNationOrProvinceName(state) {

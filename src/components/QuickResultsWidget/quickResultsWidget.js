@@ -52,6 +52,8 @@ import {
     parseProgressVotesCount,
     parseVotesData,
     parseSeatsData,
+
+    getSeatsCount
 } from "../../utils";
 
 var dataRefreshTime = 30 * 1000;
@@ -302,10 +304,15 @@ class QuickResultsWidget extends Component {
 
     renderTurnoutProgressSpoilt() {
         var {
+            comp,
             currentTurnout,
             currentCountingProg,
             currentSpoiltVotes,
         } = this.state;
+
+        if (comp == 'votes-turnout' || comp == 'votes-progress') {
+            return null;
+        }
 
         return (
             <div className={cn("current-progress")}>
@@ -348,7 +355,7 @@ class QuickResultsWidget extends Component {
         if (comp == 'seats-default') {
             return (
                 <div className={className("quick-results-title")+" "+className("race-for-seats")}>
-                    Race for Seats: {getNationalProvincialStr2(self.state)} (#SEATS)
+                    Race for Seats: {getNationalProvincialStr2(self.state)} ({getSeatsCount(self.state)})
                 </div>
             );
         }
@@ -362,7 +369,7 @@ class QuickResultsWidget extends Component {
         if (comp == 'votes-progress') {
             return (
                 <div className={className("quick-results-title")}>
-                    Counting Progress {getNationalProvincialStr3(self.state)}
+                    Counting Progress{getNationalProvincialStr3(self.state)}
                 </div>
             );
         }
@@ -376,7 +383,7 @@ class QuickResultsWidget extends Component {
         if (comp == 'seats-comparisons') {
             return (
                 <div className={className("quick-results-title")}>
-                    Race for Seats: {getNationalProvincialStr2(self.state)} (#SEATS)
+                    Race for Seats: {getNationalProvincialStr2(self.state)} ({getSeatsCount(self.state)})
                 </div>
             );
         }
@@ -417,6 +424,10 @@ class QuickResultsWidget extends Component {
                 mapState.disableNavigation = true;
                 return (
                     <div className={className("map-container")}>
+                        <div className={cn("leadingmap-title-container")}>
+                            <div className={cn("leading-parties")}>Leading Parties</div>
+                            <div className={cn("helper-text")}>Click on the map for lower level results</div>
+                        </div>
                         <Map
                             ref={instance => { this.mapInstance = instance; }}
                             key={comp}
@@ -433,6 +444,10 @@ class QuickResultsWidget extends Component {
             mapState.regionType = "national";
             return (
                 <div className={className("map-container")}>
+                    <div className={cn("leadingmap-title-container")}>
+                        <div className={cn("leading-parties")}>Leading Parties</div>
+                        <div className={cn("helper-text")}>Click on the map for lower level results</div>
+                    </div>
                     <Map
                         ref={instance => { this.mapInstance = instance; }}
                         key={comp}
@@ -454,6 +469,13 @@ class QuickResultsWidget extends Component {
         } else {
             return (
                 <div className={className("map-container")}>
+                    {
+                        (comp === 'votes-default' || comp === 'votes-default-metro') && 
+                        <div className={cn("leadingmap-title-container")}>
+                            <div className={cn("leading-parties")}>Leading Parties</div>
+                            <div className={cn("helper-text")}>Click on the map for lower level results</div>
+                        </div>
+                    }
                     <Map
                         ref={instance => { this.mapInstance = instance; }}
                         key={comp}

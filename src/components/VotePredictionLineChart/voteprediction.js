@@ -13,6 +13,7 @@ import {
 import {
   parseVotesPredictionData,
   parseCSIRTurnoutTimestamp,
+  parseCSIRMinMax,
   getNationOrProvinceName,
   fetchDataFromOBJ,
   handleRegionChange
@@ -184,6 +185,7 @@ class VotePredictionLineChart extends Component {
     }
 
     drawGraph(container, props, data, partyColorsData) {
+        var minMaxData = parseCSIRMinMax(data);
         var chartData = parseVotesPredictionData(data, props);
         var {
           turnout,
@@ -200,7 +202,7 @@ class VotePredictionLineChart extends Component {
         if (!this.chart)
           this.chart = new Chart(container, null, null, className, chartOptions);
         
-        this.chart.draw(chartData, partyColorsData);
+        this.chart.draw(chartData, partyColorsData, minMaxData);
     }
 }
 

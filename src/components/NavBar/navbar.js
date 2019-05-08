@@ -120,6 +120,12 @@ class NavBar extends Component {
         if (e.target.className.indexOf("metismenu-link") == -1) {
             return;
         }
+        if (this.activeElement && this.activeElement.classList && this.activeElement.classList.remove) {
+            this.activeElement.classList.remove("active");
+        }
+        e.target.classList.add("active");
+        this.activeElement = e.target;
+
         var iconClass = e.target.childNodes[0].className;
         var classList = iconClass.split(' ');
         var lastClass = classList[classList.length - 1];
@@ -130,6 +136,8 @@ class NavBar extends Component {
 
         var eventDescription, electionType, regionType, selectionData = {}, chartType = "";
         var activeLinkId = passInfo.slice(1, passInfo.length).join('-');
+
+        console.log("activeLinkId", activeLinkId);
 
         if (passInfo[1] == '1') {
             eventDescription = this.state.nationalEventDescription;
@@ -326,6 +334,7 @@ class NavBar extends Component {
         // triggerCustomEvent(events.MAP_PREVIEW, newState);
 
         newState.activeLinkId = activeLinkId;
+        console.log("newState", newState);
         this.setState(newState);
     }
       
@@ -339,11 +348,13 @@ class NavBar extends Component {
                         label: "Race for votes",
                         content: [
                             {
+                                id: `1-1-1`,
                                 icon: `1-1-1`,
                                 label: `National assembly`,
                                 to: `1-1-1`,
                             },
                             {
+                                id: `1-1-2`,
                                 icon: `1-1-2`,
                                 label: `Comparisons`,
                                 to: `1-1-2`,
@@ -522,11 +533,11 @@ class NavBar extends Component {
                 // })
             // }
         ];
-
+        // this.state.activeLinkId
         
         return (
             <div className={[className(cssPrefix("menu-widget")), cssPrefix("menu-widget")].join(" ")} ref="navbar">
-                <MetisMenu activeLinkId={this.state.activeLinkId} content={content} LinkComponent={CustomLink}/>
+                <MetisMenu activeLinkTo={`1-2-1`} content={content} LinkComponent={CustomLink}/>
             </div>
         )
     }

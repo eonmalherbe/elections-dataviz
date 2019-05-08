@@ -119,3 +119,19 @@
   width: 25%;
   float: right;
 }
+.ELVIZ_leadingmap-title-container {
+  display: inline-block;
+}
+.ELVIZ_leading-parties {
+  font-size: 30px;
+  font-weight: bold;
+  float: left;
+  width: 300px;
+}
+
+.ELVIZ_helper-text {
+  font-size: 20px;
+  line-height: 30px;
+  float: right;
+  width: 400px;
+}
