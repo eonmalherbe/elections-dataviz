@@ -153,7 +153,7 @@ export function Chart(container, width, height, className, options) {
               tooltipDiv.transition()		
                   .duration(200)		
                   .style("opacity", .9);		
-              tooltipDiv.html(d.y + "%")
+              tooltipDiv.html(d.y.toFixed(2) + "%")
                   .style("left", (d3.event.pageX) + "px")		
                   .style("top", (d3.event.pageY - 28) + "px");	
             })					

@@ -688,13 +688,18 @@ export function getRegionName2(state) {
     else
       return ""
   }
-  else
-      return getRegionName(state);
+  else if (state.regionType == "province") {
+    return getRegionName(state) + " Legislature";
+  }
+  return getRegionName(state);
 }
 
 export function getRegionName3(state) {
   if (state.regionType == "national")
-    return "NATIONAL";
+    return "National";
+  if (state.regionType == "province") {
+    return getRegionName(state) + " Legislature";
+  }
   return getRegionName(state);
 }
 
@@ -704,6 +709,50 @@ export function getRegionName4(state) {
   } else { // province
     return state.provinceName + " Legislature";
   }
+}
+
+export function getNationalProvincialStr(state) {
+  var event = state.eventDescription.toLocaleLowerCase()
+  var nationalProvincialStr = ""; 
+  if (event.indexOf("national election") >= 0) {
+      nationalProvincialStr = "National Assembly";
+  } else {
+      nationalProvincialStr = "Provincial Legislature";
+  }
+  return nationalProvincialStr;
+}
+
+export function getNationalProvincialStr2(state) {
+  var event = state.eventDescription.toLocaleLowerCase()
+  var nationalProvincialStr = ""; 
+  if (event.indexOf("national election") >= 0) {
+      nationalProvincialStr = "National Assembly";
+  } else {
+      nationalProvincialStr = state.provinceName + " Legislature";
+  }
+  return nationalProvincialStr;
+}
+
+export function getNationalProvincialStr3(state) {
+  var event = state.eventDescription.toLocaleLowerCase()
+  var nationalProvincialStr = ""; 
+  if (event.indexOf("national election") >= 0) {
+      nationalProvincialStr = "";
+  } else {
+      nationalProvincialStr = ": " + state.provinceName + " Legislature";
+  }
+  return nationalProvincialStr;
+}
+
+export function getNationalProvincialStr4(state) {
+  var event = state.eventDescription.toLocaleLowerCase()
+  var nationalProvincialStr = ""; 
+  if (event.indexOf("national election") >= 0) {
+      nationalProvincialStr = "National";
+  } else {
+      nationalProvincialStr = state.provinceName + " Legislature";
+  }
+  return nationalProvincialStr;
 }
 
 export function getNationOrProvinceName(state) {

@@ -256,7 +256,7 @@ class NavBar extends Component {
             eventDescription = this.state.nationalEventDescription;
             regionType = "municipality"
             selectionData = metrosData[passInfo[2]];
-            chartType = "votes-default";
+            chartType = "votes-default-metro";
         } else {
             return;
         }
@@ -408,11 +408,11 @@ class NavBar extends Component {
                                 label: `Comparisons`,
                                 to: `1-2-2`,
                             },
-                            {
-                                icon: `1-2-3`,
-                                label: `Electeds`,
-                                to: `1-2-3`,
-                            },
+                            // {
+                            //     icon: `1-2-3`,
+                            //     label: `Electeds`,
+                            //     to: `1-2-3`,
+                            // },
                             // {
                             //     icon: `1-2-4`,
                             //     label: `Women`,
@@ -482,11 +482,11 @@ class NavBar extends Component {
                                         label: `Comparisons`,
                                         to: `2-${i}-2-2`,
                                     },
-                                    {
-                                        icon: `2-${i}-2-3`,
-                                        label: `Electeds`,
-                                        to: `2-${i}-2-3`,
-                                    },
+                                    // {
+                                    //     icon: `2-${i}-2-3`,
+                                    //     label: `Electeds`,
+                                    //     to: `2-${i}-2-3`,
+                                    // },
                                     // {
                                     //     icon: `2-${i}-2-4`,
                                     //     label: `Women`,

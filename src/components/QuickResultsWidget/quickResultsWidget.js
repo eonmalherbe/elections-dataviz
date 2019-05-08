@@ -36,8 +36,13 @@ import {
 import {
     getRegionName,
     getRegionName2,
-    getRegionName3,
     getRegionName4,
+
+    getNationalProvincialStr,
+    getNationalProvincialStr2,
+    getNationalProvincialStr3,
+    getNationalProvincialStr4,
+
     triggerCustomEvent,
     fetchDataFromOBJ,
     handleRegionChange,
@@ -329,49 +334,56 @@ class QuickResultsWidget extends Component {
         if (comp == 'votes-default') {
             return (
                 <div className={className("quick-results-title")}>
-                    RACE FOR VOTES: <span className="regionName">{getRegionName2(self.state)}</span>
+                    Race for Votes: {getNationalProvincialStr2(self.state)}
+                </div>
+            );
+        }
+        if (comp == 'votes-default-metro') {
+            return (
+                <div className={className("quick-results-title")}>
+                    Race for Votes: {getNationalProvincialStr(self.state)} - <span className="regionName">{getRegionName2(self.state)}</span>
                 </div>
             );
         }
         if (comp == 'seats-default') {
             return (
                 <div className={className("quick-results-title")+" "+className("race-for-seats")}>
-                    RACE FOR SEATS: <span className="regionName">{getRegionName(self.state)}</span>(#SEATS)
+                    Race for Seats: {getNationalProvincialStr2(self.state)} (#SEATS)
                 </div>
             );
         }
         if (comp == 'votes-turnout') {
             return (
                 <div className={className("quick-results-title")}>
-                    RACE FOR VOTES: TURNOUT - {getRegionName3(self.state)}
+                    Turnout: {getNationalProvincialStr4(self.state)}
                 </div>
             );
         }
         if (comp == 'votes-progress') {
             return (
                 <div className={className("quick-results-title")}>
-                    COUNTING PROGRESS: {getRegionName(self.state)}
+                    Counting Progress {getNationalProvincialStr3(self.state)}
                 </div>
             );
         }
         if (comp == 'votes-comparisons') {
             return (
                 <div className={className("quick-results-title")}>
-                    VOTES COMPARISONS: {getRegionName(self.state)}
+                    Comparisons: {getNationalProvincialStr2(self.state)}
                 </div>
             );
         }
         if (comp == 'seats-comparisons') {
             return (
                 <div className={className("quick-results-title")}>
-                    SEATS COMPARISONS: {getRegionName(self.state)}
+                    Race for Seats: {getNationalProvincialStr2(self.state)} (#SEATS)
                 </div>
             );
         }
         if (comp == 'votes-myvd') {
             return (
                 <div className={className("quick-results-title")}>
-                    Voting District //{getRegionName(self.state)}
+                    Voting District
                 </div>
             );
         }
@@ -459,7 +471,7 @@ class QuickResultsWidget extends Component {
             partyAbbrs,
             iecId
         } = this.state;
-        if (comp == 'votes-default' || (comp == 'votes-myvd' && iecId && iecId.length)) {
+        if (comp == 'votes-default' || comp == 'votes-default-metro' || (comp == 'votes-myvd' && iecId && iecId.length)) {
             return (
                 <div className={className("barchart-container")}>
                     <BarChart 
