@@ -72,8 +72,7 @@
 .ELVIZ_menu-widget  .metismenu-link.active {
   text-shadow: 0 -1px 0 rgba(0, 0, 0, .25);
   -webkit-text-shadow: 0 -1px 0 rgba(0, 0, 0, .25);
-  background: #f53;
-  color: #000;
+  color: #f54641;
 }
 
 .ELVIZ_menu-widget  .metismenu-link.has-active-child {
