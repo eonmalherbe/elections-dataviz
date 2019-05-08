@@ -59,9 +59,9 @@ function cn(originName) {
 }
 
 class QuickResultsWidget extends Component {
-    _isMounted = false;
     constructor(props) {
         super(props);
+        this._isMounted = false;
         this.state = {
             numParties: 5,
             eventDescription: "2019 National Election",
