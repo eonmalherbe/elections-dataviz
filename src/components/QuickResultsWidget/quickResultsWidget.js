@@ -134,7 +134,7 @@ class QuickResultsWidget extends Component {
         this._isMounted = true;
         var self = this;
         this.refreshIntervalID = setInterval(() => {
-            self.fetchCurrentResultData();
+            self.fetchCurrentResultData(false);
         }, dataRefreshTime);
 
         document.addEventListener(events.EXPORT_SUPERWIDGET_PNG, this.exportAsPNG);
@@ -143,7 +143,7 @@ class QuickResultsWidget extends Component {
 
         document.addEventListener(events.SEATS_ELECTEDS_EVENT, this.handleSeatsElectedsEvent); // "seats-electeds-event"
 
-        this.fetchCurrentResultData();
+        this.fetchCurrentResultData(false);
     }
   
     componentWillUnmount() {
@@ -154,16 +154,26 @@ class QuickResultsWidget extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-      this.fetchCurrentResultData()
+      this.fetchCurrentResultData(true)
     }
 
     handleSeatsElectedsEvent(event) {
     }
 
-    fetchCurrentResultData() {
+    fetchCurrentResultData(showLoadingIcon) {
         var self = this;
         var newProps = JSON.parse(JSON.stringify(this.state));
         var {comp, iecId} = this.state;
+
+        if (showLoadingIcon) {
+            console.log("showLoadingIcon");
+            if (self.refs.currentTurnout)
+                self.refs.currentTurnout.innerHTML = "--";
+            if (self.refs.currentCountingProg)
+                self.refs.currentCountingProg.innerHTML = "--";
+            if (self.refs.currentSpoiltVotes)
+                self.refs.currentSpoiltVotes.innerHTML = "--";
+        }
 
         function dataLoadCallback(values) {
             var spoiltData = values[0];
@@ -221,9 +231,12 @@ class QuickResultsWidget extends Component {
         }
 
         if (newProps.regionType == "municipality-vd" && (!iecId || !iecId.length)) {
-            self.refs.currentTurnout.innerHTML = "0%";
-            self.refs.currentCountingProg.innerHTML = "0%";
-            self.refs.currentSpoiltVotes.innerHTML = "0%";
+            if (self.refs.currentTurnout)
+                self.refs.currentTurnout.innerHTML = "--";
+            if (self.refs.currentCountingProg)
+                self.refs.currentCountingProg.innerHTML = "--";
+            if (self.refs.currentSpoiltVotes)
+                self.refs.currentSpoiltVotes.innerHTML = "--";
             return;
         }
 
