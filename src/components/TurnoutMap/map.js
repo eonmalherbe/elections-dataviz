@@ -360,32 +360,26 @@ class Map extends Component {
                 }];
 
                 var countProgColors = [{
-                    text: "More than 65%",
-                    countProg: 66
+                    text: "100%",
+                    countProg: 100
                 },{
-                    text: "60% - 65%",
-                    countProg: 60
+                    text: "80% - 99%",
+                    countProg: 81
                 },{
-                    text: "55% - 60%",
-                    countProg: 55
+                    text: "60% - 79%",
+                    countProg: 61
                 },{
-                    text: "50% - 55%",
-                    countProg: 50
+                    text: "40% - 59%",
+                    countProg: 41
                 },{
-                    text: "45% - 50%",
-                    countProg: 45
+                    text: "20% - 39%",
+                    countProg: 21
                 },{
-                    text: "40% - 45%",
-                    countProg: 40
+                    text: "1% - 19%",
+                    countProg: 1
                 },{
-                    text: "35% - 40%",
-                    countProg: 35
-                },{
-                    text: "30% - 35%",
-                    countProg: 30
-                },{
-                    text: "Less than 30%",
-                    countProg: 15
+                    text: "0%",
+                    countProg: 0
                 }];
                 
                 function getLegendXY(i) {
