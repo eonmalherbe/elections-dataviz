@@ -13,6 +13,7 @@ import {
 } from "../../api";
 import {
   parseTurnoutData,
+  parseCountingProgressDataForMap,
   getRegionName,
   getSubRegionName,
   createTooltip,
@@ -44,6 +45,7 @@ class Map extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isTurnout: true,
             disableNavigation: false,
             eventDescription: "2019 National Election",
             regionType: "national",
@@ -56,6 +58,7 @@ class Map extends Component {
         }
 
         fetchDataFromOBJ(this.state, props);
+        console.log("updatedState", this.state, props);
 
         this.refreshIntervalID = 0;
         this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
@@ -131,6 +134,9 @@ class Map extends Component {
         });
 
         var canvas = rendercanvas, filename = `turnout-map(${getRegionName(this.state)}).png`;
+        if (!this.state.isTurnout) {
+            filename = `counting-progress-map(${getRegionName(this.state)}).png`
+        }
         var lnk = document.createElement("a"), e;
 
         lnk.download = filename;
@@ -204,14 +210,19 @@ class Map extends Component {
             .classed("svg-content", true);
 
         var geoJsonLoader = d3.json(fullRouteGeoJsonFile);
-        var turnoutDataLoader = getTurnoutData(props);
-        // var dataLoaders = [geoJsonLoader, turnoutDataLoader];
-        var dataLoaders = [turnoutDataLoader];
+        var mainDataLoader = getTurnoutData(props);
+        var dataLoaders = [mainDataLoader];
 
         geoJsonLoader.then(function(value) {
             var geoJsonData = value;
             Promise.all(dataLoaders).then(function(values){ 
-                var locationToTurnout = parseTurnoutData(values[0], props);      
+                var locationToMainData;
+                if (self.state.isTurnout) {
+                    locationToMainData = parseTurnoutData(values[0], props);
+                } else {
+                    locationToMainData = parseCountingProgressDataForMap(values[0], props);
+                }
+                       
     
                 function getMergedColorWithWhite(percent) {
                     var originRGB = {
@@ -243,29 +254,49 @@ class Map extends Component {
                     return "#C5F3AF";//getMergedColorWithWhite(30);//"rgb(124,194,231)";
                   return "#D3F6C3";//regionColor;
                 }
+
+                function getFillColorFromCountProg(countProg) {
+                    if (countProg >= 100)
+                      return "#980043";
+                    if (countProg >= 80)
+                      return "#dd1c77";
+                    if (countProg >= 60)
+                      return "#df65b0";
+                    if (countProg >= 40)
+                      return "#c994c7";
+                    if (countProg >= 20)
+                      return "#d4b9da";
+                    if (countProg <= 0)
+                      return "#ffffff";
+                    return "#f1eef6";
+                  }
     
-                function getTurnout(d, i) {
-                    var turnout;
+                function getMainData(d, i) {
+                    var mainData;
                     var regionType = self.state.regionType;
                     if (regionType === "national") {
                         var provinceName = d.properties.SPROVINCE;
-                        turnout = locationToTurnout[provinceName];
+                        mainData = locationToMainData[provinceName];
                     } else if (regionType === "province") {
                         var muniCode = getMunicipalityCode(d.properties);
-                        turnout = locationToTurnout[muniCode];
+                        mainData = locationToMainData[muniCode];
                     } else if (regionType === "municipality"){// "municipality"
                         var iecId = getMunicipalityiecId(d.properties);
-                        turnout = locationToTurnout[iecId];
+                        mainData = locationToMainData[iecId];
                     } else {// "municipality-vd"
                         var iecId = getMunicipalityiecId(d.properties);
-                        turnout = locationToTurnout[iecId];
+                        mainData = locationToMainData[iecId];
                     }
-                    return turnout;
+                    return mainData;
                 }
                 function getFillColorFromRegion(d, i) {
-                    var turnout = getTurnout(d, i);
-                    var fillColor = getFillColorFromTurnout(turnout);
-                    return fillColor;
+                    if (self.state.isTurnout) {
+                        var turnout = getMainData(d, i);
+                        return getFillColorFromTurnout(turnout);
+                    } else {
+                        var countProg = getMainData(d, i);
+                        return getFillColorFromCountProg(countProg);
+                    }
                 }
                 var jsonDataFeatures;
                 if (fullRouteGeoJsonFile.indexOf(".topojson") !== -1) {//topojson is used for munis and muni-vds
@@ -327,12 +358,41 @@ class Map extends Component {
                     text: "Less than 30%",
                     turnout: 15
                 }];
+
+                var countProgColors = [{
+                    text: "More than 65%",
+                    countProg: 66
+                },{
+                    text: "60% - 65%",
+                    countProg: 60
+                },{
+                    text: "55% - 60%",
+                    countProg: 55
+                },{
+                    text: "50% - 55%",
+                    countProg: 50
+                },{
+                    text: "45% - 50%",
+                    countProg: 45
+                },{
+                    text: "40% - 45%",
+                    countProg: 40
+                },{
+                    text: "35% - 40%",
+                    countProg: 35
+                },{
+                    text: "30% - 35%",
+                    countProg: 30
+                },{
+                    text: "Less than 30%",
+                    countProg: 15
+                }];
                 
                 function getLegendXY(i) {
                     return [(i%5)*170, h + 10 + parseInt(i/5) * 40];
                 }
                 var legends = svg.selectAll(`.${className("legend")}`)
-                    .data(turnoutColors)
+                    .data(self.state.isTurnout? turnoutColors: countProgColors)
                     .enter()
                     .append('g')
                     .attr("class", className("legend"))
@@ -344,7 +404,9 @@ class Map extends Component {
                     .attr('x', 0)
                     .attr('y', 0)
                     .attr("fill", (it) => {
-                        return getFillColorFromTurnout(it.turnout);
+                        if (self.state.isTurnout)
+                            return getFillColorFromTurnout(it.turnout);
+                        return getFillColorFromCountProg(it.countProg);
                     })
                 legends.append('text')
                     .attr('x', 30)
@@ -412,10 +474,10 @@ class Map extends Component {
                             undefinedText = "votes not counted yet";
                         }
     
-                        var turnoutData = getTurnout(d, i);
+                        var mainData = getMainData(d, i);
                         var subRegionName = getSubRegionName(d.properties, self.state);
-                        var tooltipText = (typeof turnoutData !== "undefined")? 
-                                    (subRegionName + " : " + turnoutData + "%") : undefinedText;
+                        var tooltipText = (typeof mainData !== "undefined")? 
+                                    (subRegionName + " : " + mainData + "%") : undefinedText;
     
                         tooltipDiv.html(tooltipText)	
                             .style("left", (d3.event.pageX) + "px")		

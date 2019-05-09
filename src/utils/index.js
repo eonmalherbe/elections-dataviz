@@ -576,6 +576,37 @@ export function parseTurnoutData(data, props) {
   return locationToTurnout;
 }
 
+export function parseCountingProgressDataForMap(data, props) {
+  if (!data)  return null;
+  var locationToProgVotes = {};
+  var edges;
+  var regionType = props.regionType;
+  if (regionType === "national") {
+      edges = data["data"]["allProvincialBallots"].edges;
+      edges.forEach(function(edge) {
+          var node = edge.node;
+          var provinceName = node["location"]["name"];
+          
+          locationToProgVotes[provinceName] = calcPercent(node["vdWithResultsCaptured"], node["vdCount"]); 
+      })
+  } else if (regionType === "province") {
+      edges = data["data"]["allMunicipalBallots"].edges;
+      edges.forEach(function(edge) {
+          var node = edge.node;
+          var muniCode = node["location"]["code"];
+          locationToProgVotes[muniCode] = calcPercent(node["vdWithResultsCaptured"], node["vdCount"]); 
+      })
+  } else {// "municipality" or "municipality-vd"
+      edges = data["data"]["allVotingDistrictBallots"].edges;
+      edges.forEach(function(edge) {
+          var node = edge.node;
+          var iecId = node["location"]["iecId"];
+          locationToProgVotes[iecId] = calcPercent(node["vdWithResultsCaptured"], node["vdCount"]); 
+      })
+  }
+  return locationToProgVotes;
+}
+
 export function parseTurnoutDataForAllEvents(data, props) {
   if (!data)  return null;
   var edges;
@@ -948,7 +979,7 @@ export function handleRegionChange(event) {
 
 export function fetchDataFromOBJ(state, props) {
   Object.keys(state).forEach(key => {
-    if (props[key]) {
+    if (typeof props[key] != 'undefined') {
       state[key] = props[key];
     }
   })

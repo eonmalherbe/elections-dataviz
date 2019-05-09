@@ -212,7 +212,7 @@ class QuickResultsWidget extends Component {
                 } 
                 if (self.refs.curCountingProg && self.refs.curCountingProg.innerHTML  && self._isMounted) {
                     console.log("self.refs.curCountingProg", self.refs.curCountingProg, self._isMounted);
-                    // self.refs.curCountingProg.innerHTML = newState.currentCountingProg + "%";
+                    self.refs.curCountingProg.innerHTML = newState.currentCountingProg + "%";
                 }
                 if (self.refs.currentSpoiltVotes) {
                     self.refs.currentSpoiltVotes.innerHTML = newState.currentSpoiltVotes + "%";
@@ -463,6 +463,18 @@ class QuickResultsWidget extends Component {
                         ref={instance => { this.mapInstance = instance; }}
                         key={comp}
                         {...this.state}
+                        componentID={-1000} />
+                </div>
+            );
+        } else if (comp == 'votes-progress') {
+            console.log("votes-PROGRESS");
+            return (
+                <div className={className("map-container")}>
+                    <TurnoutMap
+                        ref={instance => { this.mapInstance = instance; }}
+                        key={comp}
+                        {...this.state}
+                        isTurnout={false}
                         componentID={-1000} />
                 </div>
             );

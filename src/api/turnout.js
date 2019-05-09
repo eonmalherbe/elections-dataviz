@@ -17,6 +17,8 @@ import {client} from "./config"
             edges{
               node{
                 percVoterTurnout
+                vdCount
+                vdWithResultsCaptured
                 location {
                   id
                   name
@@ -38,6 +40,8 @@ import {client} from "./config"
             edges{
               node {
                 percVoterTurnout
+                vdCount
+                vdWithResultsCaptured
                 location {
                   code
                   name
@@ -63,6 +67,8 @@ import {client} from "./config"
                     iecId
                   }
                   percVoterTurnout
+                  vdCount
+                  vdWithResultsCaptured
                 }
               }
             }

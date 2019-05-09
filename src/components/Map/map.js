@@ -449,7 +449,7 @@ class Map extends Component {
                         .attr("y", 10)
                         .attr("width", 500)
                         .attr("height", 30)
-                        .attr("class", "map-controls")
+                        .attr("class", className("map-controls"))
                     
                     function setRegionType(regionType) {
                         var newState;

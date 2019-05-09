@@ -57,7 +57,7 @@ export function Chart(container, width, height, className, options) {
         return d3.max(partyInfo.data.map(it => it.x));
       }));
 
-      minMaxData.maxX = Math.min(100, maxValue * 3);
+      minMaxData.maxX = Math.min(100, maxValue * 1.5);
     }
 
     var x = d3.scaleLinear()
@@ -90,7 +90,7 @@ export function Chart(container, width, height, className, options) {
 
     axisContainer.append("text")
       .text("% VDs declared")
-      .attr("transform", "translate(" + x(50) + ", " + y(-10) + ")")
+      .attr("transform", "translate(" + x((minMaxData.minX + minMaxData.maxX)/2 ) + ", " + y(-10) + ")")
       .style("fill", "white")
       .attr("text-anchor", "middle")
       .classed("x-axis-text", "true")
