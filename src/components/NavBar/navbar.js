@@ -132,6 +132,7 @@ class NavBar extends Component {
         console.log("handleNavBarSelection", lastClass);
         var passInfo = lastClass.split('-');
         var enableMap = true;
+        var enableBarChart = true
         var enableTurnoutProgressSpoilt = true;
 
         var eventDescription, electionType, regionType, selectionData = {}, chartType = "";
@@ -257,6 +258,8 @@ class NavBar extends Component {
                 // Main page for National Legislature
                 regionType = "national";
                 chartType = "votes-default";
+                electionType = "provincial"
+                enableBarChart = false;
             } else {
                 return;
             }
@@ -315,6 +318,7 @@ class NavBar extends Component {
         newState.electionType = electionType
         newState.comp = chartType;
         newState.enableMap = enableMap;
+        newState.enableBarChart = enableBarChart;
         newState.enableTurnoutProgressSpoilt = enableTurnoutProgressSpoilt;
 
         console.log("newState", newState);
