@@ -187,6 +187,8 @@ export function Chart(container, width, height, className, options) {
             }
           }
       }
+      pythonConvertedCode(totalSeats, mainSvg);
+
       var legendBoxWidth = 10;
       var boxMargin = legendBoxWidth;
       var boxX = 360;
@@ -291,7 +293,6 @@ export function Chart(container, width, height, className, options) {
           })
           .classed("label")
 
-      pythonConvertedCode(totalSeats, mainSvg);
 
     }
     this.destroy = function() {
