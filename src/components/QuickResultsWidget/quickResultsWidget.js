@@ -368,7 +368,7 @@ class QuickResultsWidget extends Component {
         if (comp == 'seats-default') {
             return (
                 <div className={className("quick-results-title")+" "+className("race-for-seats")}>
-                    Race for Seats: {getNationalProvincialStr2(self.state)} ({getSeatsCount(self.state)})
+                    PREDICTED: Race for Seats: {getNationalProvincialStr2(self.state)} ({getSeatsCount(self.state)})
                 </div>
             );
         }
