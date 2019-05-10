@@ -192,26 +192,26 @@ export function Chart(container, width, height, className, options) {
       var boxX = 360;
       var columnSpacing = legendBoxWidth * 8;
 
-//      var positionBoxes = function(idx, args) {
-//            var args = args || {};
-//            var boxWidth = args.boxWidth || 5;
-//            var boxX = args.boxX || 380;
-//            var columnSpacing = args.columnSpacing || boxWidth * 6
-//            var boxMargin = args.boxMargin || boxWidth * 2;
-//
-//            var yPos = (idx % 2 == 0) ? idx / 2 : (idx - 1) / 2;
-//            var y = yPos * (boxWidth + boxMargin) + 10;
-//            var x;
-//
-//            if (idx % 2 == 0)
-//              x = boxX;
-//            else
-//              x = boxX + columnSpacing;
-//
-//            return {x: x, y: y};
-//      }
+      var positionBoxes2 = function(idx, args) {
+            var args = args || {};
+            var boxWidth = args.boxWidth || 5;
+            var boxX = args.boxX || 380;
+            var columnSpacing = args.columnSpacing || boxWidth * 6
+            var boxMargin = args.boxMargin || boxWidth * 2;
 
-      var positionBoxes = function(idx, args) {
+            var yPos = (idx % 2 == 0) ? idx / 2 : (idx - 1) / 2;
+            var y = yPos * (boxWidth + boxMargin) + 10;
+            var x;
+
+            if (idx % 2 == 0)
+              x = boxX;
+            else
+              x = boxX + columnSpacing;
+
+            return {x: x, y: y};
+      }
+
+      var positionBoxes3 = function(idx, args) {
             var args = args || {};
             var boxWidth = args.boxWidth || 5;
             var boxX = args.boxX || 390;
@@ -236,13 +236,18 @@ export function Chart(container, width, height, className, options) {
             return {x: x, y: y};
       }
 
-
+      var threeColumnThreshold = 12;
       chartData = chartData.sort(function(el1, el2) {
         return el2.seats - el1.seats;
       })
 
       var legendContainer = mainSvg.append("g")
         .classed("legend", true)
+
+      var seatParties = chartData.filter(function(el){
+        return el.seats > 0;
+      })
+      var legendParams = {boxX: 360, columnSpacing: legendBoxWidth * 7, boxMargin: legendBoxWidth * 2}
 
       legendContainer
         .selectAll(".legend rect")
@@ -253,7 +258,10 @@ export function Chart(container, width, height, className, options) {
         })
         .append("rect")
           .attr("transform", function(el, idx) {
-            var pos = positionBoxes(idx, {boxX: 360, columnSpacing: legendBoxWidth * 7, boxMargin: legendBoxWidth * 2});
+            if (seatParties.length < threeColumnThreshold)
+              var pos = positionBoxes2(idx, legendParams);
+            else
+              var pos = positionBoxes3(idx, legendParams);
 
             return "translate(" + pos.x +", " + pos.y + ")";
           })
@@ -275,7 +283,10 @@ export function Chart(container, width, height, className, options) {
            return el.name + " (" + el.seats + ")";
          })
           .attr("transform", function(el, idx) {
-            var pos = positionBoxes(idx, {boxX: 360, columnSpacing: legendBoxWidth * 7, boxMargin: legendBoxWidth * 2});
+            if (seatParties.length < threeColumnThreshold)
+              var pos = positionBoxes2(idx, legendParams);
+            else
+              var pos = positionBoxes3(idx, legendParams);
             return "translate(" + (pos.x + legendBoxWidth * 1.5) +", " + (pos.y + 8) + ")";
           })
           .classed("label")
