@@ -426,6 +426,8 @@ class QuickResultsWidget extends Component {
     }
 
     renderMap() {
+
+            var msgMapClick = "Click on the map for detailed results";
         var {
             comp,
             iecId,
@@ -439,7 +441,7 @@ class QuickResultsWidget extends Component {
                     <div className={className("map-container")}>
                         <div className={cn("leadingmap-title-container")}>
                             <div className={cn("leading-parties")}>Leading Parties</div>
-                            <div className={cn("helper-text")}>Click on the map for lower level results</div>
+                            <div className={cn("helper-text")}>{ msgMapClick }</div>
                         </div>
                         <Map
                             ref={instance => { this.mapInstance = instance; }}
@@ -459,7 +461,7 @@ class QuickResultsWidget extends Component {
                 <div className={className("map-container")}>
                     <div className={cn("leadingmap-title-container")}>
                         <div className={cn("leading-parties")}>Leading Parties</div>
-                        <div className={cn("helper-text")}>Click on the map for lower level results</div>
+                        <div className={cn("helper-text")}>{ msgMapClick }</div>
                     </div>
                     <Map
                         ref={instance => { this.mapInstance = instance; }}
@@ -498,7 +500,7 @@ class QuickResultsWidget extends Component {
                         (comp === 'votes-default' || comp === 'votes-default-metro') && 
                         <div className={cn("leadingmap-title-container")}>
                             <div className={cn("leading-parties")}>Leading Parties</div>
-                            <div className={cn("helper-text")}>Click on the map for lower level results</div>
+                            <div className={cn("helper-text")}>{ msgMapClick }</div>
                         </div>
                     }
                     <Map
