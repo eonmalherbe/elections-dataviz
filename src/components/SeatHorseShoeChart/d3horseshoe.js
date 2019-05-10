@@ -239,21 +239,22 @@ export function Chart(container, width, height, className, options) {
       }
 
       var threeColumnThreshold = 12;
-      chartData = chartData.sort(function(el1, el2) {
+      var legendChart = chartData.slice()
+      legendChart.sort(function(el1, el2) {
         return el2.seats - el1.seats;
       })
 
       var legendContainer = mainSvg.append("g")
         .classed("legend", true)
 
-      var seatParties = chartData.filter(function(el){
+      var seatParties = legendContainer.filter(function(el){
         return el.seats > 0;
       })
       var legendParams = {boxX: 360, columnSpacing: legendBoxWidth * 7, boxMargin: legendBoxWidth * 2}
 
       legendContainer
         .selectAll(".legend rect")
-        .data(chartData)
+        .data(legendContainer)
         .enter()
         .filter(function(el) {
           return el.seats > 0
@@ -276,7 +277,7 @@ export function Chart(container, width, height, className, options) {
 
       legendContainer
         .selectAll(".legend text")
-        .data(chartData)
+        .data(legendContainer)
         .enter()
         .filter(function(el) {
           return el.seats > 0
