@@ -29,3 +29,7 @@
   fill: white;
   color: white;
 }
+
+.horseshoechart .legend text {
+  font-size: 8px;
+}

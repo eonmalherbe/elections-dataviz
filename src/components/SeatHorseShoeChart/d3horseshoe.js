@@ -6,8 +6,8 @@ export function Chart(container, width, height, className, options) {
     options = {};
   } 
 
-  width = 360;
-  height = 185;
+  width = 560;
+  height = 200;
 
     var predefColors = ["blue", "yellow", "red"];
 
@@ -187,6 +187,99 @@ export function Chart(container, width, height, className, options) {
             }
           }
       }
+      var legendBoxWidth = 10;
+      var boxMargin = legendBoxWidth;
+      var boxX = 360;
+      var columnSpacing = legendBoxWidth * 8;
+
+//      var positionBoxes = function(idx, args) {
+//            var args = args || {};
+//            var boxWidth = args.boxWidth || 5;
+//            var boxX = args.boxX || 380;
+//            var columnSpacing = args.columnSpacing || boxWidth * 6
+//            var boxMargin = args.boxMargin || boxWidth * 2;
+//
+//            var yPos = (idx % 2 == 0) ? idx / 2 : (idx - 1) / 2;
+//            var y = yPos * (boxWidth + boxMargin) + 10;
+//            var x;
+//
+//            if (idx % 2 == 0)
+//              x = boxX;
+//            else
+//              x = boxX + columnSpacing;
+//
+//            return {x: x, y: y};
+//      }
+
+      var positionBoxes = function(idx, args) {
+            var args = args || {};
+            var boxWidth = args.boxWidth || 5;
+            var boxX = args.boxX || 390;
+            var columnSpacing = args.columnSpacing || boxWidth * 6
+            var boxMargin = args.boxMargin || boxWidth * 2;
+            var yShift = args.yShift || 30;
+
+            var yPos;
+
+            if (idx % 3 == 0) {
+              yPos = idx / 3;
+            } else if (idx % 3 == 1) {
+              yPos = (idx - 1) / 3;
+            } else {
+              yPos = (idx - 2) / 3;
+            }
+
+            yPos = (idx - idx % 3) / 3;
+            var y = yPos * boxMargin + yShift;
+            var x = columnSpacing * (idx % 3) + boxX;
+
+            return {x: x, y: y};
+      }
+
+
+      chartData = chartData.sort(function(el1, el2) {
+        return el2.seats - el1.seats;
+      })
+
+      var legendContainer = mainSvg.append("g")
+        .classed("legend", true)
+
+      legendContainer
+        .selectAll(".legend rect")
+        .data(chartData)
+        .enter()
+        .filter(function(el) {
+          return el.seats > 0
+        })
+        .append("rect")
+          .attr("transform", function(el, idx) {
+            var pos = positionBoxes(idx, {boxX: 360, columnSpacing: legendBoxWidth * 7, boxMargin: legendBoxWidth * 2});
+
+            return "translate(" + pos.x +", " + pos.y + ")";
+          })
+          .attr("width", legendBoxWidth)
+          .attr("height", legendBoxWidth)
+          .style("fill", function(el) {
+            return getFillColorFromPartyName(el.partyInfo.name)
+          })
+
+
+      legendContainer
+        .selectAll(".legend text")
+        .data(chartData)
+        .enter()
+        .filter(function(el) {
+          return el.seats > 0
+         })
+         .append("text").text(function(el) {
+           return el.name + " (" + el.seats + ")";
+         })
+          .attr("transform", function(el, idx) {
+            var pos = positionBoxes(idx, {boxX: 360, columnSpacing: legendBoxWidth * 7, boxMargin: legendBoxWidth * 2});
+            return "translate(" + (pos.x + legendBoxWidth * 1.5) +", " + (pos.y + 8) + ")";
+          })
+          .classed("label")
+
       pythonConvertedCode(totalSeats, mainSvg);
 
     }
