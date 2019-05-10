@@ -346,7 +346,6 @@ class NavBar extends Component {
         var content = [
             {
                 label: 'National Assembly',
-                icon: `1-3-4-1`,
                 content: [
                     {
                         label: "Race for votes",
@@ -444,7 +443,6 @@ class NavBar extends Component {
             },
             {
                 label: 'Provincial Legislature',
-                icon: `2-3-4-1`,
                 content: provincesData.map((province, i) => {
                     return {
                         label: province.name,

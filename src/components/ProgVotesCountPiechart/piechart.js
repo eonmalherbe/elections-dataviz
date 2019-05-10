@@ -21,7 +21,8 @@ var dataRefreshTime = 30 * 1000;
 var chartOptions = {
   chartType: 'Progress on Votes Count',
   variable: 'percent',
-  category: 'name'
+  category: 'name',
+  hideTooltip: true
 };
 
 function className(originName) {
