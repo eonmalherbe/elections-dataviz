@@ -236,23 +236,34 @@ class Map extends Component {
                     return `rgb(${mixedR},${mixedG},${mixedB})`;
                 }
                 function getFillColorFromTurnout(turnout) {
-                  if (turnout > 65)
-                    return "#39711D";//getMergedColorWithWhite(100);//"rgb(0,165,138)";
-                  if (turnout >= 60)
-                    return "#458923";//getMergedColorWithWhite(90);//"rgb(4,68,95)";
-                  if (turnout >= 55)
-                    return "#53B025";//getMergedColorWithWhite(80);//"rgb(4,98,138)";
-                  if (turnout >= 50)
-                    return "#4BDC02";//getMergedColorWithWhite(70);//"rgb(4,117,164)";
-                  if (turnout >= 45)
-                    return "#7CE547";//getMergedColorWithWhite(60);//"rgb(4,136,191)";
-                  if (turnout >= 40)
-                    return "#93E968";//getMergedColorWithWhite(50);//"rgb(0,154,216)";
-                  if (turnout >= 35)
-                    return "#A6ED83";//getMergedColorWithWhite(40);//"rgb(77,174,224)";
-                  if (turnout >= 30)
-                    return "#C5F3AF";//getMergedColorWithWhite(30);//"rgb(124,194,231)";
-                  return "#D3F6C3";//regionColor;
+                //   if (turnout > 65)
+                //     return "#39711D";//getMergedColorWithWhite(100);//"rgb(0,165,138)";
+                //   if (turnout >= 60)
+                //     return "#458923";//getMergedColorWithWhite(90);//"rgb(4,68,95)";
+                //   if (turnout >= 55)
+                //     return "#53B025";//getMergedColorWithWhite(80);//"rgb(4,98,138)";
+                //   if (turnout >= 50)
+                //     return "#4BDC02";//getMergedColorWithWhite(70);//"rgb(4,117,164)";
+                //   if (turnout >= 45)
+                //     return "#7CE547";//getMergedColorWithWhite(60);//"rgb(4,136,191)";
+                //   if (turnout >= 40)
+                //     return "#93E968";//getMergedColorWithWhite(50);//"rgb(0,154,216)";
+                //   if (turnout >= 35)
+                //     return "#A6ED83";//getMergedColorWithWhite(40);//"rgb(77,174,224)";
+                //   if (turnout >= 30)
+                //     return "#C5F3AF";//getMergedColorWithWhite(30);//"rgb(124,194,231)";
+                //   return "#D3F6C3";//regionColor;
+                    if (turnout > 90)
+                        return "#39711D";//getMergedColorWithWhite(100);//"rgb(0,165,138)";
+                    if (turnout >= 80)
+                        return "#458923";//getMergedColorWithWhite(90);//"rgb(4,68,95)";
+                    if (turnout >= 70)
+                        return "#53B025";//getMergedColorWithWhite(80);//"rgb(4,98,138)";
+                    if (turnout >= 60)
+                        return "#7CE547";//getMergedColorWithWhite(70);//"rgb(4,117,164)";
+                    if (turnout >= 50)
+                        return "#C5F3AF";//getMergedColorWithWhite(60);//"rgb(4,136,191)";
+                    return "#D3F6C3";//regionColor;
                 }
 
                 function getFillColorFromCountProg(countProg) {
@@ -329,34 +340,26 @@ class Map extends Component {
                         return `region-${i}`;
                     })
                     .attr("d", path);
-                
+
+                    
                 var turnoutColors = [{
-                    text: "More than 65%",
-                    turnout: 66
+                    text: "More than 90%",
+                    turnout: 91
                 },{
-                    text: "60% - 65%",
-                    turnout: 60
+                    text: "80% - 89%",
+                    turnout: 81
                 },{
-                    text: "55% - 60%",
-                    turnout: 55
+                    text: "70% - 79%",
+                    turnout: 71
                 },{
-                    text: "50% - 55%",
-                    turnout: 50
+                    text: "60% - 69%",
+                    turnout: 61
                 },{
-                    text: "45% - 50%",
-                    turnout: 45
+                    text: "50% - 59%",
+                    turnout: 51
                 },{
-                    text: "40% - 45%",
+                    text: "Less than 50%",
                     turnout: 40
-                },{
-                    text: "35% - 40%",
-                    turnout: 35
-                },{
-                    text: "30% - 35%",
-                    turnout: 30
-                },{
-                    text: "Less than 30%",
-                    turnout: 15
                 }];
 
                 var countProgColors = [{

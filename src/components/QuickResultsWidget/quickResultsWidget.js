@@ -395,8 +395,8 @@ class QuickResultsWidget extends Component {
         }
         if (comp == 'seats-comparisons') {
             return (
-                <div className={className("quick-results-title")}>
-                    Race for Seats: {getNationalProvincialStr2(self.state)} ({getSeatsCount(self.state)})
+                <div className={className("quick-results-title")+" "+className("race-for-seats")}>
+                    Comparisons: {getNationalProvincialStr2(self.state)} ({getSeatsCount(self.state)})
                 </div>
             );
         }
@@ -410,7 +410,7 @@ class QuickResultsWidget extends Component {
         if (comp == 'votes-split') {
             return (
                 <div className={className("quick-results-title")}>
-                    {getRegionName(self.state)} Race for Votes - Split (Nat/Prov)
+                    Split (Nat/Prov): National and {getNationalProvincialStr2(self.state)}
                 </div>
             )
         }

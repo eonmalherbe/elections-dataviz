@@ -140,6 +140,9 @@ export function Chart(container, width, height, className, options) {
 
     function toolTip(selection) {
 
+        if (options.hideTooltip)
+            return;
+
         selection.on('mouseenter', function (data) {
             svg.append('text')
                 .attr('class', 'toolCircle')

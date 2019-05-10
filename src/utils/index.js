@@ -162,7 +162,7 @@ export function parseVotesComparisonData(data, props) {
       }
     }
   });
-  var results = partyfilter_edges.filter(edge => eventDescriptions.indexOf(edge.name) != -1).reverse();
+  var results = partyfilter_edges.filter(edge => eventDescriptions.indexOf(edge.name) != -1);
 
   var new_results = [];
   for(var i = 0; i < eventDescriptions.length; i ++) {
