@@ -167,6 +167,10 @@ class NavBar extends Component {
                         chartType = "votes-turnout";
                         break;
                     case '6':
+                        chartType = "votes-split";
+                        enableMap = false;
+                        break;
+                    case '7':
                         chartType = "votes-myvd";
                         break;
                     default:
@@ -221,6 +225,7 @@ class NavBar extends Component {
                         break;
                     case '5':
                         chartType = "votes-split";
+                        enableMap = false;
                         break;
                     case '6':
                         chartType = "votes-predictions";
@@ -324,8 +329,12 @@ class NavBar extends Component {
             newState.iecId = "";
         }
 
+        if (newState.comp == "seats-electeds") {
+            window.open("http://elections.sabc.co.za/candidates/");
+            return;
+        }
         if (newState.comp == "seats-electeds" || newState.comp == "seats-women" || newState.comp == "seats-age") {
-            triggerCustomEvent(events.SEATS_ELECTEDS_EVENT, newState);
+            // triggerCustomEvent(events.SEATS_ELECTEDS_EVENT, newState);
             return;
         }
 
@@ -388,9 +397,9 @@ class NavBar extends Component {
                                 to: `1-1-5`,
                             },
                             {
-                                icon: `1-1-6`,
+                                icon: `1-1-7`,
                                 label: `My voting District`,
-                                to: `1-1-6`,
+                                to: `1-1-7`,
                             },
                             {
                                 label: `Metros`,
@@ -418,11 +427,11 @@ class NavBar extends Component {
                                 label: `Comparisons`,
                                 to: `1-2-2`,
                             },
-                            // {
-                            //     icon: `1-2-3`,
-                            //     label: `Electeds`,
-                            //     to: `1-2-3`,
-                            // },
+                            {
+                                icon: `1-2-3`,
+                                label: `Candidates`,
+                                to: `1-2-3`,
+                            },
                             // {
                             //     icon: `1-2-4`,
                             //     label: `Women`,
@@ -491,11 +500,11 @@ class NavBar extends Component {
                                         label: `Comparisons`,
                                         to: `2-${i}-2-2`,
                                     },
-                                    // {
-                                    //     icon: `2-${i}-2-3`,
-                                    //     label: `Electeds`,
-                                    //     to: `2-${i}-2-3`,
-                                    // },
+                                    {
+                                        icon: `2-${i}-2-3`,
+                                        label: `Candidates`,
+                                        to: `2-${i}-2-3`,
+                                    },
                                     // {
                                     //     icon: `2-${i}-2-4`,
                                     //     label: `Women`,

@@ -66,7 +66,7 @@ export function parseVotesDataForAllEvents(data, props) {
         }
         return -1;
       }
-      return edge1Year - edge2Year;
+      return -edge1Year + edge2Year;
     })
 }
  
@@ -188,9 +188,9 @@ export function parseVotesComparisonData(data, props) {
       })
     }
   }
-  new_results.sort(function(a, b) {
-    return a.name - b.name;
-  })
+  // new_results.sort(function(a, b) {
+  //   return a.name - b.name;
+  // })
   return new_results;
 }
 
@@ -635,7 +635,7 @@ export function parseTurnoutDataForAllEvents(data, props) {
   .sort(function(edge1, edge2) {
     var edge1Year = parseInt(/(19|20)\d{2}/g.exec(edge1.name)[0]);
     var edge2Year = parseInt(/(19|20)\d{2}/g.exec(edge2.name)[0]);
-    return edge1Year - edge2Year;
+    return -edge1Year + edge2Year;
   })
 }
 

@@ -378,7 +378,7 @@ class Map extends Component {
                     text: "20% - 39%",
                     countProg: 21
                 },{
-                    text: "1% - 19%",
+                    text: "0.01% - 19%",
                     countProg: 1
                 },{
                     text: "0%",

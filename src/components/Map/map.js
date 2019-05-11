@@ -20,7 +20,8 @@ import {
   triggerCustomEvent,
   getMunicipalityiecId,
   getRegionFileName,
-  fetchDataFromOBJ
+  fetchDataFromOBJ,
+  getYear
 } from "../../utils";
 
 var dataRefreshTime = 30 * 1000;
@@ -295,6 +296,9 @@ class Map extends Component {
                 var availableCnt = [];
                 jsonDataFeatures.forEach((d, i) => {
                     var party = getMainPartyName(d, i);
+                    if (!party) {
+                        party = "";
+                    }
                     if (parties.indexOf(party) == -1) {
                         parties.push(party);
                         availableCnt.push(1);
@@ -302,8 +306,17 @@ class Map extends Component {
                         availableCnt[parties.indexOf(party)] ++;
                     }
                 })
+
+                console.log("parties", parties);
+                console.log("availableCnt", availableCnt);
     
                 parties.sort(function(a, b){
+                    if (!a || !a.length) {
+                        return 1;
+                    }
+                    if (!b || !b.length) {
+                        return -1;
+                    }
                     return availableCnt[parties.indexOf(b)] - availableCnt[parties.indexOf(a)];
                 })
     
@@ -328,7 +341,7 @@ class Map extends Component {
                 legends.append('text')
                     .attr('x', 30)
                     .attr('y', 16)
-                    .text(party => partyAbbrByName[party])
+                    .text(party => partyAbbrByName[party] || "No results available")
                 
                 if (self.state.regionType.indexOf("municipality") == -1) {
                     svg.selectAll(".place-label")
@@ -382,15 +395,21 @@ class Map extends Component {
                             .style("opacity", 1);
     
                         var undefinedText;
-                        if (self.state.regionType === "province") {
-                            undefinedText = "New municipality - no previous results available"
-                        } else {
-                            undefinedText = "New voting district - no previous results available"
-                        }
+                        if (getYear(self.state.eventDescription) == 2019)
+                            undefinedText = "no results available"
+                        else 
+                            undefinedText = "no previous results available"
                         var mainPartyName = getMainPartyName(d, i);
                         var subRegionName = getSubRegionName(d.properties, self.state);
-                        var tooltipText = (typeof mainPartyName !== "undefined")? 
-                                    (subRegionName + " : " + mainPartyName) : undefinedText;
+                        if (getYear(self.state.eventDescription) != 2019 && !mainPartyName) {
+                            if (self.state.regionType === "province") {
+                                subRegionName = "New municipality"
+                            } else {
+                                subRegionName = "New voting district"
+                            }
+                        }
+                        var tooltipText = (typeof mainPartyName !== "undefined" && mainPartyName)? 
+                                    (subRegionName + " : " + mainPartyName) : (subRegionName + " : " + undefinedText);
     
                         tooltipDiv.html(tooltipText)	
                             .style("left", (d3.event.pageX) + "px")		
@@ -435,6 +454,10 @@ class Map extends Component {
                                 iecId: getMunicipalityiecId(d.properties),
                             }
                         } else { // "municipality-vd"
+                            return;
+                        }
+                        var mainPartyName = getMainPartyName(d, i);
+                        if (!mainPartyName && regionType === "municipality") {
                             return;
                         }
                         triggerCustomEvent(events.REGION_CHANGE, newState);

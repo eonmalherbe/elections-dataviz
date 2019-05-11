@@ -111,12 +111,12 @@ class QuickResultsWidget extends Component {
                 // "Provincial Elections 1999",
                 // "14 Apr 2004 National Election",
                 // "14 Apr 2004 Provincial Election",
-                "22 Apr 2009 National Election",
-                "22 Apr 2009 Provincial Election",
+                // "22 Apr 2009 National Election",
+                // "22 Apr 2009 Provincial Election",
+                "2019 NATIONAL ELECTION",
+                "2019 PROVINCIAL ELECTION",
                 "2014 National Election",
                 "2014 Provincial Election",
-                // "2019 NATIONAL ELECTION",
-                // "2019 PROVINCIAL ELECTION",
             ],
             currentTurnout: 0,
             currentCountingProg: 0,
@@ -410,7 +410,7 @@ class QuickResultsWidget extends Component {
         if (comp == 'votes-split') {
             return (
                 <div className={className("quick-results-title")}>
-                    Split (Nat/Prov): National and {getNationalProvincialStr2(self.state)}
+                    Split (Nat/Prov): National Assembly and {getNationalProvincialStr2(self.state)}
                 </div>
             )
         }
@@ -632,7 +632,7 @@ class QuickResultsWidget extends Component {
             <div className="voting-district-enter-form">
                 <input ref="vdInput" type="text" placeholder="Enter your VD number"/>
                 <button onClick={this.onShowVDResult.bind(this)}> Show Result</button>
-                <p className="iec-link">Look up your voting district number at the <a href="http://maps.elections.org.za/vsfinder/">IEC</a>.</p>
+                <p className="iec-link">Look up your voting district number at the <a href="http://maps.elections.org.za/vsfinder/" target="_blank">IEC</a>.</p>
             </div>
         )
     }

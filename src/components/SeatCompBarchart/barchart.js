@@ -28,7 +28,8 @@ var chartOptions = {
   },
   yValueFormat: function(seats) {
     return seats;
-  } 
+  },
+  showLegend: true
 };
 
 function className(originName) {
