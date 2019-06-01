@@ -13,6 +13,7 @@ import {
 } from "../../api";
 import {
   parseTurnoutData,
+  parseCountingProgressDataForMap,
   getRegionName,
   getSubRegionName,
   createTooltip,
@@ -44,6 +45,7 @@ class Map extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isTurnout: true,
             disableNavigation: false,
             eventDescription: "2019 National Election",
             regionType: "national",
@@ -56,6 +58,7 @@ class Map extends Component {
         }
 
         fetchDataFromOBJ(this.state, props);
+        console.log("updatedState", this.state, props);
 
         this.refreshIntervalID = 0;
         this.exportAsPNGUri = this.exportAsPNGUri.bind(this);
@@ -131,6 +134,9 @@ class Map extends Component {
         });
 
         var canvas = rendercanvas, filename = `turnout-map(${getRegionName(this.state)}).png`;
+        if (!this.state.isTurnout) {
+            filename = `counting-progress-map(${getRegionName(this.state)}).png`
+        }
         var lnk = document.createElement("a"), e;
 
         lnk.download = filename;
@@ -204,14 +210,19 @@ class Map extends Component {
             .classed("svg-content", true);
 
         var geoJsonLoader = d3.json(fullRouteGeoJsonFile);
-        var turnoutDataLoader = getTurnoutData(props);
-        // var dataLoaders = [geoJsonLoader, turnoutDataLoader];
-        var dataLoaders = [turnoutDataLoader];
+        var mainDataLoader = getTurnoutData(props);
+        var dataLoaders = [mainDataLoader];
 
         geoJsonLoader.then(function(value) {
             var geoJsonData = value;
             Promise.all(dataLoaders).then(function(values){ 
-                var locationToTurnout = parseTurnoutData(values[0], props);      
+                var locationToMainData;
+                if (self.state.isTurnout) {
+                    locationToMainData = parseTurnoutData(values[0], props);
+                } else {
+                    locationToMainData = parseCountingProgressDataForMap(values[0], props);
+                }
+                       
     
                 function getMergedColorWithWhite(percent) {
                     var originRGB = {
@@ -225,47 +236,78 @@ class Map extends Component {
                     return `rgb(${mixedR},${mixedG},${mixedB})`;
                 }
                 function getFillColorFromTurnout(turnout) {
-                  if (turnout > 65)
-                    return "#39711D";//getMergedColorWithWhite(100);//"rgb(0,165,138)";
-                  if (turnout >= 60)
-                    return "#458923";//getMergedColorWithWhite(90);//"rgb(4,68,95)";
-                  if (turnout >= 55)
-                    return "#53B025";//getMergedColorWithWhite(80);//"rgb(4,98,138)";
-                  if (turnout >= 50)
-                    return "#4BDC02";//getMergedColorWithWhite(70);//"rgb(4,117,164)";
-                  if (turnout >= 45)
-                    return "#7CE547";//getMergedColorWithWhite(60);//"rgb(4,136,191)";
-                  if (turnout >= 40)
-                    return "#93E968";//getMergedColorWithWhite(50);//"rgb(0,154,216)";
-                  if (turnout >= 35)
-                    return "#A6ED83";//getMergedColorWithWhite(40);//"rgb(77,174,224)";
-                  if (turnout >= 30)
-                    return "#C5F3AF";//getMergedColorWithWhite(30);//"rgb(124,194,231)";
-                  return "#D3F6C3";//regionColor;
+                //   if (turnout > 65)
+                //     return "#39711D";//getMergedColorWithWhite(100);//"rgb(0,165,138)";
+                //   if (turnout >= 60)
+                //     return "#458923";//getMergedColorWithWhite(90);//"rgb(4,68,95)";
+                //   if (turnout >= 55)
+                //     return "#53B025";//getMergedColorWithWhite(80);//"rgb(4,98,138)";
+                //   if (turnout >= 50)
+                //     return "#4BDC02";//getMergedColorWithWhite(70);//"rgb(4,117,164)";
+                //   if (turnout >= 45)
+                //     return "#7CE547";//getMergedColorWithWhite(60);//"rgb(4,136,191)";
+                //   if (turnout >= 40)
+                //     return "#93E968";//getMergedColorWithWhite(50);//"rgb(0,154,216)";
+                //   if (turnout >= 35)
+                //     return "#A6ED83";//getMergedColorWithWhite(40);//"rgb(77,174,224)";
+                //   if (turnout >= 30)
+                //     return "#C5F3AF";//getMergedColorWithWhite(30);//"rgb(124,194,231)";
+                //   return "#D3F6C3";//regionColor;
+                    if (turnout > 90)
+                        return "#39711D";//getMergedColorWithWhite(100);//"rgb(0,165,138)";
+                    if (turnout >= 80)
+                        return "#458923";//getMergedColorWithWhite(90);//"rgb(4,68,95)";
+                    if (turnout >= 70)
+                        return "#53B025";//getMergedColorWithWhite(80);//"rgb(4,98,138)";
+                    if (turnout >= 60)
+                        return "#7CE547";//getMergedColorWithWhite(70);//"rgb(4,117,164)";
+                    if (turnout >= 50)
+                        return "#C5F3AF";//getMergedColorWithWhite(60);//"rgb(4,136,191)";
+                    return "#D3F6C3";//regionColor;
                 }
+
+                function getFillColorFromCountProg(countProg) {
+                    if (countProg >= 100)
+                      return "#980043";
+                    if (countProg >= 80)
+                      return "#dd1c77";
+                    if (countProg >= 60)
+                      return "#df65b0";
+                    if (countProg >= 40)
+                      return "#c994c7";
+                    if (countProg >= 20)
+                      return "#d4b9da";
+                    if (countProg <= 0)
+                      return "#ffffff";
+                    return "#f1eef6";
+                  }
     
-                function getTurnout(d, i) {
-                    var turnout;
+                function getMainData(d, i) {
+                    var mainData;
                     var regionType = self.state.regionType;
                     if (regionType === "national") {
                         var provinceName = d.properties.SPROVINCE;
-                        turnout = locationToTurnout[provinceName];
+                        mainData = locationToMainData[provinceName];
                     } else if (regionType === "province") {
                         var muniCode = getMunicipalityCode(d.properties);
-                        turnout = locationToTurnout[muniCode];
+                        mainData = locationToMainData[muniCode];
                     } else if (regionType === "municipality"){// "municipality"
                         var iecId = getMunicipalityiecId(d.properties);
-                        turnout = locationToTurnout[iecId];
+                        mainData = locationToMainData[iecId];
                     } else {// "municipality-vd"
                         var iecId = getMunicipalityiecId(d.properties);
-                        turnout = locationToTurnout[iecId];
+                        mainData = locationToMainData[iecId];
                     }
-                    return turnout;
+                    return mainData;
                 }
                 function getFillColorFromRegion(d, i) {
-                    var turnout = getTurnout(d, i);
-                    var fillColor = getFillColorFromTurnout(turnout);
-                    return fillColor;
+                    if (self.state.isTurnout) {
+                        var turnout = getMainData(d, i);
+                        return getFillColorFromTurnout(turnout);
+                    } else {
+                        var countProg = getMainData(d, i);
+                        return getFillColorFromCountProg(countProg);
+                    }
                 }
                 var jsonDataFeatures;
                 if (fullRouteGeoJsonFile.indexOf(".topojson") !== -1) {//topojson is used for munis and muni-vds
@@ -298,41 +340,56 @@ class Map extends Component {
                         return `region-${i}`;
                     })
                     .attr("d", path);
-                
+
+                    
                 var turnoutColors = [{
-                    text: "More than 65%",
-                    turnout: 66
+                    text: "More than 90%",
+                    turnout: 91
                 },{
-                    text: "60% - 65%",
-                    turnout: 60
+                    text: "80% - 89%",
+                    turnout: 81
                 },{
-                    text: "55% - 60%",
-                    turnout: 55
+                    text: "70% - 79%",
+                    turnout: 71
                 },{
-                    text: "50% - 55%",
-                    turnout: 50
+                    text: "60% - 69%",
+                    turnout: 61
                 },{
-                    text: "45% - 50%",
-                    turnout: 45
+                    text: "50% - 59%",
+                    turnout: 51
                 },{
-                    text: "40% - 45%",
+                    text: "Less than 50%",
                     turnout: 40
+                }];
+
+                var countProgColors = [{
+                    text: "100%",
+                    countProg: 100
                 },{
-                    text: "35% - 40%",
-                    turnout: 35
+                    text: "80% - 99%",
+                    countProg: 81
                 },{
-                    text: "30% - 35%",
-                    turnout: 30
+                    text: "60% - 79%",
+                    countProg: 61
                 },{
-                    text: "Less than 30%",
-                    turnout: 15
+                    text: "40% - 59%",
+                    countProg: 41
+                },{
+                    text: "20% - 39%",
+                    countProg: 21
+                },{
+                    text: "0.01% - 19%",
+                    countProg: 1
+                },{
+                    text: "0%",
+                    countProg: 0
                 }];
                 
                 function getLegendXY(i) {
                     return [(i%5)*170, h + 10 + parseInt(i/5) * 40];
                 }
                 var legends = svg.selectAll(`.${className("legend")}`)
-                    .data(turnoutColors)
+                    .data(self.state.isTurnout? turnoutColors: countProgColors)
                     .enter()
                     .append('g')
                     .attr("class", className("legend"))
@@ -344,7 +401,9 @@ class Map extends Component {
                     .attr('x', 0)
                     .attr('y', 0)
                     .attr("fill", (it) => {
-                        return getFillColorFromTurnout(it.turnout);
+                        if (self.state.isTurnout)
+                            return getFillColorFromTurnout(it.turnout);
+                        return getFillColorFromCountProg(it.countProg);
                     })
                 legends.append('text')
                     .attr('x', 30)
@@ -412,10 +471,10 @@ class Map extends Component {
                             undefinedText = "votes not counted yet";
                         }
     
-                        var turnoutData = getTurnout(d, i);
+                        var mainData = getMainData(d, i);
                         var subRegionName = getSubRegionName(d.properties, self.state);
-                        var tooltipText = (typeof turnoutData !== "undefined")? 
-                                    (subRegionName + " : " + turnoutData + "%") : undefinedText;
+                        var tooltipText = (typeof mainData !== "undefined")? 
+                                    (subRegionName + " : " + mainData + "%") : undefinedText;
     
                         tooltipDiv.html(tooltipText)	
                             .style("left", (d3.event.pageX) + "px")		

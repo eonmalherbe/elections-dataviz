@@ -119,16 +119,23 @@ class NavBar extends Component {
     }
 
     handleNavBarSelection(e) {
-        console.log("handleNavBarSelection");
         if (e.target.className.indexOf("metismenu-link") === -1) {
             return;
         }
+        if (this.activeElement && this.activeElement.classList && this.activeElement.classList.remove) {
+            this.activeElement.classList.remove("active");
+        }
+        e.target.classList.add("active");
+        this.activeElement = e.target;
+
         var iconClass = e.target.childNodes[0].className;
         var classList = iconClass.split(' ');
         var lastClass = classList[classList.length - 1];
+        console.log("handleNavBarSelection", lastClass);
         var passInfo = lastClass.split('-');
         var enableMap = true;
-        var enableBarChart = true;
+        var enableBarChart = true
+        var enableTurnoutProgressSpoilt = true;
 
         var eventDescription, electionType, regionType, selectionData = {}, chartType = "";
         var activeLinkId = passInfo.slice(1, passInfo.length).join('-');
@@ -148,6 +155,11 @@ class NavBar extends Component {
                     case '3':
                         chartType = "votes-predictions";
                         enableMap = false;
+                        enableTurnoutProgressSpoilt = false;
+                        // if (passInfo[4] > 0) {
+                        //     regionType = "province";
+                        //     selectionData = provincesData[passInfo[4]-1];
+                        // }
                         break;
                     case '4':
                         chartType = "votes-progress";
@@ -156,6 +168,10 @@ class NavBar extends Component {
                         chartType = "votes-turnout";
                         break;
                     case '6':
+                        chartType = "votes-split";
+                        enableMap = false;
+                        break;
+                    case '7':
                         chartType = "votes-myvd";
                         break;
                     default:
@@ -210,9 +226,12 @@ class NavBar extends Component {
                         break;
                     case '5':
                         chartType = "votes-split";
+                        enableMap = false;
                         break;
                     case '6':
-                        chartType = "votes-CSIR";
+                        chartType = "votes-predictions";
+                        enableMap = false;
+                        enableTurnoutProgressSpoilt = false;
                         break;
                     default:
                         return;
@@ -221,6 +240,7 @@ class NavBar extends Component {
                 switch (passInfo[4]) {
                     case '1':
                         chartType = "seats-default"; // done
+                        enableMap = false;
                         break;
                     case '2':
                         chartType = "seats-comparisons";
@@ -242,8 +262,9 @@ class NavBar extends Component {
             } else if (passInfo[3] === '4') {
                 // Main page for National Legislature
                 regionType = "national";
-                enableBarChart = false;
                 chartType = "votes-default";
+                electionType = "provincial"
+                enableBarChart = false;
             } else {
                 return;
             }
@@ -251,7 +272,7 @@ class NavBar extends Component {
             eventDescription = this.state.nationalEventDescription;
             regionType = "municipality"
             selectionData = metrosData[passInfo[2]];
-            chartType = "votes-default";
+            chartType = "votes-default-metro";
         } else {
             return;
         }
@@ -260,7 +281,7 @@ class NavBar extends Component {
             return;
 
         if (eventDescription)
-            if (eventDescription.toLowerCase().indexOf("provincial") > 0) {
+            if (eventDescription.toLowerCase().indexOf("provincial") >= 0) {
                 electionType = "provincial"
             }
         else {
@@ -303,14 +324,21 @@ class NavBar extends Component {
         newState.comp = chartType;
         newState.enableMap = enableMap;
         newState.enableBarChart = enableBarChart;
-
+        newState.enableTurnoutProgressSpoilt = enableTurnoutProgressSpoilt;
         if (newState.comp === "votes-myvd") {
             newState.regionType = "municipality-vd";
             newState.iecId = "";
         }
 
+      
+        if (newState.comp === "seats-electeds") {
+            window.open("http://elections.sabc.co.za/candidates/");
+
+            return;
+        }
+      
         if (newState.comp === "seats-electeds" || newState.comp === "seats-women" || newState.comp === "seats-age") {
-            triggerCustomEvent(events.SEATS_ELECTEDS_EVENT, newState);
+            // triggerCustomEvent(events.SEATS_ELECTEDS_EVENT, newState);
             return;
         }
 
@@ -319,6 +347,7 @@ class NavBar extends Component {
         // triggerCustomEvent(events.MAP_PREVIEW, newState);
 
         newState.activeLinkId = activeLinkId;
+        console.log("newState", newState);
         this.setState(newState);
     }
       
@@ -326,17 +355,18 @@ class NavBar extends Component {
         var content = [
             {
                 label: 'National Assembly',
-                icon: `1-3-4-1`,
                 content: [
                     {
                         label: "Race for votes",
                         content: [
                             {
+                                id: `1-1-1`,
                                 icon: `1-1-1`,
                                 label: `National assembly`,
                                 to: `1-1-1`,
                             },
                             {
+                                id: `1-1-2`,
                                 icon: `1-1-2`,
                                 label: `Comparisons`,
                                 to: `1-1-2`,
@@ -345,6 +375,20 @@ class NavBar extends Component {
                                 icon: `1-1-3`,
                                 label: `CSIR predictions`,
                                 to: `1-1-3`,
+                                // content: [
+                                //     {
+                                //         icon: `1-1-3-0`,
+                                //         label: `National Assembly`,
+                                //         to: `1-1-3-0`,
+                                //     },
+                                //     ...provincesData.map((province, i) => {
+                                //         return {
+                                //             icon: `1-1-3-${i+1}`,
+                                //             label: province.name,
+                                //             to: `1-1-3-${i+1}`,
+                                //         }
+                                //     })
+                                // ]
                             },
                             {
                                 icon: `1-1-4`,
@@ -357,9 +401,9 @@ class NavBar extends Component {
                                 to: `1-1-5`,
                             },
                             {
-                                icon: `1-1-6`,
+                                icon: `1-1-7`,
                                 label: `My voting District`,
-                                to: `1-1-6`,
+                                to: `1-1-7`,
                             },
                             {
                                 label: `Metros`,
@@ -389,7 +433,7 @@ class NavBar extends Component {
                             },
                             {
                                 icon: `1-2-3`,
-                                label: `Electeds`,
+                                label: `Candidates`,
                                 to: `1-2-3`,
                             },
                             // {
@@ -408,7 +452,6 @@ class NavBar extends Component {
             },
             {
                 label: 'Provincial Legislature',
-                icon: `2-3-4-1`,
                 content: provincesData.map((province, i) => {
                     return {
                         label: province.name,
@@ -441,11 +484,11 @@ class NavBar extends Component {
                                         label: `Split (Nat/Prov)`,
                                         to: `2-${i}-1-5`,
                                     },
-                                    // {
-                                    //     icon: `2-${i}-1-6`,
-                                    //     label: `CSIR Predictions`,
-                                    //     to: `2-${i}-1-6`,
-                                    // },
+                                    {
+                                        icon: `2-${i}-1-6`,
+                                        label: `CSIR Predictions`,
+                                        to: `2-${i}-1-6`,
+                                    },
                                 ]
                             },
                             {
@@ -463,7 +506,7 @@ class NavBar extends Component {
                                     },
                                     {
                                         icon: `2-${i}-2-3`,
-                                        label: `Electeds`,
+                                        label: `Candidates`,
                                         to: `2-${i}-2-3`,
                                     },
                                     // {
@@ -501,11 +544,11 @@ class NavBar extends Component {
                 // })
             // }
         ];
-
+        // this.state.activeLinkId
         
         return (
             <div className={[className(cssPrefix("menu-widget")), cssPrefix("menu-widget")].join(" ")} ref="navbar">
-                <MetisMenu activeLinkId={this.state.activeLinkId} content={content} LinkComponent={CustomLink}/>
+                <MetisMenu activeLinkTo={`1-2-1`} content={content} LinkComponent={CustomLink}/>
             </div>
         )
     }

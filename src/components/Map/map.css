@@ -61,3 +61,7 @@ text {
 .map-widget.ELVIZ_stylesheet-none a:hover{
   color: purple;
 }
+
+.map-controls {
+  font-size: 20px;
+}

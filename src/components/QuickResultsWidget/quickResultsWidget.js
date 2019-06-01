@@ -36,7 +36,13 @@ import {
 import {
     getRegionName,
     getRegionName2,
-    getRegionName3,
+    getRegionName4,
+
+    getNationalProvincialStr,
+    getNationalProvincialStr2,
+    getNationalProvincialStr3,
+    getNationalProvincialStr4,
+
     triggerCustomEvent,
     fetchDataFromOBJ,
     handleRegionChange,
@@ -46,6 +52,8 @@ import {
     parseProgressVotesCount,
     parseVotesData,
     parseSeatsData,
+
+    getSeatsCount
 } from "../../utils";
 
 var dataRefreshTime = 30 * 1000;
@@ -61,8 +69,10 @@ function cn(originName) {
 class QuickResultsWidget extends Component {
     constructor(props) {
         super(props);
+        this._isMounted = false;
         this.state = {
             numParties: 5,
+            electionType: "national",
             eventDescription: "2019 National Election",
             nationalEventDescription: "2019 National Election",
             provincialEventDescription: "2019 Provincial Election",
@@ -76,6 +86,7 @@ class QuickResultsWidget extends Component {
             componentID: 5,
             enableBarChart: true,
             enableMap: true,
+            enableTurnoutProgressSpoilt: true,
 
             partyAbbrs: ["ANC", "DA", "EFF", "ID"],
             partyIecIds: [null, null, null, null],        
@@ -100,12 +111,12 @@ class QuickResultsWidget extends Component {
                 // "Provincial Elections 1999",
                 // "14 Apr 2004 National Election",
                 // "14 Apr 2004 Provincial Election",
-                "22 Apr 2009 National Election",
-                "22 Apr 2009 Provincial Election",
+                // "22 Apr 2009 National Election",
+                // "22 Apr 2009 Provincial Election",
+                "2019 NATIONAL ELECTION",
+                "2019 PROVINCIAL ELECTION",
                 "2014 National Election",
                 "2014 Provincial Election",
-                // "2019 NATIONAL ELECTION",
-                // "2019 PROVINCIAL ELECTION",
             ],
             currentTurnout: 0,
             currentCountingProg: 0,
@@ -120,9 +131,10 @@ class QuickResultsWidget extends Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         var self = this;
         this.refreshIntervalID = setInterval(() => {
-            self.fetchCurrentResultData();
+            self.fetchCurrentResultData(false);
         }, dataRefreshTime);
 
         document.addEventListener(events.EXPORT_SUPERWIDGET_PNG, this.exportAsPNG);
@@ -131,26 +143,37 @@ class QuickResultsWidget extends Component {
 
         document.addEventListener(events.SEATS_ELECTEDS_EVENT, this.handleSeatsElectedsEvent); // "seats-electeds-event"
 
-        this.fetchCurrentResultData();
+        this.fetchCurrentResultData(false);
     }
   
     componentWillUnmount() {
+        this._isMounted = false;
         document.removeEventListener(events.EXPORT_SUPERWIDGET_PNG, this.exportAsPNG);
         document.removeEventListener(events.REGION_CHANGE, this.handleRegionChange);
         document.removeEventListener(events.QUICK_RESULTS_PREVIEW, this.handlePreviewEvent);
     }
 
     componentDidUpdate(prevProps, prevState) {
-      this.fetchCurrentResultData()
+      this.fetchCurrentResultData(true)
     }
 
     handleSeatsElectedsEvent(event) {
     }
 
-    fetchCurrentResultData() {
+    fetchCurrentResultData(showLoadingIcon) {
         var self = this;
         var newProps = JSON.parse(JSON.stringify(this.state));
         var {comp, iecId} = this.state;
+
+        if (showLoadingIcon) {
+            console.log("showLoadingIcon");
+            if (self.refs.currentTurnout)
+                self.refs.currentTurnout.innerHTML = "--";
+            if (self.refs.currentCountingProg)
+                self.refs.currentCountingProg.innerHTML = "--";
+            if (self.refs.currentSpoiltVotes)
+                self.refs.currentSpoiltVotes.innerHTML = "--";
+        }
 
         function dataLoadCallback(values) {
             var spoiltData = values[0];
@@ -191,18 +214,29 @@ class QuickResultsWidget extends Component {
             if (newState.partyIecIds && newState.partyIecIds.join(" ") != self.state.partyIecIds.join(" ")) {
                 self.setState(newState);
             } else {
-                if (self.refs.currentTurnout && self.refs.currentCountingProg && self.refs.currentSpoiltVotes) {
+                if (self.refs.currentTurnout) {
                     self.refs.currentTurnout.innerHTML = newState.currentTurnout + "%";
+                }
+                if(self.refs.currentCountingProg) {
                     self.refs.currentCountingProg.innerHTML = newState.currentCountingProg + "%";
+                } 
+                if (self.refs.curCountingProg && self.refs.curCountingProg.innerHTML  && self._isMounted) {
+                    console.log("self.refs.curCountingProg", self.refs.curCountingProg, self._isMounted);
+                    self.refs.curCountingProg.innerHTML = newState.currentCountingProg + "%";
+                }
+                if (self.refs.currentSpoiltVotes) {
                     self.refs.currentSpoiltVotes.innerHTML = newState.currentSpoiltVotes + "%";
                 }
             }
         }
 
         if (newProps.regionType == "municipality-vd" && (!iecId || !iecId.length)) {
-            self.refs.currentTurnout.innerHTML = "0%";
-            self.refs.currentCountingProg.innerHTML = "0%";
-            self.refs.currentSpoiltVotes.innerHTML = "0%";
+            if (self.refs.currentTurnout)
+                self.refs.currentTurnout.innerHTML = "--";
+            if (self.refs.currentCountingProg)
+                self.refs.currentCountingProg.innerHTML = "--";
+            if (self.refs.currentSpoiltVotes)
+                self.refs.currentSpoiltVotes.innerHTML = "--";
             return;
         }
 
@@ -264,6 +298,8 @@ class QuickResultsWidget extends Component {
     }
 
     handlePreviewEvent(event) {
+
+      if (this._isMounted) {
         var newState = event.detail;
         if (newState.regionType == "national" && this.state.comp == "votes-split") {
             newState.regionType = "province";
@@ -276,14 +312,20 @@ class QuickResultsWidget extends Component {
 
         triggerCustomEvent(events.CHART_PREVIEW, triggerState);
         triggerCustomEvent(events.MAP_PREVIEW, triggerState);
+      }
     };
 
     renderTurnoutProgressSpoilt() {
         var {
+            comp,
             currentTurnout,
             currentCountingProg,
             currentSpoiltVotes,
         } = this.state;
+
+        if (comp == 'votes-turnout' || comp == 'votes-progress') {
+            return null;
+        }
 
         return (
             <div className={cn("current-progress")}>
@@ -305,70 +347,87 @@ class QuickResultsWidget extends Component {
 
     renderQuickResultsTitle() {
         var {
-            comp
+            comp,
+            currentCountingProg
         } = this.state;
         var self = this;
         if (comp == 'votes-default') {
             return (
                 <div className={className("quick-results-title")}>
-                    RACE FOR VOTES: <span className="regionName">{getRegionName2(self.state)}</span>
+                    Race for Votes: {getNationalProvincialStr2(self.state)}
+                </div>
+            );
+        }
+        if (comp == 'votes-default-metro') {
+            return (
+                <div className={className("quick-results-title")}>
+                    Race for Votes: {getNationalProvincialStr(self.state)} - <span className="regionName">{getRegionName2(self.state)}</span>
                 </div>
             );
         }
         if (comp == 'seats-default') {
             return (
                 <div className={className("quick-results-title")+" "+className("race-for-seats")}>
-                    RACE FOR SEATS: <span className="regionName">{getRegionName(self.state)}</span>(#SEATS)
+                    PREDICTED: Race for Seats: {getNationalProvincialStr2(self.state)} ({getSeatsCount(self.state)})
                 </div>
             );
         }
         if (comp == 'votes-turnout') {
             return (
                 <div className={className("quick-results-title")}>
-                    RACE FOR VOTES: TURNOUT - {getRegionName3(self.state)}
+                    Turnout: {getNationalProvincialStr4(self.state)}
                 </div>
             );
         }
         if (comp == 'votes-progress') {
             return (
                 <div className={className("quick-results-title")}>
-                    COUNTING PROGRESS: {getRegionName(self.state)}
+                    Counting Progress{getNationalProvincialStr3(self.state)}
                 </div>
             );
         }
         if (comp == 'votes-comparisons') {
             return (
                 <div className={className("quick-results-title")}>
-                    VOTES COMPARISONS: {getRegionName(self.state)}
+                    Comparisons: {getNationalProvincialStr2(self.state)}
                 </div>
             );
         }
         if (comp == 'seats-comparisons') {
             return (
-                <div className={className("quick-results-title")}>
-                    SEATS COMPARISONS: {getRegionName(self.state)}
+                <div className={className("quick-results-title")+" "+className("race-for-seats")}>
+                    Comparisons: {getNationalProvincialStr2(self.state)} ({getSeatsCount(self.state)})
                 </div>
             );
         }
         if (comp == 'votes-myvd') {
             return (
                 <div className={className("quick-results-title")}>
-                    Voting District //{getRegionName(self.state)}
+                    Voting District
                 </div>
             );
         }
         if (comp == 'votes-split') {
             return (
                 <div className={className("quick-results-title")}>
-                    {getRegionName(self.state)} Race for Votes - Split (Nat/Prov)
+                    Split (Nat/Prov): National Assembly and {getNationalProvincialStr2(self.state)}
                 </div>
-                
+            )
+        }
+        if (comp == 'votes-predictions') {
+            
+            return (
+                <div className={className("quick-results-title")}>
+                     CSIR predictions for final results, with <span ref="curCountingProg">{currentCountingProg}%</span> VDs counted: {getRegionName4(self.state)}
+                </div>
             )
         }
         return null;
     }
 
     renderMap() {
+
+            var msgMapClick = "Click on the map for detailed results";
         var {
             comp,
             iecId,
@@ -380,6 +439,10 @@ class QuickResultsWidget extends Component {
                 mapState.disableNavigation = true;
                 return (
                     <div className={className("map-container")}>
+                        <div className={cn("leadingmap-title-container")}>
+                            <div className={cn("leading-parties")}>Leading Parties</div>
+                            <div className={cn("helper-text")}>{ msgMapClick }</div>
+                        </div>
                         <Map
                             ref={instance => { this.mapInstance = instance; }}
                             key={comp}
@@ -396,6 +459,10 @@ class QuickResultsWidget extends Component {
             mapState.regionType = "national";
             return (
                 <div className={className("map-container")}>
+                    <div className={cn("leadingmap-title-container")}>
+                        <div className={cn("leading-parties")}>Leading Parties</div>
+                        <div className={cn("helper-text")}>{ msgMapClick }</div>
+                    </div>
                     <Map
                         ref={instance => { this.mapInstance = instance; }}
                         key={comp}
@@ -414,9 +481,28 @@ class QuickResultsWidget extends Component {
                         componentID={-1000} />
                 </div>
             );
+        } else if (comp == 'votes-progress') {
+            console.log("votes-PROGRESS");
+            return (
+                <div className={className("map-container")}>
+                    <TurnoutMap
+                        ref={instance => { this.mapInstance = instance; }}
+                        key={comp}
+                        {...this.state}
+                        isTurnout={false}
+                        componentID={-1000} />
+                </div>
+            );
         } else {
             return (
                 <div className={className("map-container")}>
+                    {
+                        (comp === 'votes-default' || comp === 'votes-default-metro') && 
+                        <div className={cn("leadingmap-title-container")}>
+                            <div className={cn("leading-parties")}>Leading Parties</div>
+                            <div className={cn("helper-text")}>{ msgMapClick }</div>
+                        </div>
+                    }
                     <Map
                         ref={instance => { this.mapInstance = instance; }}
                         key={comp}
@@ -434,7 +520,7 @@ class QuickResultsWidget extends Component {
             partyAbbrs,
             iecId
         } = this.state;
-        if (comp == 'votes-default' || (comp == 'votes-myvd' && iecId && iecId.length)) {
+        if (comp == 'votes-default' || comp == 'votes-default-metro' || (comp == 'votes-myvd' && iecId && iecId.length)) {
             return (
                 <div className={className("barchart-container")}>
                     <BarChart 
@@ -548,7 +634,7 @@ class QuickResultsWidget extends Component {
             <div className="voting-district-enter-form">
                 <input ref="vdInput" type="text" placeholder="Enter your VD number"/>
                 <button onClick={this.onShowVDResult.bind(this)}> Show Result</button>
-                <p className="iec-link">Look up your voting district number at the <a href="http://maps.elections.org.za/vsfinder/">IEC</a>.</p>
+                <p className="iec-link">Look up your voting district number at the <a href="http://maps.elections.org.za/vsfinder/" target="_blank">IEC</a>.</p>
             </div>
         )
     }
@@ -573,7 +659,9 @@ class QuickResultsWidget extends Component {
 
         var components = [];
         components.push(this.renderQuickResultsTitle())
-        components.push(this.renderTurnoutProgressSpoilt())
+        if (this.state.enableTurnoutProgressSpoilt) {
+            components.push(this.renderTurnoutProgressSpoilt())
+        }
         components.push(this.renderMyVDEnterForm())
 
         if (this.state.enableBarChart)

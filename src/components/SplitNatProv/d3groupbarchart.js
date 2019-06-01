@@ -252,6 +252,7 @@ export function Chart(container, width, height, className, options) {
           legends.append('text')
               .attr('x', 30)
               .attr('y', 10)
+              .attr('fill', 'currentColor')
               .style('font-size', '12px')
               .text(party => partyAbbrByName[party])
       }

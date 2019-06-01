@@ -3,7 +3,70 @@ import {client} from "./config"
 
 
 export function getVotesPredictionData(options) {
-    return [[1, 3], [5,7], [7, 9]]
+    console.log("getVotesPredictionData", options);
+    var eventType = (options.electionType == "national"? "National Election": "Provincial Election");
+
+    if (options.regionType === "national") {
+      return client.query({
+        query: gql`
+        {
+          CSIRPrediction(eventType: "${eventType}", areaType:"National") {
+            turnout
+            timestamp
+            results{
+              edges{
+                node{
+                  percVds
+                  prediction{
+                    edges{
+                      node{
+                        party{
+                          name
+                          abbreviation
+                          iecId
+                        }
+                        actualPercent
+                        predictedPercent
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }`
+      })
+    } else { // regionType == "province"
+      return client.query({
+        query: gql`
+        {
+          CSIRPrediction(eventType: "${eventType}", areaType:"Provincial", province: "${options.provinceName}") {
+            turnout
+            timestamp
+            results{
+              edges{
+                node{
+                  percVds
+                  prediction{
+                    edges{
+                      node{
+                        party{
+                          name
+                          abbreviation
+                          iecId
+                        }
+                        actualPercent
+                        predictedPercent
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }`
+      })
+    }
 }
 
 export function getVotesDataForComparison(options) {

@@ -15,6 +15,10 @@ export function getShortenedEventDescription(event) {
   return `${year} ${shortenedNatProv}`;
 }
 
+export function getYear(desc) {
+  return /(19|20)\d{2}/g.exec(desc)[0];
+}
+
 export function parseVotesDataForAllEvents(data, props) {
     var results, edges;
     var regionType = props.regionType;
@@ -62,7 +66,7 @@ export function parseVotesDataForAllEvents(data, props) {
         }
         return -1;
       }
-      return edge1Year - edge2Year;
+      return -edge1Year + edge2Year;
     })
 }
  
@@ -158,7 +162,7 @@ export function parseVotesComparisonData(data, props) {
       }
     }
   });
-  var results = partyfilter_edges.filter(edge => eventDescriptions.indexOf(edge.name) != -1).reverse();
+  var results = partyfilter_edges.filter(edge => eventDescriptions.indexOf(edge.name) != -1);
 
   var new_results = [];
   for(var i = 0; i < eventDescriptions.length; i ++) {
@@ -166,13 +170,16 @@ export function parseVotesComparisonData(data, props) {
     for (var j = 0; j < results.length; j ++) {
       if (results[j].name == eventDescriptions[i]) {
         var available = true;
-        new_results.push(results[j]);
+        new_results.push({
+          ...results[j],
+          name: getYear(results[j].name)
+        });
         break;
       }
     }
     if (!available) {
       new_results.push({
-        name: eventDescriptions[i],
+        name: getYear(eventDescriptions[i]),
         percOfVotes: 0,
         partyInfo: {
           name: props.partyAbbr,
@@ -181,6 +188,9 @@ export function parseVotesComparisonData(data, props) {
       })
     }
   }
+  // new_results.sort(function(a, b) {
+  //   return a.name - b.name;
+  // })
   return new_results;
 }
 
@@ -336,6 +346,126 @@ export function parseSeatsData(data, props) {
   return results.slice(0, props.numParties);
 }
 
+export function parseVotesPredictionData(data, props) {
+  // TODO actually implement a function that removes hypens and .s
+  var edges = data["data"]["CSIRPrediction"]["results"].edges;
+  var partyIecIds = [];
+  var lineData = [];
+  edges.forEach(function(edge) {
+    var nodeData = edge.node;
+    var percVds = nodeData.percVds;
+    var prediction = nodeData.prediction;
+    var predictionEdges = prediction.edges;
+    predictionEdges.forEach(function(predictionEdge) {
+      console.log("predictionEdge", predictionEdge);
+      var predictionNodeData = predictionEdge.node;
+      var partyInfo = predictionNodeData.party;
+      if (!partyInfo) {
+        return;
+      }
+      var predictedPercent = predictionNodeData.predictedPercent;
+      var actualPercent = predictionNodeData.actualPercent;
+
+      var partyIndex = partyIecIds.indexOf(partyInfo.iecId);
+      if (partyIndex == -1) {
+        partyIecIds.push(partyInfo.iecId);
+        lineData.push({
+          name: partyInfo.name,
+          iecId: partyInfo.iecId,
+          abbreviation: partyInfo.abbreviation,
+          cleaned_name: partyInfo.abbreviation.replace(/[^a-zA-Z0-9]+/g, ''),
+          data: []
+        });
+        partyIndex = partyIecIds.length - 1;
+      }
+      lineData[partyIndex].data.push({
+        'x': percVds,
+        'y': predictedPercent
+      })
+    })
+  })
+  lineData.forEach(oneLine => {
+    oneLine.data.sort(function(a, b) {
+      return a.x - b.x;
+    })
+  })
+  console.log("parsedLineData", lineData);
+  // var lineData = [{
+  //     name : "AFRICAN NATIONAL CONGRESS",
+  //     cleaned_name : "anc",
+  //     data : [
+  //       {'x': 3, 'y': 51.6},
+  //       {'x': 6, 'y': 59.3},
+  //       {'x': 12, 'y': 55.4},
+  //       {'x': 20, 'y': 56},
+  //       {'x': 27, 'y': 59.5},
+  //       {'x': 33, 'y': 59.8},
+  //       {'x': 39, 'y': 61.2},
+  //       {'x': 45, 'y': 61.8},
+  //       {'x': 51, 'y': 62.7},
+  //       {'x': 57, 'y': 63.1},
+  //       {'x': 63, 'y': 63.6},
+  //       {'x': 69, 'y': 62.7},
+  //       {'x': 69, 'y': 62.7},
+  //       {'x': 75, 'y': 62.3},
+  //       {'x': 81, 'y': 62.9},
+  //       {'x': 87, 'y': 63},
+  //       {'x': 93, 'y': 62.8},
+  //       {'x': 100, 'y': 62.8},
+  //     ]
+  //   },
+  //   {
+  //     name : "DEMOCRATIC ALLIANCE",
+  //     cleaned_name: "da",
+  //     data : [
+  //       {'x': 3, 'y': 31.6},
+  //       {'x': 6, 'y': 39.3},
+  //       {'x': 12, 'y': 35.4},
+  //       {'x': 20, 'y': 36},
+  //       {'x': 27, 'y': 39.6},
+  //       {'x': 33, 'y': 39.8},
+  //       {'x': 39, 'y': 31.2},
+  //       {'x': 45, 'y': 31.4},
+  //       {'x': 51, 'y': 22.7},
+  //       {'x': 57, 'y': 33.1},
+  //       {'x': 63, 'y': 23.6},
+  //       {'x': 69, 'y': 32.7},
+  //       {'x': 69, 'y': 32.7},
+  //       {'x': 75, 'y': 22.3},
+  //       {'x': 81, 'y': 32.9},
+  //       {'x': 87, 'y': 33},
+  //       {'x': 93, 'y': 22.8},
+  //       {'x': 100, 'y': 22.8},
+  //     ]
+  //   }
+  // ];
+
+  return lineData;
+}
+
+export function parseCSIRTurnoutTimestamp(data) {
+  var predictionData = data["data"]["CSIRPrediction"];
+  var {
+    turnout,
+    timestamp
+  } = predictionData;
+  return {
+    turnout: turnout.toFixed(2),
+    timestamp
+  }
+}
+
+export function parseCSIRMinMax(data) {
+  var predictionData = data["data"]["CSIRPrediction"];
+  var {
+    minX,
+    maxX
+  } = predictionData;
+  return {
+    minX,
+    maxX
+  }
+}
 
 export function parseSeatsComparisonData(data, props) {
   if (!data)  return null;
@@ -371,13 +501,16 @@ export function parseSeatsComparisonData(data, props) {
     for (var j = 0; j < results.length; j ++) {
       if (results[j].name == eventDescriptions[i]) {
         var available = true;
-        new_results.push(results[j]);
+        new_results.push({
+          ...results[j],
+          name: getYear(results[j].name)
+        });
         break;
       }
     }
     if (!available) {
       new_results.push({
-        name: props.eventDescriptions[i],
+        name: getYear(props.eventDescriptions[i]),
         seats: 0,
         partyInfo: {
           name: props.partyAbbr,
@@ -443,6 +576,37 @@ export function parseTurnoutData(data, props) {
   return locationToTurnout;
 }
 
+export function parseCountingProgressDataForMap(data, props) {
+  if (!data)  return null;
+  var locationToProgVotes = {};
+  var edges;
+  var regionType = props.regionType;
+  if (regionType === "national") {
+      edges = data["data"]["allProvincialBallots"].edges;
+      edges.forEach(function(edge) {
+          var node = edge.node;
+          var provinceName = node["location"]["name"];
+          
+          locationToProgVotes[provinceName] = calcPercent(node["vdWithResultsCaptured"], node["vdCount"]); 
+      })
+  } else if (regionType === "province") {
+      edges = data["data"]["allMunicipalBallots"].edges;
+      edges.forEach(function(edge) {
+          var node = edge.node;
+          var muniCode = node["location"]["code"];
+          locationToProgVotes[muniCode] = calcPercent(node["vdWithResultsCaptured"], node["vdCount"]); 
+      })
+  } else {// "municipality" or "municipality-vd"
+      edges = data["data"]["allVotingDistrictBallots"].edges;
+      edges.forEach(function(edge) {
+          var node = edge.node;
+          var iecId = node["location"]["iecId"];
+          locationToProgVotes[iecId] = calcPercent(node["vdWithResultsCaptured"], node["vdCount"]); 
+      })
+  }
+  return locationToProgVotes;
+}
+
 export function parseTurnoutDataForAllEvents(data, props) {
   if (!data)  return null;
   var edges;
@@ -463,7 +627,7 @@ export function parseTurnoutDataForAllEvents(data, props) {
     var eventType = node["event"]["eventType"]["description"];
     var percVoterTurnout = node["percVoterTurnout"].toFixed(2); 
     return {
-      name: event,
+      name: getYear(event),
       eventType: eventType,
       percVoterTurnout
     }
@@ -471,7 +635,7 @@ export function parseTurnoutDataForAllEvents(data, props) {
   .sort(function(edge1, edge2) {
     var edge1Year = parseInt(/(19|20)\d{2}/g.exec(edge1.name)[0]);
     var edge2Year = parseInt(/(19|20)\d{2}/g.exec(edge2.name)[0]);
-    return edge2Year - edge1Year;
+    return -edge1Year + edge2Year;
   })
 }
 
@@ -494,7 +658,7 @@ export function parseTurnoutDataForOneEvent(data, props) {
     var event = node["event"]["description"];
     var percVoterTurnout = node["percVoterTurnout"].toFixed(2); 
     return {
-      name: event,
+      name: getYear(event),
       percVoterTurnout
     }
   })
@@ -567,17 +731,92 @@ export function getRegionName2(state) {
     else
       return ""
   }
-  else
-      return getRegionName(state);
+  else if (state.regionType == "province") {
+    return getRegionName(state) + " Legislature";
+  }
+  return getRegionName(state);
 }
 
 export function getRegionName3(state) {
   if (state.regionType == "national")
-    return "NATIONAL";
+    return "National";
+  if (state.regionType == "province") {
+    return getRegionName(state) + " Legislature";
+  }
   return getRegionName(state);
 }
 
+export function getRegionName4(state) {
+  if (state.regionType == "national") {
+    return "National Assembly";
+  } else { // province
+    return state.provinceName + " Legislature";
+  }
+}
 
+export function getNationalProvincialStr(state) {
+  var event = state.eventDescription.toLocaleLowerCase()
+  var nationalProvincialStr = ""; 
+  if (event.indexOf("national election") >= 0) {
+      nationalProvincialStr = "National Assembly";
+  } else {
+      nationalProvincialStr = "Provincial Legislature";
+  }
+  return nationalProvincialStr;
+}
+
+export function getNationalProvincialStr2(state) {
+  var event = state.eventDescription.toLocaleLowerCase()
+  var nationalProvincialStr = ""; 
+  if (event.indexOf("national election") >= 0) {
+      nationalProvincialStr = "National Assembly";
+  } else {
+      nationalProvincialStr = state.provinceName + " Legislature";
+  }
+  return nationalProvincialStr;
+}
+
+export function getNationalProvincialStr3(state) {
+  var event = state.eventDescription.toLocaleLowerCase()
+  var nationalProvincialStr = ""; 
+  if (event.indexOf("national election") >= 0) {
+      nationalProvincialStr = "";
+  } else {
+      nationalProvincialStr = ": " + state.provinceName + " Legislature";
+  }
+  return nationalProvincialStr;
+}
+
+export function getNationalProvincialStr4(state) {
+  var event = state.eventDescription.toLocaleLowerCase()
+  var nationalProvincialStr = ""; 
+  if (event.indexOf("national election") >= 0) {
+      nationalProvincialStr = "National";
+  } else {
+      nationalProvincialStr = state.provinceName + " Legislature";
+  }
+  return nationalProvincialStr;
+}
+
+export function getSeatsCount(state) {
+  if (state.regionType == "national") {
+    return 400;
+  } else {
+    var seatsTable = {
+      "Eastern Cape": 63,
+      "Free State": 30,
+      "Gauteng": 73,
+      "KwaZulu-Natal": 80,
+      "Limpopo": 49,
+      "Mpumalanga": 30,
+      "North West": 33,
+      "Northern Cape": 30,
+      "Western Cape": 42,
+    }
+    return seatsTable[state.provinceName];
+  }
+  
+}
 
 export function getNationOrProvinceName(state) {
   if (state.regionType == "national") {
@@ -740,7 +979,7 @@ export function handleRegionChange(event) {
 
 export function fetchDataFromOBJ(state, props) {
   Object.keys(state).forEach(key => {
-    if (props[key]) {
+    if (typeof props[key] != 'undefined') {
       state[key] = props[key];
     }
   })
@@ -809,8 +1048,8 @@ export function PartyColours(partyColours) {
 
   // TODO should used cleaned name
   function getFillColourFromPartyName(partyName, i) {
-    console.log(partyColourByName[partyName])
-    console.log(partyColourByName)
+    // console.log(partyColourByName[partyName])
+    // console.log(partyColourByName)
     return partyColourByName[partyName];
     //return partyColourByName[partyName.split("/")[0]] || predefColours[i%predefColours.length];
   }
