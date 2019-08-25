@@ -510,7 +510,7 @@ export function parseSeatsComparisonData(data, props) {
     }
     if (!available) {
       new_results.push({
-        name: getYear(props.eventDescriptions[i]),
+        name: getYear(eventDescriptions[i]),
         seats: 0,
         partyInfo: {
           name: props.partyAbbr,

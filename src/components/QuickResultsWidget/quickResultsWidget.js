@@ -88,7 +88,7 @@ class QuickResultsWidget extends Component {
             enableMap: true,
             enableTurnoutProgressSpoilt: true,
 
-            partyAbbrs: ["ANC", "DA", "EFF", "ID"],
+            partyAbbrs: ["ANC", "DA", "EFF", "IFP", "VF PLUS"],
             partyIecIds: [null, null, null, null],        
             eventDescriptions: {
                 national : [
@@ -592,7 +592,7 @@ class QuickResultsWidget extends Component {
             );
         }
         if (comp == 'seats-comparisons') {
-            this.barchartInstances = new Array(numParties);
+            this.barchartInstances = new Array(this.state.numParties);
             return (
                 <div className={className("barchart-container")}>
                     {
