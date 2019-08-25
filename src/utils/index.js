@@ -32,7 +32,6 @@ export function parseVotesDataForAllEvents(data, props) {
       edges = data["data"]["allVotingDistrictBallots"].edges;
     }
 
-    console.log("props", props)
     return edges.map(edge => {
       var nodeData = edge["node"];
 
@@ -961,7 +960,6 @@ export function loadCanvg() {
 
 export function loadJSZip() {
   loadScript("jsZipScript", "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.0/jszip.min.js", function() {
-    console.log("loadJSZip load finished");
   });
 }
 
@@ -1048,10 +1046,7 @@ export function PartyColours(partyColours) {
 
   // TODO should used cleaned name
   function getFillColourFromPartyName(partyName, i) {
-    // console.log(partyColourByName[partyName])
-    // console.log(partyColourByName)
     return partyColourByName[partyName];
-    //return partyColourByName[partyName.split("/")[0]] || predefColours[i%predefColours.length];
   }
 
   return getFillColourFromPartyName;

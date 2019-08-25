@@ -166,7 +166,6 @@ class QuickResultsWidget extends Component {
         var {comp, iecId} = this.state;
 
         if (showLoadingIcon) {
-            console.log("showLoadingIcon");
             if (self.refs.currentTurnout)
                 self.refs.currentTurnout.innerHTML = "--";
             if (self.refs.currentCountingProg)
@@ -221,7 +220,6 @@ class QuickResultsWidget extends Component {
                     self.refs.currentCountingProg.innerHTML = newState.currentCountingProg + "%";
                 } 
                 if (self.refs.curCountingProg && self.refs.curCountingProg.innerHTML  && self._isMounted) {
-                    console.log("self.refs.curCountingProg", self.refs.curCountingProg, self._isMounted);
                     self.refs.curCountingProg.innerHTML = newState.currentCountingProg + "%";
                 }
                 if (self.refs.currentSpoiltVotes) {
@@ -482,7 +480,6 @@ class QuickResultsWidget extends Component {
                 </div>
             );
         } else if (comp == 'votes-progress') {
-            console.log("votes-PROGRESS");
             return (
                 <div className={className("map-container")}>
                     <TurnoutMap
