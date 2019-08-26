@@ -572,7 +572,7 @@ class QuickResultsWidget extends Component {
             var {numParties} = this.state;
             this.barchartInstances = new Array(numParties);
             return (
-                <div className={className("barchart-container")}>
+                <div className={className("barchart-container") + " " + className("comparisons-container") + " " + className("votes-comparisons-container")}>
                     {
                         partyIecIds.map((partyIecId, partyIdx) => {
                             return <VoteCompBarchart 
@@ -591,7 +591,7 @@ class QuickResultsWidget extends Component {
         if (comp == 'seats-comparisons') {
             this.barchartInstances = new Array(this.state.numParties);
             return (
-                <div className={className("barchart-container")}>
+                <div className={className("barchart-container") + " " + className("comparisons-container") + " " + className("seats-comparisons-container")}>
                     {
                         partyIecIds.map((partyIecId, partyIdx) => {
                             return <SeatCompBarchart 
