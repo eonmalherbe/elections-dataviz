@@ -560,7 +560,7 @@ class QuickResultsWidget extends Component {
         }
         if (comp == 'votes-predictions') {
             return (
-                <div className={className("barchart-container")}>
+                <div className={className("barchart-container") + " " + className("csir-predictions-container")}>
                     <VotePredictionLineChart
                         ref={instance => { this.barchartInstance = instance; }}
                         {...this.state}
