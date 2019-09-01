@@ -474,25 +474,29 @@ export function parseSeatsComparisonData(data, props) {
   if (props.electionType === "provincial")
     eventDescriptions = props.eventDescriptions["provincial"]
 
-  var results = edges.map(edge => {
-    var node = edge.node;
-    var seats = 0;
-    if (regionType === "national") {
-      seats = node["nationalPr"] + node["regional"];
-    } else {//"province"
-      seats = node["regional"];
-    }
-    return {
-      seats,
-      name: node["party"]["event"]["description"],
-      partyInfo: node["party"]
-    }
-  }).filter(result => eventDescriptions.indexOf(result.name) != -1)
-  .filter(result => 
-    props.partyIecId
-    ? (result.partyInfo["iecId"] == props.partyIecId)
-    : (result.partyInfo["abbreviation"] == props.partyAbbr)
-  )
+  var results = edges
+    .map(edge => {
+        var node = edge.node;
+        var seats = 0;
+        if (regionType === "national") {
+          seats = node["nationalPr"] + node["regional"];
+        } else {//"province"
+          seats = node["regional"];
+        }
+        return {
+          seats,
+          name: node["party"]["event"]["description"],
+          partyInfo: node["party"]
+        }
+    })
+    .filter(result => eventDescriptions.indexOf(result.name) != -1)
+    .filter(function(result) {
+        if (props.partyIecId) {
+            return result.partyInfo["iecId"] == props.partyIecId
+        } else {
+            return result.partyInfo["abbreviation"] == props.partyAbbr
+        }
+    })
 
   var new_results = [];
   for(var i = 0; i < eventDescriptions.length; i ++) {

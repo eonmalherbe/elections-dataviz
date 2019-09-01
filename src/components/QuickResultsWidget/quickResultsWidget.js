@@ -88,8 +88,8 @@ class QuickResultsWidget extends Component {
             enableMap: true,
             enableTurnoutProgressSpoilt: true,
 
-            partyAbbrs: ["ANC", "DA", "EFF", "IFP", "VF PLUS"],
-            partyIecIds: [null, null, null, null],        
+            partyAbbrs: ["ANC", "DA", "EFF", "IFP", "GOOD"],
+            partyIecIds: [null, null, null, null, null],        
             eventDescriptions: {
                 national : [
                     "2019 NATIONAL ELECTION",
@@ -366,7 +366,7 @@ class QuickResultsWidget extends Component {
         if (comp == 'seats-default') {
             return (
                 <div className={className("quick-results-title")+" "+className("race-for-seats")}>
-                    PREDICTED: Race for Seats: {getNationalProvincialStr2(self.state)} ({getSeatsCount(self.state)})
+                    Race for Seats: {getNationalProvincialStr2(self.state)} ({getSeatsCount(self.state)})
                 </div>
             );
         }
@@ -593,16 +593,18 @@ class QuickResultsWidget extends Component {
             return (
                 <div className={className("barchart-container") + " " + className("comparisons-container") + " " + className("seats-comparisons-container")}>
                     {
-                        partyIecIds.map((partyIecId, partyIdx) => {
-                            return <SeatCompBarchart 
-                                ref={instance => { this.barchartInstances[partyIdx] = instance; }} 
-                                key={partyIdx}
-                                {...this.state}
-                                partyAbbr={partyAbbrs[partyIdx]}
-                                partyIecId={partyIecId}
-                                componentID={-1000}
-                            />
-                        })
+
+                        partyIecIds
+                            .map((partyIecId, partyIdx) => {
+                                return <SeatCompBarchart 
+                                    ref={instance => { this.barchartInstances[partyIdx] = instance; }} 
+                                    key={partyIdx}
+                                    {...this.state}
+                                    partyAbbr={partyAbbrs[partyIdx]}
+                                    partyIecId={partyIecId}
+                                    componentID={-1000}
+                                />
+                            })
                     }
                 </div>
             );

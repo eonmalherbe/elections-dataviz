@@ -92,6 +92,7 @@ class BarChart extends Component {
     }
 
     componentDidUpdate() {
+      fetchDataFromOBJ(this.state, this.props);
       this.draw(this.getContainer(), this.state)
     }
 
